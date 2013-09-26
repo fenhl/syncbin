@@ -41,9 +41,9 @@ else
     git clone git://github.com/robbyrussell/oh-my-zsh.git
 fi
 
-if mkdir -pv ${HUB}/robbyrussell/custom/themes; then
-    unlink ${HUB}/robbyrussell/custom/themes/fenhl.zsh-theme
-    ln -s ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/custom/themes/fenhl.zsh-theme
+if mkdir -pv ${HUB}/robbyrussell/oh-my-zsh/custom/themes; then
+    unlink ${HUB}/robbyrussell/oh-my-zsh/custom/themes/fenhl.zsh-theme
+    ln -s ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/oh-my-zsh/custom/themes/fenhl.zsh-theme
 fi
 
 unlink ${HOME}/.zshrc
