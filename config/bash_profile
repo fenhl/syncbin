@@ -1,0 +1,26 @@
+PATH="/Applications/Alice.app/Contents/Resources/bin:${PATH}"
+PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
+PATH="/Library/Frameworks/Python.framework/Versions/3.3/bin:${PATH}"
+PATH="/opt/local/sbin:${PATH}"
+PATH="/opt/local/bin:${PATH}"
+PATH="${HOME}/syncbin:${PATH}"
+PATH="${HOME}/bin:${PATH}"
+export PATH
+
+export PYTHONPATH="/opt/py:/usr/lib/python3.3"
+
+export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"
+
+export CUPS_SERVER=print.coli.uni-saarland.de
+
+export EDITOR=nano
+
+# add aliases from syncbin
+. ${HOME}/syncbin/aliases define
+
+# Fenhl short prompt, bash edition
+PS1="\$(if [[ \$? == 0 ]]; then echo \"[\[\033[1;37m\]??\$(short_prompt_path)\\$\[\033[m\]]\"; else echo \"\[\033[1;31m\][\[\033[1;37m\]??\$(short_prompt_path)\\$\[\033[1;31m\]]\"; fi)\[\e[0m\] "
+
+export CLICOLOR=1
+
+export LANG=en_US.UTF-8

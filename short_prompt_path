@@ -1,0 +1,10 @@
+#!/bin/bash
+if [[ $(pwd) == / ]]; then
+    printf '/'
+else
+    if [[ $(pwd) == ${HOME} ]]; then
+        printf '~'
+    else
+        printf '.'
+    fi
+fi

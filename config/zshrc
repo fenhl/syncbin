@@ -1,0 +1,67 @@
+ZSH=/opt/hub/robbyrussell/oh-my-zsh
+ZSH_THEME="fenhl"
+DEFAULT_USER="fenhl"
+DEFAULT_HOST="fenubookair.local"
+
+# autoupdate
+DISABLE_UPDATE_PROMPT=true
+export UPDATE_ZSH_DAYS=1
+
+#CASE_SENSITIVE="true"
+COMPLETION_WAITING_DOTS="true"
+#DISABLE_CORRECTION="true"
+#DISABLE_UNTRACKED_FILES_DIRTY="true" # disable marking untracked files under VCS as dirty. This makes repository status check for large repositories much, much faster.
+
+plugins=(autojump brew git osx pip)
+
+source $ZSH/oh-my-zsh.sh
+
+# envars
+PATH="/usr/texbin:${PATH}"
+PATH="/usr/local/MacGPG2/bin:${PATH}"
+PATH="/opt/X11/bin:${PATH}"
+PATH="/sbin:#{PATH}"
+PATH="/usr/sbin:${PATH}"
+PATH="/bin:${PATH}"
+PATH="/usr/bin:${PATH}"
+PATH="/usr/local/bin:${PATH}"
+PATH="/Applications/Alice.app/Contents/Resources/bin:${PATH}"
+PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
+PATH="/Library/Frameworks/Python.framework/Versions/3.3/bin:${PATH}"
+PATH="/opt/local/sbin:${PATH}"
+PATH="/opt/local/bin:${PATH}"
+PATH="/opt/wurstmineberg/bin:${PATH}"
+PATH="/opt/hub/fenhl/syncbin:${PATH}"
+PATH="${HOME}/hub/fenhl/syncbin:${PATH}"
+PATH="${HOME}/bin:${PATH}"
+export PATH
+
+export LANG=en_US.UTF-8
+export EDITOR=nano
+
+export CUPS_SERVER=print.coli.uni-saarland.de
+export PYTHONPATH="/opt/py:/usr/lib/python3.3"
+export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"
+
+# add aliases from syncbin
+if [[ -d /opt/hub/fenhl/syncbin ]]; then
+    . /opt/hub/fenhl/syncbin/aliases define
+elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
+    . ${HOME}/hub/fenhl/syncbin/aliases define
+fi
+
+# startup scripts
+if which brew &> /dev/null; then
+    brew update
+    brew upgrade
+fi
+if which hub &> /dev/null; then
+    if [[ -d /opt/hub/fenhl/syncbin ]]; then
+        cd /opt/hub/fenhl/syncbin &&
+        hub pull
+    elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
+        cd ${HOME}/hub/fenhl/syncbin &&
+        hub pull
+    fi
+fi
+cd

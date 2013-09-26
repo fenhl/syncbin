@@ -1,0 +1,23 @@
+#!/bin/bash
+
+USAGE=$'Usage:\n  . aliases define'
+
+if [ $# -ne 1 ]; then
+    echo "$USAGE" >&2
+else
+    case "$1" in
+    define)
+        alias accio=". accio"
+        alias chmox="chmod +x"
+        eval "$(hub alias -s)" # alias git=hub
+        alias l="ls -halF"
+        alias mkcd=". mkcd"
+        alias pip3i="sudo pip install --target /usr/lib/python3.3"
+        alias rr="rm -rf"
+        alias sudo="sudo -p '[sudo] Password for %p:'"
+        alias tac="tail -r"
+        ;;
+    *)
+        echo "$USAGE" >&2
+    esac
+fi

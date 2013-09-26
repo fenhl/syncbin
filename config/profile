@@ -1,0 +1,6 @@
+PATH="/opt/hub/fenhl/syncbin:${PATH}"
+PATH="${HOME}/hub/fenhl/syncbin:${PATH}"
+PATH="${HOME}/bin:${PATH}"
+export PATH
+
+PS1='[??.>] '; export PS1

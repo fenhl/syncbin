@@ -1,0 +1,13 @@
+#!/bin/bash
+
+USAGE=$'Usage:\n  accio <command>'
+
+if [ "$#" -ne 1 ]; then
+    echo "$USAGE" >&2
+else
+    if which "$1" &> /dev/null; then
+        cd $(dirname $(which "$1"))
+    else
+        cd $(dirname "$1")
+    fi
+fi
