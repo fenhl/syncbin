@@ -9,7 +9,7 @@ else
     define)
         alias accio=". accio"
         alias chmox="chmod +x"
-        eval "$(hub alias -s)" # alias git=hub
+        alias git="hub"
         alias l="ls -halF"
         alias mkcd=". mkcd"
         alias pip3i="sudo pip install --target /usr/lib/python3.3"
