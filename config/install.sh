@@ -25,7 +25,10 @@ if which hub; then
         hub clone fenhl/syncbin
     fi
 elif which git; then
-    if
+    if [[ -d syncbin ]] && git branch; then
+        cd syncbin
+        git pull origin master
+    else
         [[ -d syncbin ]] && rm -r syncbin
         git clone https://github.com/fenhl/syncbin.git
     fi
