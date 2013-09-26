@@ -40,10 +40,12 @@ else
     git clone git://github.com/robbyrussell/oh-my-zsh.git
 fi
 
-mkdir -pv ${HUB}/robbyrussell/custom/themes &&
-ln -s ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/custom/themes/fenhl.zsh-theme
+if mkdir -pv ${HUB}/robbyrussell/custom/themes; then
+    unlink ${HUB}/robbyrussell/custom/themes/fenhl.zsh-theme
+    ln -s ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/custom/themes/fenhl.zsh-theme
+fi
 
-rm ${HOME}/.zshrc ${HOME}/.bash_profile ${HOME}/.profile
+unlink ${HOME}/.zshrc ${HOME}/.bash_profile ${HOME}/.profile
 ln -s ${HUB}/fenhl/syncbin/config/zshrc ${HOME}/.zshrc
 ln -s ${HUB}/fenhl/syncbin/config/bash_profile ${HOME}/.bash_profile
 ln -s ${HUB}/fenhl/syncbin/config/profile ${HOME}/.profile
