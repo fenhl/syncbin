@@ -11,8 +11,10 @@ fi
 cd ${HUB}/fenhl || exit 1
 
 if which hub; then
+    rm -r syncbin
     hub clone fenhl/syncbin
 elif which git; then
+    rm -r syncbin
     git clone https://github.com/fenhl/syncbin.git
 else
     exit 1
@@ -31,6 +33,7 @@ fi
 mkdir -pv ${HUB}/robbyrussell &&
 cd ${HUB}/robbyrussell &&
 if which hub; then
+    rm -r oh-my-zsh
     hub clone robbyrussell/oh-my-zsh
 else
     git clone git://github.com/robbyrussell/oh-my-zsh.git
