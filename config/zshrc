@@ -1,4 +1,8 @@
-ZSH=/opt/hub/robbyrussell/oh-my-zsh
+if [[ -d /opt/hub/robbyrussell/oh-my-zsh ]]; then
+    ZSH=/opt/hub/robbyrussell/oh-my-zsh
+else
+    ZSH=${HOME}/hub/robbyrussell/oh-my-zsh
+fi
 ZSH_THEME="fenhl"
 DEFAULT_USER="fenhl"
 DEFAULT_HOST="fenubookair.local"
