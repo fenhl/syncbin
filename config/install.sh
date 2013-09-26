@@ -36,12 +36,14 @@ if which hub; then
     rm -r oh-my-zsh
     hub clone robbyrussell/oh-my-zsh
 else
+    rm -r oh-my-zsh
     git clone git://github.com/robbyrussell/oh-my-zsh.git
 fi
 
 mkdir -pv ${HUB}/robbyrussell/custom/themes &&
 ln -s ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/custom/themes/fenhl.zsh-theme
 
+rm ${HOME}/.zshrc ${HOME}/.bash_profile ${HOME}/.profile
 ln -s ${HUB}/fenhl/syncbin/config/zshrc ${HOME}/.zshrc
 ln -s ${HUB}/fenhl/syncbin/config/bash_profile ${HOME}/.bash_profile
 ln -s ${HUB}/fenhl/syncbin/config/profile ${HOME}/.profile
