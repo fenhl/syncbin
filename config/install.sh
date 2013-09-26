@@ -7,6 +7,7 @@ elif mkdir -pv ${HOME}/hub/fenhl; then
 else
     exit 1
 fi
+echo "hub is at ${HUB}"
 
 cd ${HUB}/fenhl || exit 1
 
