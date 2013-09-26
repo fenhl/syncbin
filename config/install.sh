@@ -42,9 +42,15 @@ cd ${HOME}/bin &&
 if which curl; then
     curl -L http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -
     rm lns.tar.gz
+    mv lns .lnsdir
+    mv .lnsdir/lns lns
+    rm -r .lnsdir
 elif which wget; then
     wget -O - http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -
     rm lns.tar.gz
+    mv lns .lnsdir
+    mv .lnsdir/lns lns
+    rm -r .lnsdir
 fi
 
 mkdir -pv ${HUB}/robbyrussell &&
