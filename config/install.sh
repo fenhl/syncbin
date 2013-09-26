@@ -45,9 +45,11 @@ if mkdir -pv ${HUB}/robbyrussell/custom/themes; then
     ln -s ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/custom/themes/fenhl.zsh-theme
 fi
 
-unlink ${HOME}/.zshrc ${HOME}/.bash_profile ${HOME}/.profile
+unlink ${HOME}/.zshrc
 ln -s ${HUB}/fenhl/syncbin/config/zshrc ${HOME}/.zshrc
+unlink ${HOME}/.bash_profile
 ln -s ${HUB}/fenhl/syncbin/config/bash_profile ${HOME}/.bash_profile
+unlink ${HOME}/.profile
 ln -s ${HUB}/fenhl/syncbin/config/profile ${HOME}/.profile
 
 chsh -s /bin/zsh
