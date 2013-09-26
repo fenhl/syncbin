@@ -5,7 +5,7 @@ if [[ -w /opt/hub ]]; then
     HUB=/opt/hub
 else
     mkdir -pv ${HOME}/hub
-    if [[ -w ${HOME}/hub; then
+    if [[ -w ${HOME}/hub ]]; then
         HUB=${HOME}/hub
     else
         exit 1
