@@ -1,23 +1,36 @@
 #!/bin/bash
 
-if mkdir -pv /opt/hub/fenhl; then
+mkdir -pv /opt/hub
+if [[ -w /opt/hub ]]; then
     HUB=/opt/hub
-elif mkdir -pv ${HOME}/hub/fenhl; then
-    HUB=${HOME}/hub
 else
-    exit 1
+    mkdir -pv ${HOME}/hub
+    if [[ -w ${HOME}/hub; then
+        HUB=${HOME}/hub
+    else
+        exit 1
+    fi
 fi
 echo "hub is at ${HUB}"
 
+mkdir -pv ${HUB}/fenhl &&
 cd ${HUB}/fenhl || exit 1
 
 if which hub; then
-    rm -r syncbin
-    hub clone fenhl/syncbin
+    if [[ -d syncbin ]] && hub branch; then
+        cd syncbin
+        hub pull
+    else
+        [[ -d syncbin ]] && rm -r syncbin
+        hub clone fenhl/syncbin
+    fi
 elif which git; then
-    rm -r syncbin
-    git clone https://github.com/fenhl/syncbin.git
+    if
+        [[ -d syncbin ]] && rm -r syncbin
+        git clone https://github.com/fenhl/syncbin.git
+    fi
 else
+    echo "missing git command"
     exit 1
 fi
 
@@ -34,11 +47,21 @@ fi
 mkdir -pv ${HUB}/robbyrussell &&
 cd ${HUB}/robbyrussell &&
 if which hub; then
-    rm -r oh-my-zsh
-    hub clone robbyrussell/oh-my-zsh
+    if [[ -d oh-my-zsh ]] && hub branch; then
+        cd oh-my-zsh &&
+        hub pull
+    else
+        [[ -d oh-my-zsh ]] && rm -r oh-my-zsh
+        hub clone robbyrussell/oh-my-zsh
+    fi
 else
-    rm -r oh-my-zsh
-    git clone git://github.com/robbyrussell/oh-my-zsh.git
+    if [[ -d oh-my-zsh ]] && git branch; then
+        cd oh-my-zsh &&
+        git pull origin master
+    else
+        [[ -d oh-my-zsh ]] && rm -r oh-my-zsh
+        git clone git://github.com/robbyrussell/oh-my-zsh.git
+    fi
 fi
 
 if mkdir -pv ${HUB}/robbyrussell/oh-my-zsh/custom/themes; then
