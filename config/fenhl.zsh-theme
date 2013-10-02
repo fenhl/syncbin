@@ -19,7 +19,7 @@ function user {
 
 function host {
     if hostname -f &> /dev/null; then
-        if [[ $DEFAULT_HOST == $(hostname -f) ]] || [[ $(localhost) == "fenubookair" ]]; then
+        if [[ $DEFAULT_HOST == $(hostname -f) ]] || $(which localhost) && [[ $(localhost) == "fenubookair" ]]; then
             echo ' '
         else
             echo '%B%F{white}'$(hostname -f | cut -c 1)'%b%f'
