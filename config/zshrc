@@ -55,17 +55,20 @@ elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
 fi
 
 # startup scripts
-if which brew &> /dev/null; then
-    brew update
-    brew upgrade
-fi
-if which hub &> /dev/null; then
-    if [[ -d /opt/hub/fenhl/syncbin ]]; then
-        cd /opt/hub/fenhl/syncbin &&
-        hub pull
-    elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
-        cd ${HOME}/hub/fenhl/syncbin &&
-        hub pull
+if ping -c 1 -t 5 -q isup.me &> /dev/null; then
+    if which brew &> /dev/null; then
+        brew update
+        brew upgrade
+    fi
+    if which hub &> /dev/null; then
+        if [[ -d /opt/hub/fenhl/syncbin ]]; then
+            cd /opt/hub/fenhl/syncbin &&
+            hub pull &&
+            cd -
+        elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
+            cd ${HOME}/hub/fenhl/syncbin &&
+            hub pull &&
+            cd -
+        fi
     fi
 fi
-cd
