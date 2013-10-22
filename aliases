@@ -12,6 +12,7 @@ else
         disable -a ll
         alias mkcd=". mkcd"
         alias pip3i="sudo pip install --target /usr/lib/python3.3"
+        alias retab="tab; logout"
         alias rr="rm -rf"
         alias sudo="sudo -p '[sudo] Password for %p:'"
         alias tac="tail -r"
