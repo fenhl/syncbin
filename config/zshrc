@@ -55,7 +55,13 @@ elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
 fi
 
 # startup scripts
-if ping -c 1 -t 5 -q isup.me &> /dev/null; then
+if which syncbin-hasinet &> /dev/null; then
+    syncbin-hasinet
+    SYNCBINHASINET=$?
+else
+    SYNCBINHASINET=0
+fi
+if [[ $SYNCBINHASINET -eq 0 ]]; then
     if which brew &> /dev/null; then
         brew update
         brew upgrade
