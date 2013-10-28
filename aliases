@@ -15,7 +15,9 @@ else
         alias retab="tab; logout"
         alias rr="rm -rf"
         alias sudo="sudo -p '[sudo] Password for %p:'"
-        alias tac="tail -r"
+        if ! ( which tac &> /dev/null ); then
+            alias tac="tail -r"
+        fi
         ;;
     *)
         echo "$USAGE" >&2

@@ -1,2 +1,2 @@
 #!/bin/bash
-tail -r $@ | less
+tac $@ | less
