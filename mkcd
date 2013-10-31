@@ -1,7 +1,10 @@
 #!/bin/sh
+
+USAGE=$'Usage:
+  mkcd NEWDIRECTORY'
+
 if [ "$#" -ne 1 ]; then
-    echo 'Usage:' >&2
-    echo '  mkcd NEWDIRECTORY' >&2
+    echo "$USAGE" >&2
 else
     mkdir $1 &&
     cd $1
