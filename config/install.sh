@@ -33,24 +33,31 @@ elif which git; then
         git clone https://github.com/fenhl/syncbin.git
     fi
 else
-    echo "missing git command"
+    echo "missing git command" >&2
     exit 1
 fi
 
 mkdir -pv ${HOME}/bin &&
 cd ${HOME}/bin &&
+CURLSUCCESS=1
 if which curl; then
     curl -L http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -
+    CURLSUCCESS=$?
     rm lns.tar.gz
     mv lns .lnsdir
     mv .lnsdir/lns lns
     rm -r .lnsdir
-elif which wget; then
-    wget -O - http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -
-    rm lns.tar.gz
-    mv lns .lnsdir
-    mv .lnsdir/lns lns
-    rm -r .lnsdir
+fi
+if [[ "$CURLSUCCESS" != "0" ]]; then
+    if which wget; then
+        wget -O - http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -
+        rm lns.tar.gz
+        mv lns .lnsdir
+        mv .lnsdir/lns lns
+        rm -r .lnsdir
+    else
+        echo "failed to install lns" >&2
+    fi
 fi
 
 mkdir -pv ${HUB}/robbyrussell &&
