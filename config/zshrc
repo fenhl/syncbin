@@ -11,7 +11,7 @@ DEFAULT_HOST="fenubookair.local"
 DISABLE_UPDATE_PROMPT=true
 export UPDATE_ZSH_DAYS=1
 
-#CASE_SENSITIVE="true"
+CASE_SENSITIVE="true"
 COMPLETION_WAITING_DOTS="true"
 DISABLE_CORRECTION="true"
 #DISABLE_UNTRACKED_FILES_DIRTY="true" # disable marking untracked files under VCS as dirty. This makes repository status check for large repositories much, much faster.
