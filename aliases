@@ -11,7 +11,7 @@ else
         alias git="hub"
         alias l="ls -halF"
         disable -a ll
-        alias mkcd=". mkcd"
+        alias mkcd="take"
         alias pip3i="sudo pip install --target /usr/lib/python3.3"
         alias retab="tab; logout"
         alias rr="rm -rf"
