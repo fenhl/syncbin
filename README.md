@@ -3,7 +3,7 @@
 Installation
 ============
 
-The following *should* install `syncbin`, [`lns`][lns], and [`oh-my-zsh`][]:
+The following *should* install `syncbin`, [`lns`][lns], and [`oh-my-zsh`][oh-my-zsh]:
 
 ```sh
 wget -O - https://raw.github.com/fenhl/syncbin/master/config/install.sh | sh
