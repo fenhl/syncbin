@@ -70,11 +70,11 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         if [[ -d /opt/hub/fenhl/syncbin ]]; then
             cd /opt/hub/fenhl/syncbin &&
             hub pull > /dev/null &&
-            cd -
+            cd - > /dev/null
         elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
             cd ${HOME}/hub/fenhl/syncbin &&
             hub pull > /dev/null &&
-            cd -
+            cd - > /dev/null
         fi
     fi
 fi
