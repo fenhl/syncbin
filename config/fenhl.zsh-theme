@@ -69,3 +69,4 @@ ZSH_THEME_GIT_PROMPT_DIRTY=" %F{red}(dirty)%f"
 
 PROMPT='[$(user)$(host)$(path)$(prompt_symbol)] '
 RPROMPT='$(git_prompt_info)%F{red}$(battery_charge)%(?..[exit: %?])%f'
+PROMPT2='zsh %_> '
