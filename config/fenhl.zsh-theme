@@ -1,6 +1,5 @@
 #-------------------------------------------------------------------------------
 # Fenhl's (http://fenhl.net/) personal oh-my-zsh theme
-# (Needs git plugin)
 #-------------------------------------------------------------------------------
 
 function user {
@@ -55,6 +54,42 @@ function prompt_symbol {
     fi
 }
 
+function git_status { # uses modified code from oh-my-git, see the LICENSE
+    has_git_status="no"
+    git_prompt=""
+    current_commit_hash=$(git rev-parse HEAD 2> /dev/null)
+    if [[ -n $current_commit_hash ]]; then
+        current_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+        git_status=$(git status --porcelain 2> /dev/null)
+        if [[ $git_status =~ ($'\n'|^).D ]] || [[ $git_status =~ ($'\n'|^)D ]]; then
+            if [[ ${has_git_status} == "no" ]]; then
+                git_prompt="[git: "
+            fi
+            has_git_status="flags"
+            git_prompt=${git_prompt}"-"
+        fi
+        if [[ $git_status =~ ($'\n'|^).M ]] || [[ $git_status =~ ($'\n'|^)M ]]; then
+            if [[ ${has_git_status} == "no" ]]; then
+                git_prompt="[git: "
+            fi
+            has_git_status="flags"
+            git_prompt=${git_prompt}"≠"
+        fi
+        if [[ $git_status =~ ($'\n'|^)A ]]; then
+            if [[ ${has_git_status} == "no" ]]; then
+                git_prompt="[git: "
+            fi
+            has_git_status="flags"
+            git_prompt=${git_prompt}"+"
+        fi
+        if [[ ${has_git_status} != "no" ]]; then
+            has_git_status="end"
+            git_prompt=${git_prompt}"]"
+        fi
+        echo ${git_prompt}
+    fi
+}
+
 function battery_charge {
     if which batcharge &> /dev/null; then
         echo `batcharge --zsh` 2>/dev/null
@@ -63,10 +98,6 @@ function battery_charge {
     fi
 }
 
-ZSH_THEME_GIT_PROMPT_PREFIX="[git: "
-ZSH_THEME_GIT_PROMPT_SUFFIX="]"
-ZSH_THEME_GIT_PROMPT_DIRTY=" %F{red}(dirty)%f"
-
 PROMPT='[$(user)$(host)$(path)$(prompt_symbol)] '
-RPROMPT='$(git_prompt_info)%F{red}$(battery_charge)%(?..[exit: %?])%f'
+RPROMPT='%F{red}$(git_status)$(battery_charge)%(?..[exit: %?])%f'
 PROMPT2='zsh %_> '
