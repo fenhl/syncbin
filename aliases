@@ -21,6 +21,9 @@ else
         if ! ( which tac &> /dev/null ); then
             alias tac="tail -r"
         fi
+        if [ -x ~/bin/aliases ]; then
+            . ~/bin/aliases define
+        fi
         ;;
     *)
         echo "$USAGE" >&2
