@@ -21,6 +21,7 @@ plugins=(autojump brew git osx pip)
 source $ZSH/oh-my-zsh.sh
 
 # envars
+# prepending to $PATH
 PATH="/usr/texbin:${PATH}"
 PATH="/usr/local/MacGPG2/bin:${PATH}"
 PATH="/opt/X11/bin:${PATH}"
@@ -30,14 +31,15 @@ PATH="/bin:${PATH}"
 PATH="/usr/bin:${PATH}"
 PATH="/usr/local/bin:${PATH}"
 PATH="/Applications/Alice.app/Contents/Resources/bin:${PATH}"
-PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
-PATH="/Library/Frameworks/Python.framework/Versions/3.3/bin:${PATH}"
 PATH="/opt/local/sbin:${PATH}"
 PATH="/opt/local/bin:${PATH}"
 PATH="/opt/wurstmineberg/bin:${PATH}"
 PATH="/opt/hub/fenhl/syncbin:${PATH}"
 PATH="${HOME}/hub/fenhl/syncbin:${PATH}"
 PATH="${HOME}/bin:${PATH}"
+# appending to $PATH
+PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/3.3/bin"
+PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/2.7/bin"
 export PATH
 
 export LANG=en_US.UTF-8
