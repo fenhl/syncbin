@@ -35,13 +35,31 @@ function path {
         else
             echo '%B%F{white}/%b%f'
         fi
-    elif [[ $PWD == $HOME ]]; then
-        echo '~'
     elif (( $+path[(r)$PWD] )); then
-        echo '%B%F{white}b%b%f'
+        if [[ $PWD == $HOME ]]; then
+            echo 'b'
+        else
+            echo '%B%F{white}b%b%f'
+        fi
+    elif git branch &> /dev/null; then
+        if [[ $PWD == $HOME ]]; then
+            echo 'g'
+        else
+            echo '%B%F{white}g%b%f'
+        fi
+    elif hg root &> /dev/null; then
+        if [[ $PWD == $HOME ]]; then
+            echo 'm'
+        else
+            echo '%B%F{white}m%b%f'
+        fi
+    elif ishome &> /dev/null; then 
+        if [[ $PWD == $HOME ]]; then
+            echo '~'
+        else
+            echo '%B%F{white}~%b%f'
+        fi
     else
-        git branch >/dev/null 2>/dev/null && echo '%B%F{white}g%b%f' && return
-        hg root >/dev/null 2>/dev/null && echo '%B%F{white}m%b%f' && return
         echo '%B%F{white}.%b%f'
     fi
 }

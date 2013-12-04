@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+import sys
+
+import os
+import os.path
+import pwd
+
+def homedir_owner(filename):
+    for p in pwd.getpwall():
+        try:
+            if os.path.samefile(os.path.realpath(os.path.expanduser(p.pw_dir)), os.path.realpath(os.path.expanduser(filename))):
+                return p.pw_name
+        except:
+            pass
+
+if __name__ == '__main__':
+    dir_to_check = '.'
+    if len(sys.argv) > 1:
+        dir_to_check = sys.argv[1]
+    owner = homedir_owner(dir_to_check)
+    if owner is None:
+        sys.exit(1)
+    print(owner)
