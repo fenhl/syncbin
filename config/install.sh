@@ -1,35 +1,37 @@
-#!/bin/bash
+#!/bin/sh
 
 mkdir -pv /opt/hub
-if [[ -w /opt/hub ]]; then
+if [ -d /opt/hub ] && [ -w /opt/hub ]; then
     HUB=/opt/hub
 else
-    mkdir -pv ${HOME}/hub
-    if [[ -w ${HOME}/hub ]]; then
+    mkdir -pv ~/hub
+    if [ -d ~/hub ] && [ -w ~/hub ]; then
         HUB=${HOME}/hub
     else
         exit 1
     fi
 fi
-echo "hub is at ${HUB}"
+echo "hub is at" ${HUB}
 
 mkdir -pv ${HUB}/fenhl &&
 cd ${HUB}/fenhl || exit 1
 
 if which hub; then
-    if [[ -d syncbin ]] && hub branch; then
-        cd syncbin
+    if [ -d ${HUB}/fenhl/syncbin ] && { cd ${HUB}/fenhl/syncbin; hub branch; }; then
+        cd ${HUB}/fenhl/syncbin
         hub pull
     else
-        [[ -d syncbin ]] && rm -r syncbin
+        [ -d ${HUB}/fenhl/syncbin ] && rm -r ${HUB}/fenhl/syncbin
+        cd ${HUB}/fenhl
         hub clone fenhl/syncbin
     fi
 elif which git; then
-    if [[ -d syncbin ]] && git branch; then
-        cd syncbin
+    if [ -d ${HUB}/fenhl/syncbin ] && { cd ${HUB}/fenhl/syncbin; git branch; }; then
+        cd ${HUB}/fenhl/syncbin
         git pull origin master
     else
-        [[ -d syncbin ]] && rm -r syncbin
+        [ -d ${HUB}/fenhl/syncbin ] && rm -r ${HUB}/fenhl/syncbin
+        cd ${HUB}/fenhl
         git clone https://github.com/fenhl/syncbin.git
     fi
 else
@@ -48,7 +50,7 @@ if which curl; then
     mv .lnsdir/lns lns
     rm -r .lnsdir
 fi
-if [[ "$CURLSUCCESS" != "0" ]]; then
+if [ "$CURLSUCCESS" != "0" ]; then
     if which wget; then
         wget -O - http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -
         rm lns.tar.gz
@@ -63,20 +65,22 @@ fi
 mkdir -pv ${HUB}/robbyrussell &&
 cd ${HUB}/robbyrussell &&
 if which hub; then
-    if [[ -d oh-my-zsh ]] && hub branch; then
-        cd oh-my-zsh &&
+    if [ -d ${HUB}/robbyrussell/oh-my-zsh ] && { cd ${HUB}/robbyrussell/oh-my-zsh; hub branch; }; then
+        cd ${HUB}/robbyrussell/oh-my-zsh &&
         hub pull
     else
-        [[ -d oh-my-zsh ]] && rm -r oh-my-zsh
+        [ -d ${HUB}/robbyrussell/oh-my-zsh ] && rm -r ${HUB}/robbyrussell/oh-my-zsh
+        cd ${HUB}/robbyrussell
         hub clone robbyrussell/oh-my-zsh
     fi
 else
-    if [[ -d oh-my-zsh ]] && git branch; then
-        cd oh-my-zsh &&
+    if [ -d ${HUB}/robbyrussell/oh-my-zsh ] && { cd ${HUB}/robbyrussell/oh-my-zsh; git branch; }; then
+        cd ${HUB}/robbyrussell/oh-my-zsh &&
         git pull origin master
     else
-        [[ -d oh-my-zsh ]] && rm -r oh-my-zsh
-        git clone git://github.com/robbyrussell/oh-my-zsh.git
+        [ -d ${HUB}/robbyrussell/oh-my-zsh ] && rm -r ${HUB}/robbyrussell/oh-my-zsh
+        cd ${HUB}/robbyrussell
+        git clone https://github.com/robbyrussell/oh-my-zsh.git
     fi
 fi
 
@@ -85,11 +89,8 @@ if mkdir -pv ${HUB}/robbyrussell/oh-my-zsh/custom/themes; then
     ln -s ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/oh-my-zsh/custom/themes/fenhl.zsh-theme
 fi
 
-unlink ${HOME}/.zshrc
-ln -s ${HUB}/fenhl/syncbin/config/zshrc ${HOME}/.zshrc
-unlink ${HOME}/.bash_profile
-ln -s ${HUB}/fenhl/syncbin/config/bash_profile ${HOME}/.bash_profile
-unlink ${HOME}/.profile
-ln -s ${HUB}/fenhl/syncbin/config/profile ${HOME}/.profile
+ln -fs ${HUB}/fenhl/syncbin/config/zshrc ~/.zshrc
+ln -fs ${HUB}/fenhl/syncbin/config/bash_profile ~/.bash_profile
+ln -fs ${HUB}/fenhl/syncbin/config/profile ~/.profile
 
 chsh -s /bin/zsh
