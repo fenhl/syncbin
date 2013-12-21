@@ -1,2 +1,2 @@
 #!/bin/bash
-ls -halF $@ | less
+ls -halF "$@" | less
