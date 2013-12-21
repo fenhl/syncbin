@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+
+if __name__ != '__main__':
+    raise ImportError('This module is not for importing!')
+
+import sys
+
+import subprocess
+
+if subprocess.call(['which', 'softwareupdate'], stdout=subprocess.DEVNULL) != 0:
+    sys.exit(2)
+
+softwareupdate = subprocess.Popen(['softwareupdate', '--list'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+out, _ = softwareupdate.communicate()
+for line in out.decode('utf-8').splitlines():
+    if line == 'No new software available.':
+        sys.exit(0)
+    if line.strip().startswith('*'):
+        break
+else:
+    sys.exit(0)
+
+print('[OS X] Software updates available. Install with `sudo softwareupdate -ir`.')
