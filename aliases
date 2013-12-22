@@ -12,7 +12,7 @@ else
         alias l="ls -BFahl"
         disable -a ll
         alias mkcd="take"
-        if ! ( which pip3 &> /dev/null ); then
+        if ! (which pip3 &> /dev/null); then
             if which pip-3.2 &> /dev/null; then
                 alias pip3="pip-3.2"
             elif which pip-3.3 &> /dev/null; then
@@ -27,7 +27,7 @@ else
         alias retab="tab; logout"
         alias rr="rm -rf"
         alias sudo="sudo -p '[sudo] Password for %p:'"
-        if ! ( which tac &> /dev/null ); then
+        if ! (which tac &> /dev/null); then
             alias tac="tail -r"
         fi
         if [ -x ~/bin/aliases ]; then

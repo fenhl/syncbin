@@ -1,16 +1,10 @@
 #/bin/bash
 
-if ! which apt-get &> /dev/null; then
+if ! (which apt-get &> /dev/null); then
     exit 2
 fi
 
 PACKAGES=$(apt-get upgrade -s | grep '^Inst' | wc -l)
-
-apt_status="${PIPESTATUS[0]}"
-
-if [ ${apt_status} != "0" ]; then
-    exit ${apt status}
-fi
 
 if [ ${PACKAGES} != "0" ]; then
     if [ ${PACKAGES} == "1" ]; then
