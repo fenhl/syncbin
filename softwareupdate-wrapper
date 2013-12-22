@@ -8,7 +8,7 @@ import sys
 import subprocess
 
 with open('/dev/null', 'a') as dev_null:
-    if subprocess.call(['which', 'softwareupdate'], stdout=dev_null) != 0:
+    if subprocess.call(['which', 'softwareupdate'], stdout=dev_null, stderr=subprocess.STDOUT) != 0:
         sys.exit(2)
 
 softwareupdate = subprocess.Popen(['softwareupdate', '--list'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
