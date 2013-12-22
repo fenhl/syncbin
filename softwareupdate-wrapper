@@ -19,6 +19,6 @@ for line in out.decode('utf-8').splitlines():
     if line.strip().startswith('*'):
         break
 else:
-    sys.exit(0)
+    sys.exit(1)
 
 print('[OS X] Software updates available. Install with `sudo softwareupdate -ir`.')
