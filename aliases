@@ -9,7 +9,7 @@ else
         alias accio=". accio"
         alias chmox="chmod +x"
         alias git="hub"
-        alias l="ls -BFWahl"
+        alias l="ls -BFahl"
         disable -a ll
         alias mkcd="take"
         if ! ( which pip3 &> /dev/null ); then
