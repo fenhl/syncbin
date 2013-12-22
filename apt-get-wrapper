@@ -7,7 +7,7 @@ fi
 PACKAGES=$(apt-get upgrade -s | grep '^Inst' | wc -l)
 
 if [ ${PACKAGES} != "0" ]; then
-    if [ ${PACKAGES} == "1" ]; then
+    if [ ${PACKAGES} = "1" ]; then
         UPDATES='update'
     else
         UPDATES='updates'
