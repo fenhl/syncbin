@@ -1,3 +1,5 @@
+printf '[....] loading oh-my-zsh\r'
+
 if [[ -d /opt/hub/robbyrussell/oh-my-zsh ]]; then
     ZSH=/opt/hub/robbyrussell/oh-my-zsh
 else
@@ -18,7 +20,11 @@ DISABLE_CORRECTION="true"
 
 plugins=(autojump brew git osx pip)
 
+printf '[=...] updating oh-my-zsh\r'
+
 source $ZSH/oh-my-zsh.sh
+
+printf '[==..] defining environment variables and aliases\r'
 
 # envars
 # prepending to $PATH
@@ -61,6 +67,8 @@ elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
     . ${HOME}/hub/fenhl/syncbin/aliases define
 fi
 
+printf '[===.] running startup scripts: syncbin-hasinet  \r'
+
 # startup scripts
 if which syncbin-hasinet &> /dev/null; then
     syncbin-hasinet
@@ -69,16 +77,20 @@ else
     SYNCBINHASINET=0
 fi
 if [[ $SYNCBINHASINET -eq 0 ]]; then
+    printf '[===.] running startup scripts: apt-get-wrapper\r'
     if which apt-get-wrapper &> /dev/null; then
         apt-get-wrapper
     fi
+    printf '[===.] running startup scripts: softwareupdate-wrapper\r'
     if which softwareupdate-wrapper &> /dev/null; then
         softwareupdate-wrapper
     fi
+    printf '[===.] running startup scripts: brew                  \r'
     if which brew &> /dev/null; then
         brew update > /dev/null
         brew upgrade > /dev/null
     fi
+    printf '[===.] running startup scripts: hub \r'
     if which hub &> /dev/null; then
         if [[ -d /opt/hub/fenhl/syncbin ]]; then
             cd /opt/hub/fenhl/syncbin &&
@@ -91,3 +103,5 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         fi
     fi
 fi
+
+printf '[====] starting zsh session   \r'
