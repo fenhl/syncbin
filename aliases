@@ -9,10 +9,19 @@ else
         alias accio=". accio"
         alias chmox="chmod +x"
         alias git="hub"
-        alias l="ls -BFahl"
+        alias l="ls -BFWahl"
         disable -a ll
         alias mkcd="take"
-        alias pip3i="sudo pip install --target /usr/lib/python3.3"
+        if ! ( which pip3 &> /dev/null ); then
+            if which pip-3.2 &> /dev/null; then
+                alias pip3="pip-3.2"
+            elif which pip-3.3 &> /dev/null; then
+                alias pip3="pip-3.3"
+            elif which pip-3.4 &> /dev/null; then
+                alias pip3="pip-3.4"
+            fi
+        fi
+        alias pip3i="pip3 install --target /opt/py"
         alias py="python3"
         alias relog=": $@; zsh; logout"
         alias retab="tab; logout"
