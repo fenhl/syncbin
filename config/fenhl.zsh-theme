@@ -110,12 +110,20 @@ function git_status { # uses modified code from oh-my-git, see the LICENSE
 
 function battery_charge {
     if which batcharge &> /dev/null; then
-        echo `batcharge --zsh` 2>/dev/null
+        echo `batcharge --zsh` 2> /dev/null
     else
         echo '[battery: unknown]'
     fi
 }
 
+function disk_space {
+    if which syncbin-diskspace &> /dev/null; then
+        echo `syncbin-diskspace --zsh` 2> /dev/null
+    else
+        echo '[disk: unknown]'
+    fi
+}
+
 PROMPT='[$(user)$(host)$(path)$(prompt_symbol)] '
-RPROMPT='%F{red}$(git_status)$(battery_charge)%(?..[exit: %?])%f'
+RPROMPT='%F{red}$(git_status)$(battery_charge)$(disk_space)%(?..[exit: %?])%f'
 PROMPT2='zsh %_> '

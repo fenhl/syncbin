@@ -20,7 +20,7 @@ DISABLE_CORRECTION="true"
 
 plugins=(autojump brew git osx pip)
 
-printf '[=...] updating oh-my-zsh\r'
+printf '[=...] updating omz     \r'
 
 source $ZSH/oh-my-zsh.sh
 
