@@ -117,8 +117,8 @@ function battery_charge {
 }
 
 function disk_space {
-    if which syncbin-diskspace &> /dev/null; then
-        echo `syncbin-diskspace --zsh` 2> /dev/null
+    if which diskspace &> /dev/null; then
+        echo `diskspace --zsh` 2> /dev/null
     else
         echo '[disk: unknown]'
     fi
