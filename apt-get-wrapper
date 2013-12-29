@@ -12,5 +12,5 @@ if [ ${PACKAGES} != "0" ]; then
     else
         UPDATES='updates'
     fi
-    echo '[dpkg]' ${PACKAGES} ${UPDATES} available
+    echo '[dpkg]' ${PACKAGES} ${UPDATES} available '                     '
 fi
