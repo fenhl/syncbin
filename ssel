@@ -1,2 +1,6 @@
 #!/bin/bash
-tac $@ | less
+if which tac &> /dev/null; then
+    tac $@ | less
+else
+    tail -r $@ | less
+fi

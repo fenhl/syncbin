@@ -28,7 +28,7 @@ else
         alias relog=": $@; zsh; logout"
         alias retab="tab; logout"
         alias rr="rm -rf"
-        alias sudo="sudo -p '[sudo] Password for %p:'"
+        alias sudo="sudo -p '[sudo] Password for %p:' "
         if ! (which tac &> /dev/null); then
             alias tac="tail -r"
         fi
