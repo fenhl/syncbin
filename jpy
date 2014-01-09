@@ -1,0 +1,115 @@
+#!/usr/bin/env python3 -i
+
+"""Edit JSON files using Python's interactive mode.
+
+Usage:
+  jpy [FILE...]
+  jpy -h | --help
+
+Options:
+  -h, --help  Print this message and exit.
+
+"""
+
+import sys
+
+sys.path.append('/opt/py')
+
+import docopt
+import json
+import os
+import subprocess
+
+files = []
+f = files
+objects = {}
+obj = objects
+
+# some JSON aliases
+true = True
+false = False
+null = None
+
+def help():
+    print(__doc__)
+
+def load(file):
+    path = os.path.abspath(os.path.expanduser(file))
+    with open(path, 'a'):
+        os.utime(path, None) # touch the file
+    with open(path) as f:
+        try:
+            ret = json.load(f)
+        except ValueError:
+            print('[ !! ] Could not decode JSON from file ' + str(file) + ', created an empty object')
+            ret = {}
+        files.append(file)
+        obj[file] = ret
+        return ret
+
+touch = load
+
+def l(json_node):
+    print(json.dumps(json_node, sort_keys=True, indent=4, separators=(',', ': ')))
+
+def ll(json_node):
+    popen = subprocess.Popen('less', stdin=subprocess.PIPE, shell=True)
+    popen.communicate(input=json.dumps(json_node, sort_keys=True, indent=4, separators=(',', ': ')).encode('utf-8'))
+
+def keys(json_node):
+    if not isinstance(json_node, dict):
+        print('[ !! ] not an object')
+        return
+    key_list = sorted(list(json_node.keys()))
+    if len(key_list) == 0:
+        print('[ ** ] empty')
+    else:
+        for key in key_list:
+            if json_node[key] is None:
+                value_type = '[null] '
+            elif isinstance(json_node[key], dict):
+                value_type = '[obj ] '
+            elif isinstance(json_node[key], list):
+                value_type = '[arr ] '
+            elif isinstance(json_node[key], str):
+                value_type = '[str ] '
+            elif isinstance(json_node[key], bool):
+                value_type = '[bool] '
+            elif isinstance(json_node[key], int) or isinstance(json_node[key], float):
+                value_type = '[num ] '
+            else:
+                value_type = '[unkn] '
+            print(value_type + key)
+
+def save(file=None):
+    if file is None:
+        for fil in files:
+            if fil is not None:
+                save(fil)
+        return
+    with open(os.path.abspath(os.path.expanduser(file)), 'w') as savefile:
+        json.dump(objects[file], savefile, sort_keys=True, indent=4, separators=(',', ': '))
+        print(file=savefile)
+
+saveall = save
+s = save
+
+def quit(prompt=True):
+    if (not prompt) or input('[ ?? ] Quit jpy? All unsaved changes will be lost! [y/N] ') in ['Y', 'y', 'yes']:
+        sys.exit()
+
+q = quit
+
+def qq():
+    quit(prompt=False)
+
+def sq():
+    save()
+    quit(prompt=False)
+
+if __name__ == '__main__':
+    sys.ps1 = '[jpy>] '
+    sys.ps2 = '[jpy…] '
+    arguments = docopt.docopt(__doc__)
+    for file in arguments['FILE']:
+        o = load(file)
