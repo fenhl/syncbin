@@ -43,4 +43,7 @@ except:
     sys.exit(1)
 
 if '--zsh' not in sys.argv or space < ONE_GIG:
-    print('[disk: ' + format_space(space) + ']')
+    if '--bytes' in sys.argv:
+        print(str(space))
+    else:
+        print('[disk: ' + format_space(space) + ']')
