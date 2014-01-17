@@ -8,9 +8,6 @@ else
     define)
         alias accio=". accio"
         alias chmox="chmod +x"
-        if which hub &> /dev/null; then
-            alias git="hub"
-        fi
         alias l="ls -BFahl"
         disable -a ll
         alias mkcd="take"
