@@ -51,7 +51,11 @@ PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/3.3/bin"
 PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/2.7/bin"
 export PATH
 
+export LANGUAGE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
 export LANG=en_US.UTF-8
+
 export EDITOR=nano
 
 export CUPS_SERVER=print.coli.uni-saarland.de
