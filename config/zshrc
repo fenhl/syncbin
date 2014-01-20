@@ -109,10 +109,10 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
             cd - > /dev/null
         fi
     fi
-    printf '[===.] running startup scripts: zshrc\r'
-    if which zshrc &> /dev/null; then
-        . zshrc
-    fi
+fi
+printf '[===.] running startup scripts: zshrc\r'
+if which zshrc &> /dev/null; then
+    . zshrc
 fi
 
 printf '[====] starting zsh session   \r'
