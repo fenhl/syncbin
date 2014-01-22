@@ -67,6 +67,11 @@ insert_sudo () { zle beginning-of-line; zle -U "sudo " }
 zle -N insert-sudo insert_sudo
 bindkey "^S" insert-sudo
 
+# access the online help, for brew
+unalias run-help
+autoload run-help
+HELPDIR=/usr/local/share/zsh/helpfiles
+
 # add aliases from syncbin
 if [[ -d /opt/hub/fenhl/syncbin ]]; then
     . /opt/hub/fenhl/syncbin/aliases define
