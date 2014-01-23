@@ -63,14 +63,19 @@ export PYTHONPATH="/opt/py:/usr/lib/python3.3"
 export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"
 
 # ^S inserts sudo
-insert_sudo () { zle beginning-of-line; zle -U "sudo " }
+insert_sudo () {
+    zle beginning-of-line
+    zle -U "sudo "
+}
 zle -N insert-sudo insert_sudo
 bindkey "^S" insert-sudo
 
 # access the online help, for brew
-unalias run-help
-autoload run-help
-HELPDIR=/usr/local/share/zsh/helpfiles
+if which brew &> /dev/null; then
+    unalias run-help
+    autoload run-help
+    HELPDIR=/usr/local/share/zsh/helpfiles
+fi
 
 # add aliases from syncbin
 if [[ -d /opt/hub/fenhl/syncbin ]]; then
