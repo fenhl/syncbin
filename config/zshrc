@@ -31,7 +31,7 @@ printf '[==..] defining environment variables and aliases\r'
 PATH="/usr/texbin:${PATH}"
 PATH="/usr/local/MacGPG2/bin:${PATH}"
 PATH="/opt/X11/bin:${PATH}"
-PATH="/sbin:#{PATH}"
+PATH="/sbin:${PATH}"
 PATH="/usr/sbin:${PATH}"
 Path="/usr/local/sbin:${PATH}"
 PATH="/bin:${PATH}"
