@@ -8,6 +8,7 @@ else
     if [ -d ~/hub ] && [ -w ~/hub ]; then
         HUB=${HOME}/hub
     else
+        echo "could not create hub directory" >&2
         exit 1
     fi
 fi
@@ -85,12 +86,12 @@ else
 fi
 
 if mkdir -pv ${HUB}/robbyrussell/oh-my-zsh/custom/themes; then
-    unlink ${HUB}/robbyrussell/oh-my-zsh/custom/themes/fenhl.zsh-theme
-    ln -s ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/oh-my-zsh/custom/themes/fenhl.zsh-theme
+    ln -fs ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/oh-my-zsh/custom/themes/fenhl.zsh-theme
 fi
 
+ln -fs ${HUB}/fenhl/syncbin/config/zshenv ~/.zshenv
 ln -fs ${HUB}/fenhl/syncbin/config/zshrc ~/.zshrc
 ln -fs ${HUB}/fenhl/syncbin/config/bash_profile ~/.bash_profile
 ln -fs ${HUB}/fenhl/syncbin/config/profile ~/.profile
 
-chsh -s /bin/zsh
+echo "Looks like syncbin was successfully installed. You can now run `chsh -s /bin/zsh`."
