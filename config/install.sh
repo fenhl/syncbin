@@ -71,4 +71,4 @@ ln -fs ${HUB}/fenhl/syncbin/config/zshrc ~/.zshrc
 ln -fs ${HUB}/fenhl/syncbin/config/bash_profile ~/.bash_profile
 ln -fs ${HUB}/fenhl/syncbin/config/profile ~/.profile
 
-echo "Looks like syncbin was successfully installed. You can now run `chsh -s /bin/zsh`."
+echo 'Looks like syncbin was successfully installed. You can now run `chsh -s /bin/zsh`.'
