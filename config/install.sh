@@ -33,7 +33,7 @@ elif which git; then
     else
         [ -d ${HUB}/fenhl/syncbin ] && rm -r ${HUB}/fenhl/syncbin
         cd ${HUB}/fenhl
-        git clone https://github.com/fenhl/syncbin.git
+        git clone git@github.com:fenhl/syncbin.git
     fi
 else
     echo "missing git command" >&2
@@ -58,7 +58,7 @@ else
     else
         [ -d ${HUB}/robbyrussell/oh-my-zsh ] && rm -r ${HUB}/robbyrussell/oh-my-zsh
         cd ${HUB}/robbyrussell
-        git clone https://github.com/robbyrussell/oh-my-zsh.git
+        git clone git@github.com:robbyrussell/oh-my-zsh.git
     fi
 fi
 
