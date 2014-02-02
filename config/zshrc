@@ -31,11 +31,34 @@ printf '[==..] defining environment variables and aliases\r'
 
 # ^S inserts sudo
 insert_sudo () {
-    zle beginning-of-line
-    zle -U "sudo "
+    if [[ $LBUFFER == "sudo "* ]]; then
+        LBUFFER+="sudo "
+    else
+        LBUFFER="sudo "$LBUFFER
+        #zle beginning-of-line
+        #zle -U "sudo "
+    fi
 }
 zle -N insert-sudo insert_sudo
 bindkey "^S" insert-sudo
+
+# "cd.." to "cd .." and "..." to "../.."
+# taken and expanded from bl1nk's zshrc http://git.kuchen.io/markus/dotfiles.git/tree/zsh/.zshrc
+_rationalise-dot() {
+    if [[ $LBUFFER == "cd "* ]] || [[ $LBUFFER =~ "[^ ]*" ]]; then
+        if [[ $LBUFFER = *.. ]]; then
+            LBUFFER+=/..
+        elif [[ $LBUFFER == "cd." ]]; then
+            LBUFFER="cd .."
+        else
+            LBUFFER+=.
+        fi
+    else
+        LBUFFER+=.
+    fi
+}
+zle -N _rationalise-dot
+bindkey . _rationalise-dot
 
 # access the online help, for brew
 if which brew &> /dev/null; then
