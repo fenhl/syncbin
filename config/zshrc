@@ -29,6 +29,9 @@ source $ZSH/oh-my-zsh.sh
 
 printf '[==..] defining environment variables and aliases\r'
 
+# allow comments in interactive shells
+setopt interactivecomments
+
 # ^S inserts sudo
 insert_sudo () {
     if [[ $LBUFFER == "sudo "* ]]; then
@@ -70,8 +73,10 @@ fi
 # add aliases from syncbin
 if [[ -d /opt/hub/fenhl/syncbin ]]; then
     . /opt/hub/fenhl/syncbin/aliases define
+    . /opt/hub/fenhl/syncbin/aliases define-suffix
 elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
     . ${HOME}/hub/fenhl/syncbin/aliases define
+    . ${HOME}/hub/fenhl/syncbin/aliases define-suffix
 fi
 
 printf '[===.] running startup scripts: syncbin-hasinet  \r'

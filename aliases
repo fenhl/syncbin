@@ -34,7 +34,11 @@ else
             . ~/bin/aliases define
         fi
         ;;
+    define-suffix)
+        alias -s json=jpy
+        ;;
     *)
         echo "$USAGE" >&2
+        ;;
     esac
 fi
