@@ -1,3 +1,6 @@
+# don't show input while loading
+stty -echo
+
 printf '[....] loading oh-my-zsh\r'
 
 if [[ -d /opt/hub/robbyrussell/oh-my-zsh ]]; then
@@ -90,3 +93,6 @@ if which zshrc &> /dev/null; then
 fi
 
 printf '[====] starting zsh session   \r'
+
+# reënable input
+stty echo
