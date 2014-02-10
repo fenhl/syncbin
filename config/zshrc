@@ -30,7 +30,10 @@ source $ZSH/oh-my-zsh.sh
 printf '[==..] defining environment variables and aliases\r'
 
 # allow comments in interactive shells
-setopt interactivecomments
+setopt interactive_comments
+
+# don't “verify” history expansions (meaning I have to hit return twice), run them directly
+setopt no_hist_verify
 
 # ^S inserts sudo
 insert_sudo () {
@@ -64,7 +67,7 @@ zle -N _rationalise-dot
 bindkey . _rationalise-dot
 
 # access the online help, for brew
-if which brew &> /dev/null; then
+if where brew &> /dev/null; then
     unalias run-help
     autoload run-help
     HELPDIR=/usr/local/share/zsh/helpfiles
@@ -82,7 +85,7 @@ fi
 printf '[===.] running startup scripts: syncbin-hasinet  \r'
 
 # startup scripts
-if which syncbin-hasinet &> /dev/null; then
+if where syncbin-hasinet &> /dev/null; then
     syncbin-hasinet
     SYNCBINHASINET=$?
 else
@@ -90,37 +93,46 @@ else
 fi
 if [[ $SYNCBINHASINET -eq 0 ]]; then
     printf '[===.] running startup scripts: apt-get-wrapper\r'
-    if which apt-get-wrapper &> /dev/null; then
+    if where apt-get-wrapper &> /dev/null; then
         apt-get-wrapper
     fi
     printf '[===.] running startup scripts: softwareupdate-wrapper\r'
-    if which softwareupdate-wrapper &> /dev/null; then
+    if where softwareupdate-wrapper &> /dev/null; then
         softwareupdate-wrapper
     fi
     printf '[===.] running startup scripts: brew                  \r'
-    if which brew &> /dev/null; then
+    if where brew &> /dev/null; then
         brew update > /dev/null
         brew upgrade > /dev/null
     fi
     printf '[===.] running startup scripts: gem \r'
-    if which gem-wrapper &> /dev/null; then
+    if where gem-wrapper &> /dev/null; then
         gem-wrapper
     fi
     printf '[===.] running startup scripts: hub\r'
-    if which hub &> /dev/null; then
-        if [[ -d /opt/hub/fenhl/syncbin ]]; then
-            cd /opt/hub/fenhl/syncbin &&
-            hub pull > /dev/null &&
-            cd - > /dev/null
-        elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
-            cd ${HOME}/hub/fenhl/syncbin &&
-            hub pull > /dev/null &&
-            cd - > /dev/null
-        fi
+    #if where hub &> /dev/null; then
+    #    if [[ -d /opt/hub/fenhl/syncbin ]]; then
+    #        cd /opt/hub/fenhl/syncbin &&
+    #        hub pull > /dev/null &&
+    #        cd - > /dev/null
+    #    elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
+    #        cd ${HOME}/hub/fenhl/syncbin &&
+    #        hub pull > /dev/null &&
+    #        cd - > /dev/null
+    #    fi
+    #fi
+    printf '[===.] running startup scripts: compinit\r'
+    if where compinit &> /dev/null; then
+        rm -f ~/.zcompdump*
+        compinit
+    fi
+    printf '[===.] running startup scripts: syncbin-update\r'
+    if where syncbin-update &> /dev/null; then
+        syncbin-update 
     fi
 fi
-printf '[===.] running startup scripts: zshrc\r'
-if which zshrc &> /dev/null; then
+printf '[===.] running startup scripts: zshrc         \r'
+if where zshrc &> /dev/null; then
     . zshrc
 fi
 

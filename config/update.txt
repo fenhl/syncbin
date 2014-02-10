@@ -1,0 +1,7 @@
+syncbin 1.0 patch notes
+
+You should not see this file at all, something must have gone wrong in the
+update process. Best reinstall syncbin with:
+
+    wget https://raw.github.com/fenhl/syncbin/master/config/install.sh
+    sh install.sh && rm install.sh

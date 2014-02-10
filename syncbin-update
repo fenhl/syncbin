@@ -1,0 +1,53 @@
+#!/bin/zsh
+
+if [[ $# -eq 0 ]]; then
+    if [ -d /opt/hub/fenhl/syncbin ]; then
+        cd /opt/hub/fenhl/syncbin
+    else
+        cd ~/hub/fenhl/syncbin
+    fi
+    OLD=$(cat version.txt)
+    if [[ $(git rev-parse HEAD) == $(git rev-parse @{u}) ]]; then
+        exit 0
+    else
+        git pull --rebase > /dev/null
+        if [[ $? -ne 0 ]]; then
+            exit 1
+        fi
+        NEW=$(cat version.txt)
+        zsh ./syncbin-update ${OLD} ${NEW}
+        exit $?
+    fi
+elif [[ $# -eq 2 ]]; then
+    OLD=$1
+    NEW=$2
+else
+    echo '[ !! ] could not run syncbin update script, wrong arguments' >&2
+    exit 1
+fi
+
+OLDARRAY=("${(s/:/)OLD}")
+OLDMAJOR=$OLDARRAY[1]
+OLDMINOR=$OLDARRAY[2]
+
+NEWARRAY=("${(s/:/)NEW}")
+NEWMAJOR=$NEWARRAY[1]
+NEWMINOR=$NEWARRAY[2]
+
+if [[ ${NEWMAJOR} -lt ${OLDMAJOR} ]]; then
+    echo '[ !! ]' "Attempted to downgrade syncbin from ${OLD} to ${NEW}, aborting" >&2
+    exit 1
+fi
+if [[ ${NEWMAJOR} -gt ${OLDMAJOR} ]]; then
+    echo '[ ** ] A major revision of syncbin is available. Check the update instructions with `less ${HUB}/fenhl/syncbin/config/update.txt`'
+    exit 0
+fi
+if [[ ${NEWMINOR} -lt ${OLDMINOR} ]]; then
+    echo '[ !! ]' "Attempted to downgrade syncbin from ${OLD} to ${NEW}, aborting" >&2
+    exit 1
+fi
+if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
+    : # insert specific version checks here
+    exit 0
+fi
+echo '[ ** ] Syncbin has been patched, relog for changes to take effect'
