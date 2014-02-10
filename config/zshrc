@@ -102,7 +102,11 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         brew update > /dev/null
         brew upgrade > /dev/null
     fi
-    printf '[===.] running startup scripts: hub \r'
+    printf '[===.] running startup scripts: gem \r'
+    if which gem-wrapper &> /dev/null; then
+        gem-wrapper
+    fi
+    printf '[===.] running startup scripts: hub\r'
     if which hub &> /dev/null; then
         if [[ -d /opt/hub/fenhl/syncbin ]]; then
             cd /opt/hub/fenhl/syncbin &&
