@@ -8,7 +8,7 @@ else
     define)
         alias accio=". accio"
         alias chmox="chmod +x"
-        alias doch="sudo $(fc -ln -1)"
+        alias doch='sudo $(fc -ln -1)'
         alias l="ls -BFahl"
         disable -a ll
         alias mkcd="take"

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 yesno () {
-    echo -n "[ ?? ] $1 [y/n] "
+    printf "[ ?? ] $1 [y/n] "
     while true; do
         read YesNo
         if [ ${YesNo:=mu} = "Y" ] || [ ${YesNo} = "y" ] || [ ${YesNo} = "yes" ]; then
@@ -9,21 +9,21 @@ yesno () {
         elif [ ${YesNo} = "N" ] || [ ${YesNo} = "n" ] || [ ${YesNo} = "no" ]; then
             return 1
         fi
-        echo -n "[ ?? ] unrecognized answer, type “yes” or “no”: "
+        printf "[ ?? ] unrecognized answer, type “yes” or “no”: "
     done
 }
 
-echo -n "[....] getting OS"
+printf "[....] getting OS"
 
 OSName=$(uname -s)
-if [ ${OSName} = "Linux" ]; then
+if [ "${OSName}" = "Linux" ]; then
     if which lsb_release > /dev/null; then
         OSName=$(lsb_release -si)
     else
         echo ": could not get Linux distro\r[FAIL]"
         exit 1
     fi
-elif [ ${OSName} = "Darwin" ]; then
+elif [ "${OSName}" = "Darwin" ]; then
     OSName="OS X"
 else
     echo ": unknown OS: ${OSName}\r[FAIL]"
@@ -36,7 +36,7 @@ echo ": ${OSName}\r[ ok ]"
 
 GitInstallInstructions="open GitHub.app and in the Advanced preferences, Install Command Line Tools"
 
-if [ ${OSName} = "OS X" ]; then
+if [ "${OSName}" = "OS X" ]; then
     if which brew > /dev/null; then
         : # brew is already installed
     elif which ruby > /dev/null && yesno 'Homebrew not found, install now?'; then
@@ -57,7 +57,7 @@ fi
 
 # install homebrew-cask
 
-if [ ${OSName} = "OS X" ]; then
+if [ "${OSName}" = "OS X" ]; then
     if which brew > /dev/null; then
         echo '[ ** ] installing homebrew-cask'
         brew tap phinze/homebrew-cask || GitInstallInstructions="install homebrew-cask and GitHub.app, then ${GitInstallInstructions}"
@@ -68,7 +68,7 @@ fi
 
 # install GitHub.app
 
-if [ ${OSName} = "OS X" ]; then
+if [ "${OSName}" = "OS X" ]; then
     if which brew > /dev/null; then
         if brew cask 2>&1 | grep "Unknown command" > /dev/null; then
             echo '[ !! ] homebrew-cask not found, skipping GitHub.app install'
@@ -89,7 +89,7 @@ fi
 
 if which git > /dev/null; then
     : # found git
-elif [ ${OSName} = "Debian" ]; then
+elif [ "${OSName}" = "Debian" ]; then
     if yesno 'git not found, install using apt-get?'; then
         if which sudo > /dev/null; then
             sudo apt-get install git
@@ -97,10 +97,10 @@ elif [ ${OSName} = "Debian" ]; then
             apt-get install git
         fi
     fi
-elif [ ${OSName} = "OS X" ]; then
+elif [ "${OSName}" = "OS X" ]; then
     echo '[ ** ] to install git,' ${GitInstallInstructions}
     if [ ${GitInstallInstructions} = "open GitHub.app and in the Advanced preferences, Install Command Line Tools" ] && which open > /dev/null; then
-        if yesno "open GitHub.app now? (Make sure it's not already open)"
+        if yesno "open GitHub.app now? (Make sure it's not already open)"; then
             open -nW /Applications/GitHub.app
         fi
     fi
@@ -109,12 +109,18 @@ fi
 if which git > /dev/null; then
     : # found git
 else
-    if yesno 'git not found, continue anyway?'
+    if yesno 'git not found, continue anyway?'; then
         : # continue anyway
     else
         exit 1
     fi
 fi
+
+# install hub
+
+if which hub > /dev/null; then
+    : # found hub
+el
 
 # get hub directory
 
@@ -123,21 +129,21 @@ if mkdir -p /opt/hub 2> /dev/null && [ -d /opt/hub ]; then
     if [ -w /opt/hub ]; then
         HUB=/opt/hub
     else
-        if yesno 'no write access to /opt/hub, use anyway?'
+        if yesno 'no write access to /opt/hub, use anyway?'; then
             HUB=/opt/hub
         else
             HUB=${HOME}/hub
         fi
     fi
 elif which sudo > /dev/null; then
-    if yesno 'could not create /opt/hub, try using sudo?'
+    if yesno 'could not create /opt/hub, try using sudo?'; then
         if sudo mkdir -p /opt/hub; then
             HUB=/opt/hub
         fi
     fi
 fi
 if [ ${HUB} = "unknown" ]; then
-    if yesno 'could not create /opt/hub, use anyway?'
+    if yesno 'could not create /opt/hub, use anyway?'; then
         HUB=/opt/hub
     else
         HUB=${HOME}/hub
@@ -173,7 +179,7 @@ elif which git > /dev/null; then
         git clone git@github.com:fenhl/syncbin.git || exit 1
     fi
 else
-    echo "missing git command" >&2
+    echo '[!!!!]' "missing git command" >&2
     exit 1
 fi
 
@@ -182,25 +188,30 @@ cd ${HUB}/robbyrussell &&
 if which hub; then
     if [ -d ${HUB}/robbyrussell/oh-my-zsh ] && { cd ${HUB}/robbyrussell/oh-my-zsh; hub branch; }; then
         cd ${HUB}/robbyrussell/oh-my-zsh &&
-        hub pull
+        hub pull || exit 1
     else
         [ -d ${HUB}/robbyrussell/oh-my-zsh ] && rm -r ${HUB}/robbyrussell/oh-my-zsh
         cd ${HUB}/robbyrussell
-        hub clone robbyrussell/oh-my-zsh
+        hub clone robbyrussell/oh-my-zsh || exit 1
     fi
-else
+elif which git > /dev/null; then
     if [ -d ${HUB}/robbyrussell/oh-my-zsh ] && { cd ${HUB}/robbyrussell/oh-my-zsh; git branch; }; then
         cd ${HUB}/robbyrussell/oh-my-zsh &&
-        git pull origin master
+        git pull origin master || exit 1
     else
         [ -d ${HUB}/robbyrussell/oh-my-zsh ] && rm -r ${HUB}/robbyrussell/oh-my-zsh
         cd ${HUB}/robbyrussell
-        git clone git@github.com:robbyrussell/oh-my-zsh.git
+        git clone git@github.com:robbyrussell/oh-my-zsh.git || exit 1
     fi
+else
+    echo '[!!!!]' "missing git command" >&2
+    exit 1
 fi
 
-if mkdir -pv ${HUB}/robbyrussell/oh-my-zsh/custom/themes; then
+if mkdir -p ${HUB}/robbyrussell/oh-my-zsh/custom/themes && [ -w ${HUB}/robbyrussell/oh-my-zsh/custom/themes ]; then
     ln -fs ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/oh-my-zsh/custom/themes/fenhl.zsh-theme
+else
+    echo '[ !! ]' "could not install oh-my-zsh theme"
 fi
 
 ln -fs ${HUB}/fenhl/syncbin/config/zshenv ~/.zshenv
@@ -208,4 +219,4 @@ ln -fs ${HUB}/fenhl/syncbin/config/zshrc ~/.zshrc
 ln -fs ${HUB}/fenhl/syncbin/config/bash_profile ~/.bash_profile
 ln -fs ${HUB}/fenhl/syncbin/config/profile ~/.profile
 
-echo 'Looks like syncbin was successfully installed. You can now run `chsh -s /bin/zsh`.'
+echo '[ ** ] Looks like syncbin was successfully installed. You can now `chsh -s /bin/zsh` and relog.'

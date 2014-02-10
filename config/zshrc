@@ -66,6 +66,9 @@ _rationalise-dot() {
 zle -N _rationalise-dot
 bindkey . _rationalise-dot
 
+# additional completions
+fpath=(/usr/local/share/zsh-completions $fpath)
+
 # access the online help, for brew
 if where brew &> /dev/null; then
     unalias run-help
