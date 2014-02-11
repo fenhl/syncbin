@@ -13,6 +13,42 @@ yesno () {
     done
 }
 
+github-install () {
+    printf "[....] installing $2"
+    
+    if mkdir -p ${HUB}/"$1" 2> /dev/null && [ -d ${HUB}/"$1" ]; then
+        cd ${HUB}/"$1"
+    else
+        echo "\r"'[!!!!]' "could not create directory ${HUB}/$1" >&2
+        return 1
+    fi
+    
+    if which hub > /dev/null; then
+        echo " using hub\r"'[ ** ]'
+        if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; hub branch > /dev/null 2>&1; }; then
+            cd ${HUB}/"$1"/"$2"
+            hub pull || return 1
+        else
+            [ -d ${HUB}/"$1"/"$2" ] && rm -r ${HUB}/"$1"/"$2"
+            cd ${HUB}/"$1"
+            hub clone "$1"/"$2" || return 1
+        fi
+    elif which git > /dev/null; then
+        echo " using git\r"'[ ** ]'
+        if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; git branch > /dev/null 2>&1; }; then
+            cd ${HUB}/"$1"/"$2"
+            git pull origin master || return 1
+        else
+            [ -d ${HUB}/"$1"/"$2" ] && rm -r ${HUB}/"$1"/"$2"
+            cd ${HUB}/"$1"
+            git clone git@github.com:"$1"/"$2".git || return 1
+        fi
+    else
+        echo "\r"'[!!!!]' "missing git command" >&2
+        return 1
+    fi
+}
+
 printf "[....] getting OS"
 
 OSName=$(uname -s)
@@ -206,76 +242,21 @@ if [ ${HUB} = "unknown" ]; then
 fi
 echo "[ ** ] hub is at" ${HUB}
 
+# install zsh-completions
+
+if [ "${OSName}" = "OS X" ]; then
+    brew install zsh-completions
+else
+    github-install zsh-users zsh-completions
+fi
+
 # install syncbin
 
-printf "[....] installing syncbin"
-
-if mkdir -p ${HUB}/fenhl 2> /dev/null && [ -d ${HUB}/fenhl ]; then
-    cd ${HUB}/fenhl
-else
-    echo "\r"'[!!!!]' "could not create directory ${HUB}/fenhl" >&2
-    exit 1
-fi
-
-if which hub > /dev/null; then
-    echo " using hub\r"'[ ** ]'
-    if [ -d ${HUB}/fenhl/syncbin ] && { cd ${HUB}/fenhl/syncbin; hub branch > /dev/null 2>&1; }; then
-        cd ${HUB}/fenhl/syncbin
-        hub pull || exit 1
-    else
-        [ -d ${HUB}/fenhl/syncbin ] && rm -r ${HUB}/fenhl/syncbin
-        cd ${HUB}/fenhl
-        hub clone fenhl/syncbin || exit 1
-    fi
-elif which git > /dev/null; then
-    echo " using git\r"'[ ** ]'
-    if [ -d ${HUB}/fenhl/syncbin ] && { cd ${HUB}/fenhl/syncbin; git branch > /dev/null 2>&1; }; then
-        cd ${HUB}/fenhl/syncbin
-        git pull origin master || exit 1
-    else
-        [ -d ${HUB}/fenhl/syncbin ] && rm -r ${HUB}/fenhl/syncbin
-        cd ${HUB}/fenhl
-        git clone git@github.com:fenhl/syncbin.git || exit 1
-    fi
-else
-    echo "\r"'[!!!!]' "missing git command" >&2
-    exit 1
-fi
+github-install fenhl syncbin || exit 1
 
 # install oh-my-zsh
 
-printf "[....] installing oh-my-zsh"
-
-if mkdir -p ${HUB}/robbyrussell 2> /dev/null && [ -d ${HUB}/robbyrussell ]; then
-    cd ${HUB}/robbyrussell
-else
-    echo "\r"'[!!!!]' "could not create directory ${HUB}/robbyrussell" >&2
-fi
-
-if which hub > /dev/null; then
-    echo " using hub\r"'[ ** ]'
-    if [ -d ${HUB}/robbyrussell/oh-my-zsh ] && { cd ${HUB}/robbyrussell/oh-my-zsh; hub branch > /dev/null 2>&1; }; then
-        cd ${HUB}/robbyrussell/oh-my-zsh &&
-        hub pull || exit 1
-    else
-        [ -d ${HUB}/robbyrussell/oh-my-zsh ] && rm -r ${HUB}/robbyrussell/oh-my-zsh
-        cd ${HUB}/robbyrussell
-        hub clone robbyrussell/oh-my-zsh || exit 1
-    fi
-elif which git > /dev/null; then
-    printf " using git\r"'[ ** ]'
-    if [ -d ${HUB}/robbyrussell/oh-my-zsh ] && { cd ${HUB}/robbyrussell/oh-my-zsh; git branch > /dev/null 2>&1; }; then
-        cd ${HUB}/robbyrussell/oh-my-zsh &&
-        git pull origin master || exit 1
-    else
-        [ -d ${HUB}/robbyrussell/oh-my-zsh ] && rm -r ${HUB}/robbyrussell/oh-my-zsh
-        cd ${HUB}/robbyrussell
-        git clone git@github.com:robbyrussell/oh-my-zsh.git || exit 1
-    fi
-else
-    echo "\r"'[!!!!]' "missing git command" >&2
-    exit 1
-fi
+github-install robbyrussell oh-my-zsh || exit 1
 
 if mkdir -p ${HUB}/robbyrussell/oh-my-zsh/custom/themes && [ -w ${HUB}/robbyrussell/oh-my-zsh/custom/themes ]; then
     ln -fs ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/oh-my-zsh/custom/themes/fenhl.zsh-theme

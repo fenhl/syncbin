@@ -1,5 +1,47 @@
 #!/bin/zsh
 
+github-install () {
+    printf "[....] installing $2"
+    
+    if [ -d /opt/hub ] && [ -w /opt/hub ]; then
+        HUB=/opt/hub
+    else
+        HUB=${HOME}/hub
+    fi
+    
+    if mkdir -p ${HUB}/"$1" 2> /dev/null && [ -d ${HUB}/"$1" ]; then
+        cd ${HUB}/"$1"
+    else
+        echo "\r"'[!!!!]' "could not create directory ${HUB}/$1" >&2
+        return 1
+    fi
+    
+    if which hub > /dev/null; then
+        echo " using hub\r"'[ ** ]'
+        if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; hub branch > /dev/null 2>&1; }; then
+            cd ${HUB}/"$1"/"$2"
+            hub pull || return 1
+        else
+            [ -d ${HUB}/"$1"/"$2" ] && rm -r ${HUB}/"$1"/"$2"
+            cd ${HUB}/"$1"
+            hub clone "$1"/"$2" || return 1
+        fi
+    elif which git > /dev/null; then
+        echo " using git\r"'[ ** ]'
+        if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; git branch > /dev/null 2>&1; }; then
+            cd ${HUB}/"$1"/"$2"
+            git pull origin master || return 1
+        else
+            [ -d ${HUB}/"$1"/"$2" ] && rm -r ${HUB}/"$1"/"$2"
+            cd ${HUB}/"$1"
+            git clone git@github.com:"$1"/"$2".git || return 1
+        fi
+    else
+        echo "\r"'[!!!!]' "missing git command" >&2
+        return 1
+    fi
+}
+
 if [[ $# -eq 0 ]]; then
     if [ -d /opt/hub/fenhl/syncbin ]; then
         cd /opt/hub/fenhl/syncbin
@@ -52,6 +94,14 @@ if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
         echo '[ ** ] To update, the syncbin install script will re-run now.'
         sh config/install.sh || echo '[ ** ] Updating syncbin failed, please run again manually.'
         exit 0
+    else
+        if [[ ${OLDMINOR} -lt 4 ]]; then
+            if [ "$(uname -s)" = "Darwin" ]; then
+                brew install zsh-completions
+            else
+                github-install zsh-users zsh-completions
+            fi
+        fi
     fi
 fi
 echo '[ ** ] Syncbin has been patched, relog for changes to take effect'
