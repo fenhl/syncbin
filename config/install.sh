@@ -13,7 +13,7 @@ yesno () {
     done
 }
 
-github-install () {
+githubinstall () {
     printf "[....] installing $2"
     
     if mkdir -p ${HUB}/"$1" 2> /dev/null && [ -d ${HUB}/"$1" ]; then
@@ -247,16 +247,16 @@ echo "[ ** ] hub is at" ${HUB}
 if [ "${OSName}" = "OS X" ]; then
     brew install zsh-completions
 else
-    github-install zsh-users zsh-completions
+    githubinstall zsh-users zsh-completions
 fi
 
 # install syncbin
 
-github-install fenhl syncbin || exit 1
+githubinstall fenhl syncbin || exit 1
 
 # install oh-my-zsh
 
-github-install robbyrussell oh-my-zsh || exit 1
+githubinstall robbyrussell oh-my-zsh || exit 1
 
 if mkdir -p ${HUB}/robbyrussell/oh-my-zsh/custom/themes && [ -w ${HUB}/robbyrussell/oh-my-zsh/custom/themes ]; then
     ln -fs ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/oh-my-zsh/custom/themes/fenhl.zsh-theme

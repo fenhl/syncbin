@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-github-install () {
+githubinstall () {
     printf "[....] installing $2"
     
     if [ -d /opt/hub ] && [ -w /opt/hub ]; then
@@ -95,11 +95,11 @@ if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
         sh config/install.sh || echo '[ ** ] Updating syncbin failed, please run again manually.'
         exit 0
     else
-        if [[ ${OLDMINOR} -lt 4 ]]; then
+        if [[ ${OLDMINOR} -lt 5 ]]; then
             if [ "$(uname -s)" = "Darwin" ]; then
                 brew install zsh-completions
             else
-                github-install zsh-users zsh-completions
+                githubinstall zsh-users zsh-completions
             fi
         fi
     fi
