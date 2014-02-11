@@ -69,11 +69,11 @@ else
     exit 1
 fi
 
-OLDARRAY=("${(s/:/)OLD}")
+OLDARRAY=("${(s/./)OLD}")
 OLDMAJOR=$OLDARRAY[1]
 OLDMINOR=$OLDARRAY[2]
 
-NEWARRAY=("${(s/:/)NEW}")
+NEWARRAY=("${(s/./)NEW}")
 NEWMAJOR=$NEWARRAY[1]
 NEWMINOR=$NEWARRAY[2]
 
