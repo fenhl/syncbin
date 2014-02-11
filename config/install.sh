@@ -108,19 +108,36 @@ fi
 
 if which git > /dev/null; then
     : # found git
+elif yesno 'git not found, continue anyway?'; then
+    : # continue anyway
 else
-    if yesno 'git not found, continue anyway?'; then
-        : # continue anyway
-    else
-        exit 1
-    fi
+    exit 1
 fi
 
 # install hub
 
 if which hub > /dev/null; then
     : # found hub
-el
+elif [ "${OSName}" = "OS X" ] && which brew > /dev/null; then
+    echo '[ ** ] installing hub'
+    brew install hub
+else
+    if yesno 'hub not found, install using RubyGems?'; then
+        if gem install hub; then
+            : # successfully installed
+        elif which sudo > /dev/null && yesno 'could not install hub, try with sudo?'; then
+            sudo gem install hub
+        fi
+    fi
+fi
+
+if which hub > /dev/null; then
+    : # found hub
+elif yesno 'hub not found, continue anyway?'; then
+    : # continue anyway
+else
+    exit 1
+fi
 
 # get hub directory
 
@@ -153,15 +170,18 @@ echo "[ ** ] hub is at" ${HUB}
 
 # install syncbin
 
+printf "[....] installing syncbin"
+
 if mkdir -p ${HUB}/fenhl 2> /dev/null && [ -d ${HUB}/fenhl ]; then
     cd ${HUB}/fenhl
 else
-    echo '[!!!!]' "could not create directory ${HUB}/fenhl" >&2
+    echo "\r"'[!!!!]' "could not create directory ${HUB}/fenhl" >&2
     exit 1
 fi
 
 if which hub > /dev/null; then
-    if [ -d ${HUB}/fenhl/syncbin ] && { cd ${HUB}/fenhl/syncbin; hub branch; }; then
+    echo " using hub\r"'[ ** ]'
+    if [ -d ${HUB}/fenhl/syncbin ] && { cd ${HUB}/fenhl/syncbin; hub branch > /dev/null 2>&1; }; then
         cd ${HUB}/fenhl/syncbin
         hub pull || exit 1
     else
@@ -170,7 +190,8 @@ if which hub > /dev/null; then
         hub clone fenhl/syncbin || exit 1
     fi
 elif which git > /dev/null; then
-    if [ -d ${HUB}/fenhl/syncbin ] && { cd ${HUB}/fenhl/syncbin; git branch; }; then
+    echo " using git\r"'[ ** ]'
+    if [ -d ${HUB}/fenhl/syncbin ] && { cd ${HUB}/fenhl/syncbin; git branch > /dev/null 2>&1; }; then
         cd ${HUB}/fenhl/syncbin
         git pull origin master || exit 1
     else
@@ -179,14 +200,23 @@ elif which git > /dev/null; then
         git clone git@github.com:fenhl/syncbin.git || exit 1
     fi
 else
-    echo '[!!!!]' "missing git command" >&2
+    echo "\r"'[!!!!]' "missing git command" >&2
     exit 1
 fi
 
-mkdir -p ${HUB}/robbyrussell &&
-cd ${HUB}/robbyrussell &&
-if which hub; then
-    if [ -d ${HUB}/robbyrussell/oh-my-zsh ] && { cd ${HUB}/robbyrussell/oh-my-zsh; hub branch; }; then
+# install oh-my-zsh
+
+printf "[....] installing oh-my-zsh"
+
+if mkdir -p ${HUB}/robbyrussell 2> /dev/null && [ -d ${HUB}/robbyrussell ]; then
+    cd ${HUB}/robbyrussell
+else
+    echo "\r"'[!!!!]' "could not create directory ${HUB}/robbyrussell" >&2
+fi
+
+if which hub > /dev/null; then
+    echo " using hub\r"'[ ** ]'
+    if [ -d ${HUB}/robbyrussell/oh-my-zsh ] && { cd ${HUB}/robbyrussell/oh-my-zsh; hub branch > /dev/null 2>&1; }; then
         cd ${HUB}/robbyrussell/oh-my-zsh &&
         hub pull || exit 1
     else
@@ -195,7 +225,8 @@ if which hub; then
         hub clone robbyrussell/oh-my-zsh || exit 1
     fi
 elif which git > /dev/null; then
-    if [ -d ${HUB}/robbyrussell/oh-my-zsh ] && { cd ${HUB}/robbyrussell/oh-my-zsh; git branch; }; then
+    printf " using git\r"'[ ** ]'
+    if [ -d ${HUB}/robbyrussell/oh-my-zsh ] && { cd ${HUB}/robbyrussell/oh-my-zsh; git branch > /dev/null 2>&1; }; then
         cd ${HUB}/robbyrussell/oh-my-zsh &&
         git pull origin master || exit 1
     else
@@ -204,7 +235,7 @@ elif which git > /dev/null; then
         git clone git@github.com:robbyrussell/oh-my-zsh.git || exit 1
     fi
 else
-    echo '[!!!!]' "missing git command" >&2
+    echo "\r"'[!!!!]' "missing git command" >&2
     exit 1
 fi
 
