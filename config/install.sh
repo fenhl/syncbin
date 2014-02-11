@@ -35,7 +35,7 @@ echo ": ${OSName}\r[ ok ]"
 # modify APT sources.list
 
 if [ "${OSName}" = "Debian" ]; then
-    if ([ $(whoami) = "root" ] || where sudo > /dev/null) && yesno 'edit APT sources.list now?'; then
+    if ([ $(whoami) = "root" ] || which sudo > /dev/null) && yesno 'edit APT sources.list now?'; then
         if [ $(whoami) = "root" ]; then
             ${EDITOR:=nano} /etc/apt/sources.list
         else
