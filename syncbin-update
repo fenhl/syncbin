@@ -7,6 +7,7 @@ if [[ $# -eq 0 ]]; then
         cd ~/hub/fenhl/syncbin
     fi
     OLD=$(cat version.txt)
+    git fetch
     if [[ $(git rev-parse HEAD) == $(git rev-parse @{u}) ]]; then
         exit 0
     else
@@ -15,7 +16,7 @@ if [[ $# -eq 0 ]]; then
             exit 1
         fi
         NEW=$(cat version.txt)
-        zsh ./syncbin-update ${OLD} ${NEW}
+        syncbin-update ${OLD} ${NEW}
         exit $?
     fi
 elif [[ $# -eq 2 ]]; then
@@ -47,16 +48,10 @@ if [[ ${NEWMINOR} -lt ${OLDMINOR} ]]; then
     exit 1
 fi
 if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
-    if [[ ${OLDMINOR} -lt 1 ]]; then # 1.0 to higher
+    if [[ ${OLDMINOR} -lt 3 ]]; then # update to first version with working update script
         echo '[ ** ] To update, the syncbin install script will re-run now.'
         sh config/install.sh || echo '[ ** ] Updating syncbin failed, please run again manually.'
-    else
-        CURMINOR=${OLDMINOR}
-        if [[ ${CURMINOR} -le 2 ]]; then
-            echo '[ ** ] Remember to update your APT sources.list!'
-            CURMINOR=2
-        fi
+        exit 0
     fi
-    exit 0
 fi
 echo '[ ** ] Syncbin has been patched, relog for changes to take effect'
