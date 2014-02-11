@@ -47,7 +47,10 @@ if [[ ${NEWMINOR} -lt ${OLDMINOR} ]]; then
     exit 1
 fi
 if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
-    : # insert specific version checks here
+    if [[ ${OLDMINOR} -lt 1 ]]; then # 1.0 to higher
+        echo '[ ** ] To update, the syncbin install script will re-run now.'
+        sh config/install.sh || echo '[ ** ] Updating syncbin failed, please run again manually.'
+    fi
     exit 0
 fi
 echo '[ ** ] Syncbin has been patched, relog for changes to take effect'

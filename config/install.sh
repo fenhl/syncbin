@@ -114,6 +114,28 @@ else
     exit 1
 fi
 
+# install RubyGems
+
+if which gem > /dev/null; then
+    : # found RubyGems
+elif [ "${OSName}" = "Debian" ]; then
+    if yesno 'RubyGems not found, install using apt-get?'; then
+        if which sudo > /dev/null; then
+            sudo apt-get install rubygems
+        else
+            apt-get install rubygems
+        fi
+    fi
+fi
+
+if which gem > /dev/null; then
+    : # found RubyGems
+elif yesno 'RubyGems not found, continue anyway?'; then
+    : # continue anyway
+else
+    exit 1
+fi
+
 # install hub
 
 if which hub > /dev/null; then
@@ -122,7 +144,7 @@ elif [ "${OSName}" = "OS X" ] && which brew > /dev/null; then
     echo '[ ** ] installing hub'
     brew install hub
 else
-    if yesno 'hub not found, install using RubyGems?'; then
+    if which gem > /dev/null && yesno 'hub not found, install using RubyGems?'; then
         if gem install hub; then
             : # successfully installed
         elif which sudo > /dev/null && yesno 'could not install hub, try with sudo?'; then
