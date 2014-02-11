@@ -32,6 +32,22 @@ fi
 
 echo ": ${OSName}\r[ ok ]"
 
+# modify APT sources.list
+
+if [ "${OSName}" = "Debian" ]; then
+    if ([ $(whoami) = "root" ] || where sudo > /dev/null) && yesno 'edit APT sources.list now?'; then
+        if [ $(whoami) = "root" ]; then
+            ${EDITOR:=nano} /etc/apt/sources.list
+        else
+            sudo ${EDITOR:=nano} /etc/apt/sources.list
+        fi
+    elif yesno 'APT sources.list might be outdated or misconfigured, continue anyway?'; then
+        : # continue anyway
+    else
+        exit 1
+    fi
+fi
+
 # install and update homebrew
 
 GitInstallInstructions="open GitHub.app and in the Advanced preferences, Install Command Line Tools"

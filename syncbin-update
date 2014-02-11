@@ -50,6 +50,12 @@ if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
     if [[ ${OLDMINOR} -lt 1 ]]; then # 1.0 to higher
         echo '[ ** ] To update, the syncbin install script will re-run now.'
         sh config/install.sh || echo '[ ** ] Updating syncbin failed, please run again manually.'
+    else
+        CURMINOR=${OLDMINOR}
+        if [[ ${CURMINOR} -le 2 ]]; then
+            echo '[ ** ] Remember to update your APT sources.list!'
+            CURMINOR=2
+        fi
     fi
     exit 0
 fi
