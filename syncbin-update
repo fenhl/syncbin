@@ -103,5 +103,7 @@ if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
             fi
         fi
     fi
+    echo '[ ** ]' "syncbin has been updated from ${OLD} to ${NEW}, relog for changes to take effect"
+    exit 0
 fi
-echo '[ ** ] Syncbin has been patched, relog for changes to take effect'
+echo '[ ** ] syncbin has been patched, relog for changes to take effect'
