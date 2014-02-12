@@ -124,8 +124,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     #fi
     printf '[===.] running startup scripts: compinit\r'
     if where compinit &> /dev/null; then
-        rm -f ~/.zcompdump*
-        compinit
+        compinit -Du
     fi
     printf '[===.] running startup scripts: syncbin-update\r'
     if where syncbin-update &> /dev/null; then
