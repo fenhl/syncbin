@@ -23,7 +23,7 @@ githubinstall () {
         return 1
     fi
     
-    if which hub > /dev/null; then
+    if which hub > /dev/null 2>&1; then
         echo " using hub\r"'[ ** ]'
         if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; hub branch > /dev/null 2>&1; }; then
             cd ${HUB}/"$1"/"$2"
@@ -33,7 +33,7 @@ githubinstall () {
             cd ${HUB}/"$1"
             hub clone "$1"/"$2" || return 1
         fi
-    elif which git > /dev/null; then
+    elif which git > /dev/null 2>&1; then
         echo " using git\r"'[ ** ]'
         if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; git branch > /dev/null 2>&1; }; then
             cd ${HUB}/"$1"/"$2"
@@ -53,11 +53,12 @@ printf "[....] getting OS"
 
 OSName=$(uname -s)
 if [ "${OSName}" = "Linux" ]; then
-    if which lsb_release > /dev/null; then
+    if which lsb_release > /dev/null 2>&1; then
         OSName=$(lsb_release -si)
     else
         echo ": could not get Linux distro\r[FAIL]"
-        exit 1
+        yesno 'continue anyway?' || exit 1
+        printf "[....] getting OS"
     fi
 elif [ "${OSName}" = "Darwin" ]; then
     OSName="OS X"
@@ -71,7 +72,7 @@ echo ": ${OSName}\r[ ok ]"
 # modify APT sources.list
 
 if [ "${OSName}" = "Debian" ]; then
-    if ([ $(whoami) = "root" ] || which sudo > /dev/null) && yesno 'edit APT sources.list now?'; then
+    if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'edit APT sources.list now?'; then
         if [ $(whoami) = "root" ]; then
             ${EDITOR:=nano} /etc/apt/sources.list
         else
@@ -89,12 +90,12 @@ fi
 GitInstallInstructions="open GitHub.app and in the Advanced preferences, Install Command Line Tools"
 
 if [ "${OSName}" = "OS X" ]; then
-    if which brew > /dev/null; then
+    if which brew > /dev/null 2>&1; then
         : # brew is already installed
-    elif which ruby > /dev/null && yesno 'Homebrew not found, install now?'; then
+    elif which ruby > /dev/null 2>&1 && yesno 'Homebrew not found, install now?'; then
         ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
     fi
-    if which brew > /dev/null; then
+    if which brew > /dev/null 2>&1; then
         echo '[ ** ] updating Homebrew formulae...'
         brew update
         brew upgrade
@@ -110,7 +111,7 @@ fi
 # install homebrew-cask
 
 if [ "${OSName}" = "OS X" ]; then
-    if which brew > /dev/null; then
+    if which brew > /dev/null 2>&1; then
         echo '[ ** ] installing homebrew-cask'
         brew tap phinze/homebrew-cask || GitInstallInstructions="install homebrew-cask and GitHub.app, then ${GitInstallInstructions}"
     else
@@ -121,7 +122,7 @@ fi
 # install GitHub.app
 
 if [ "${OSName}" = "OS X" ]; then
-    if which brew > /dev/null; then
+    if which brew > /dev/null 2>&1; then
         if brew cask 2>&1 | grep "Unknown command" > /dev/null; then
             echo '[ !! ] homebrew-cask not found, skipping GitHub.app install'
         else
@@ -139,11 +140,11 @@ fi
 
 # install git
 
-if which git > /dev/null; then
+if which git > /dev/null 2>&1; then
     : # found git
 elif [ "${OSName}" = "Debian" ]; then
     if yesno 'git not found, install using apt-get?'; then
-        if which sudo > /dev/null; then
+        if which sudo > /dev/null 2>&1; then
             sudo apt-get install git
         else
             apt-get install git
@@ -151,14 +152,14 @@ elif [ "${OSName}" = "Debian" ]; then
     fi
 elif [ "${OSName}" = "OS X" ]; then
     echo '[ ** ] to install git,' ${GitInstallInstructions}
-    if [ ${GitInstallInstructions} = "open GitHub.app and in the Advanced preferences, Install Command Line Tools" ] && which open > /dev/null; then
+    if [ ${GitInstallInstructions} = "open GitHub.app and in the Advanced preferences, Install Command Line Tools" ] && which open > /dev/null 2>&1; then
         if yesno "open GitHub.app now? (Make sure it's not already open)"; then
             open -nW /Applications/GitHub.app
         fi
     fi
 fi
 
-if which git > /dev/null; then
+if which git > /dev/null 2>&1; then
     : # found git
 elif yesno 'git not found, continue anyway?'; then
     : # continue anyway
@@ -168,11 +169,11 @@ fi
 
 # install RubyGems
 
-if which gem > /dev/null; then
+if which gem > /dev/null 2>&1; then
     : # found RubyGems
 elif [ "${OSName}" = "Debian" ]; then
     if yesno 'RubyGems not found, install using apt-get?'; then
-        if which sudo > /dev/null; then
+        if which sudo > /dev/null 2>&1; then
             sudo apt-get install rubygems
         else
             apt-get install rubygems
@@ -180,7 +181,7 @@ elif [ "${OSName}" = "Debian" ]; then
     fi
 fi
 
-if which gem > /dev/null; then
+if which gem > /dev/null 2>&1; then
     : # found RubyGems
 elif yesno 'RubyGems not found, continue anyway?'; then
     : # continue anyway
@@ -190,22 +191,22 @@ fi
 
 # install hub
 
-if which hub > /dev/null; then
+if which hub > /dev/null 2>&1; then
     : # found hub
-elif [ "${OSName}" = "OS X" ] && which brew > /dev/null; then
+elif [ "${OSName}" = "OS X" ] && which brew > /dev/null 2>&1; then
     echo '[ ** ] installing hub'
     brew install hub
 else
-    if which gem > /dev/null && yesno 'hub not found, install using RubyGems?'; then
+    if which gem > /dev/null 2>&1 && yesno 'hub not found, install using RubyGems?'; then
         if gem install hub; then
             : # successfully installed
-        elif which sudo > /dev/null && yesno 'could not install hub, try with sudo?'; then
+        elif which sudo > /dev/null 2>&1 && yesno 'could not install hub, try with sudo?'; then
             sudo gem install hub
         fi
     fi
 fi
 
-if which hub > /dev/null; then
+if which hub > /dev/null 2>&1; then
     : # found hub
 elif yesno 'hub not found, continue anyway?'; then
     : # continue anyway
@@ -226,7 +227,7 @@ if mkdir -p /opt/hub 2> /dev/null && [ -d /opt/hub ]; then
             HUB=${HOME}/hub
         fi
     fi
-elif which sudo > /dev/null; then
+elif which sudo > /dev/null 2>&1; then
     if yesno 'could not create /opt/hub, try using sudo?'; then
         if sudo mkdir -p /opt/hub; then
             HUB=/opt/hub
