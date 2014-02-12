@@ -29,11 +29,9 @@ source $ZSH/oh-my-zsh.sh
 
 printf '[==..] defining environment variables and aliases\r'
 
-# allow comments in interactive shells
-setopt interactive_comments
-
-# don't “verify” history expansions (meaning I have to hit return twice), run them directly
-setopt no_hist_verify
+setopt interactive_comments # allow comments in interactive shells
+setopt list_packed # try to make menu completion more compact
+setopt no_hist_verify # don't “verify” history expansions (meaning I have to hit return twice), run them directly
 
 # ^S inserts sudo
 insert_sudo () {
