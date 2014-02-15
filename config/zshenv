@@ -32,4 +32,5 @@ export EDITOR=nano
 
 export CUPS_SERVER=print.coli.uni-saarland.de
 export PYTHONPATH="/opt/py:/usr/lib/python3.3"
+export PYTHONSTARTUP="/opt/hub/fenhl/syncbin/config/pythonstartup.py"
 export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"

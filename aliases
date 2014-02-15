@@ -23,7 +23,7 @@ else
         fi
         alias pip3i="pip3 install --target /opt/py"
         alias png2gif="convert -delay 10 -loop 0 *.png animaion.gif"
-        alias py="python3"
+        alias py="python3 -q"
         alias relog=": $@; zsh; logout"
         alias retab="tab; logout"
         alias rr="rm -rf"
