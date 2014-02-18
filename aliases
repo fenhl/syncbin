@@ -37,6 +37,7 @@ else
         ;;
     define-suffix)
         alias -s json=jpy
+        alias -s log=ssel
         ;;
     *)
         echo "$USAGE" >&2
