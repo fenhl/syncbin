@@ -251,6 +251,29 @@ else
     githubinstall zsh-users zsh-completions
 fi
 
+# install command-not-found
+
+if [ "${OSName}" = "Debian" ]; then
+    if which "command-not-found" > /dev/null 2>&1; then
+        : # command-not-found handler already installed
+    else
+        if yesno 'command-not-found not found, install using apt-get?'; then
+            if which sudo > /dev/null 2>&1; then
+                sudo apt-get install 'command-not-found'
+            else
+                apt-get install 'command-not-found'
+            fi
+            if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno "edit root's crontab now?"; then
+                if [ $(whoami) = "root" ]; then
+                    crontab -e
+                else
+                    sudo crontab -e
+                fi
+            fi
+        fi
+    fi
+fi
+
 # install syncbin
 
 githubinstall fenhl syncbin || exit 1
