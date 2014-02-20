@@ -10,7 +10,7 @@ else
         alias chmox="chmod +x"
         alias doch='sudo $(fc -ln -1)'
         alias l="ls -BFahl"
-        disable -a ll
+        alias ll='ls -BFahl "$@" | less'
         alias mkcd="take"
         if ! (which pip3 &> /dev/null); then
             if which pip-3.2 &> /dev/null; then
