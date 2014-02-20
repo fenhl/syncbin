@@ -3,36 +3,36 @@
 githubinstall () {
     printf "[....] installing $2"
     
-    if [ -d /opt/hub ] && [ -w /opt/hub ]; then
+    if [[ -d /opt/hub ]] && [[ -w /opt/hub ]]; then
         HUB=/opt/hub
     else
         HUB=${HOME}/hub
     fi
     
-    if mkdir -p ${HUB}/"$1" 2> /dev/null && [ -d ${HUB}/"$1" ]; then
+    if mkdir -p ${HUB}/"$1" 2> /dev/null && [[ -d ${HUB}/"$1" ]]; then
         cd ${HUB}/"$1"
     else
         echo "\r"'[!!!!]' "could not create directory ${HUB}/$1" >&2
         return 1
     fi
     
-    if which hub > /dev/null; then
+    if where hub &> /dev/null; then
         echo " using hub\r"'[ ** ]'
-        if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; hub branch > /dev/null 2>&1; }; then
+        if [[ -d ${HUB}/"$1"/"$2" ]] && { cd ${HUB}/"$1"/"$2"; hub branch &> /dev/null; }; then
             cd ${HUB}/"$1"/"$2"
             hub pull || return 1
         else
-            [ -d ${HUB}/"$1"/"$2" ] && rm -r ${HUB}/"$1"/"$2"
+            [[ -d ${HUB}/"$1"/"$2" ]] && rm -r ${HUB}/"$1"/"$2"
             cd ${HUB}/"$1"
             hub clone "$1"/"$2" || return 1
         fi
-    elif which git > /dev/null; then
+    elif where git &> /dev/null; then
         echo " using git\r"'[ ** ]'
-        if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; git branch > /dev/null 2>&1; }; then
+        if [[ -d ${HUB}/"$1"/"$2" ]] && { cd ${HUB}/"$1"/"$2"; git branch &> /dev/null; }; then
             cd ${HUB}/"$1"/"$2"
             git pull origin master || return 1
         else
-            [ -d ${HUB}/"$1"/"$2" ] && rm -r ${HUB}/"$1"/"$2"
+            [[ -d ${HUB}/"$1"/"$2" ]] && rm -r ${HUB}/"$1"/"$2"
             cd ${HUB}/"$1"
             git clone git@github.com:"$1"/"$2".git || return 1
         fi
@@ -43,7 +43,7 @@ githubinstall () {
 }
 
 if [[ $# -eq 0 ]]; then
-    if [ -d /opt/hub/fenhl/syncbin ]; then
+    if [[ -d /opt/hub/fenhl/syncbin ]]; then
         cd /opt/hub/fenhl/syncbin
     else
         cd ~/hub/fenhl/syncbin
@@ -92,14 +92,23 @@ fi
 if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
     if [[ ${OLDMINOR} -lt 3 ]]; then # update to first version with working update script
         echo '[ ** ] To update, the syncbin install script will re-run now.'
-        sh config/install.sh || echo '[ ** ] Updating syncbin failed, please run again manually.'
+        sh config/install.sh || echo '[ !! ] Updating syncbin failed, please run again manually.' >&2
         exit 0
     else
         if [[ ${OLDMINOR} -lt 5 ]]; then
-            if [ "$(uname -s)" = "Darwin" ]; then
+            if [[ "$(uname -s)" == "Darwin" ]]; then
                 brew install zsh-completions
             else
                 githubinstall zsh-users zsh-completions
+            fi
+        fi
+        if [[ ${OLDMINOR} -lt 6 ]]; then
+            if [[ "$(uname -s)" == "Linux" ]] && [[ "$(lsb_release -si)" == "Debian" ]]; then
+                if where "command-not-found" &> /dev/null; then
+                    : # command-not-found handler already installed
+                else
+                    echo '[ ** ] syncbin now supports command-not-found, install using `sudo apt-get install command-not-found`'
+                fi
             fi
         fi
     fi

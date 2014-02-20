@@ -67,6 +67,11 @@ bindkey . _rationalise-dot
 # additional completions
 fpath=(/usr/local/share/zsh-completions /opt/hub/zsh-users/zsh-completions/src $fpath)
 
+# load command-not-found handler
+if [[ -r /etc/zsh_command_not_found ]]; then
+    . /etc/zsh_command_not_found
+fi
+
 # access the online help, for brew
 if where brew &> /dev/null; then
     unalias run-help
