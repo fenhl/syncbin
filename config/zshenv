@@ -37,7 +37,11 @@ export NULLCMD=':'
 export READNULLCMD=less
 
 # config for automatic mail-checks
-export MAILPATH="/var/mail/fenhl:/home/fenhl/Maildir:${MAILPATH}"
+if [[ -n ${MAILPATH} ]]; then
+    export MAILPATH="/var/mail/fenhl:/home/fenhl/Maildir:${MAILPATH}"
+else
+    export MAILPATH="/var/mail/fenhl:/home/fenhl/Maildir"
+fi
 export MAILCHECK=60
 
 # github repos
