@@ -38,7 +38,7 @@ export READNULLCMD=less
 
 # config for automatic mail-checks
 export MAILPATH="/var/mail/fenhl:/home/fenhl/Maildir:${MAILPATH}"
-ecport MAILCHECK=60
+export MAILCHECK=60
 
 # github repos
 if [[ -d /opt/hub ]]; then
