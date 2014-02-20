@@ -28,6 +28,7 @@ else
         alias retab="tab; logout"
         alias rr="rm -rf"
         alias sudo="sudo -p '[sudo] Password for %p:' "
+        alias syncbin-version="cat ${HUB}/fenhl/syncbin/version.txt"
         if ! (which tac &> /dev/null); then
             alias tac="tail -r"
         fi
