@@ -21,7 +21,7 @@ COMPLETION_WAITING_DOTS="true"
 DISABLE_CORRECTION="true"
 #DISABLE_UNTRACKED_FILES_DIRTY="true" # disable marking untracked files under VCS as dirty. This makes repository status check for large repositories much, much faster.
 
-plugins=(autojump brew git mosh osx pip)
+plugins=(autojump brew git mosh osx pip zsh-syntax-highlighting)
 
 printf '[=...] updating omz     \r'
 
@@ -33,6 +33,19 @@ setopt interactive_comments # allow comments in interactive shells
 setopt list_packed # try to make menu completion more compact
 setopt no_hist_verify # don't “verify” history expansions (meaning I have to hit return twice), run them directly
 
+# ^O edits last viewed file if the line buffer is empty
+#TODO fix me
+edit_last_or_accept_line_and_down_history () {
+    if ([[ "!!:0" =~ "~.*" ]] || [[ "!!:0" =~ ".*/.*" ]]) && [[ -z $LBUFFER ]] && [[ -z $RBUFFER ]]; then
+        LBUFFER='edit !!:$'
+    elif [[ "!!:1" =~ "(cat|dog|edit|head|jpy|less|nano|ssel|tac|tail|view)" ]] && [[ -z $LBUFFER ]] && [[ -z $RBUFFER ]]; then
+        LBUFFER='edit !!:*'
+    fi
+    zle accept-line-and-down-history
+}
+zle -N edit_last_or_accept_line_and_down_history
+bindkey "^O" edit_last_or_accept_line_and_down_history
+
 # ^S inserts sudo
 insert_sudo () {
     if [[ $LBUFFER == "sudo "* ]]; then
@@ -43,12 +56,12 @@ insert_sudo () {
         #zle -U "sudo "
     fi
 }
-zle -N insert-sudo insert_sudo
-bindkey "^S" insert-sudo
+zle -N insert_sudo
+bindkey "^S" insert_sudo
 
 # "cd.." to "cd .." and "..." to "../.."
 # taken and expanded from bl1nk's zshrc http://git.kuchen.io/markus/dotfiles.git/tree/zsh/.zshrc
-_rationalise-dot() {
+rationalise_dot () {
     if [[ $LBUFFER == "cd "* ]] || [[ $LBUFFER =~ "[^ ]*" ]]; then
         if [[ $LBUFFER = *.. ]]; then
             LBUFFER+=/..
@@ -61,8 +74,8 @@ _rationalise-dot() {
         LBUFFER+=.
     fi
 }
-zle -N _rationalise-dot
-bindkey . _rationalise-dot
+zle -N rationalise_dot
+bindkey . rationalise_dot
 
 # additional completions
 fpath=(/usr/local/share/zsh-completions /opt/hub/zsh-users/zsh-completions/src $fpath)

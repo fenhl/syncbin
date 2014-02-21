@@ -9,6 +9,15 @@ else
         alias accio=". accio"
         alias chmox="chmod +x"
         alias doch='sudo $(fc -ln -1)'
+        function g { # from https://github.com/pengwynn/dotfiles/blob/master/git/git.zsh
+            if [ "$#" -gt 0 ]; then
+                git "$@"
+            else
+                #echo "Last commit: $(time_since_last_commit) ago"
+                git status --short --branch
+            fi
+        }
+        alias http="python3 -m SimpleHTTPServer"
         alias l="ls -BFahl"
         alias ll='ls -BFahl "$@" | less'
         alias mkcd="take"
@@ -26,12 +35,26 @@ else
         alias py="python3 -q"
         alias relog=": $@; zsh; logout"
         alias retab="tab; logout"
-        alias rr="rm -rf"
+        function rm { # remove current directory when called without arguments
+            if [ "$#" -gt 0 ]; then
+                command rm "$@"
+            else
+                command rm -r .
+            fi
+        }
+        function rr {
+            if [ "$#" -gt 0 ]; then
+                command rm -rf "$@"
+            else
+                command rm -rf .
+            fi
+        }
         alias sudo="sudo -p '[sudo] Password for %p:' "
         alias syncbin-version="cat ${HUB:-/opt/hub}/fenhl/syncbin/version.txt"
         if ! (which tac &> /dev/null); then
             alias tac="tail -r"
         fi
+        alias view="less" # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
         if [ -x ~/bin/aliases ]; then
             . ~/bin/aliases define
         fi

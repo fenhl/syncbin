@@ -1,1 +1,4 @@
-python/jpy.py
+#!/bin/sh
+
+python3 -im jpy "$@"
+exit $?
