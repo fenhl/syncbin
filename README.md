@@ -1,4 +1,6 @@
-**syncbin** is a collection of command-line tools by [Fenhl][], mainly for personal use.
+This is [Fenhl][]'s **syncbin**.
+
+A syncbin, also called dotfiles, is a collection of command-line tools and configuration, mainly for personal use. However, this one is easy to install and automatically updates itself, so you're welcome to check it out even if you're not Fenhl.
 
 Version
 =======
@@ -20,7 +22,7 @@ The following *should* install `syncbin` and a couple of other things like [home
 wget -O syncbin-install.sh https://raw.github.com/fenhl/syncbin/master/config/install.sh && sh syncbin-install.sh && rm syncbin-install.sh
 ```
 
-It is tested on Debian wheezy and OS X Mavericks.
+It is tested on Debian wheezy, OS X Mavericks, and CentOS 6.5. If it doesn't work for you, feel free to open an issue.
 
 [Fenhl]: http://fenhl.net/ (Fenhl)
 [homebrew]: https://github.com/Homebrew/homebrew (github: Homebrew: homebrew)
