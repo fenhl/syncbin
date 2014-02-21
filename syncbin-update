@@ -49,7 +49,7 @@ if [[ $# -eq 0 ]]; then
         cd ~/hub/fenhl/syncbin
     fi
     if [[ -r "${XDG_DATA_HOME:-~/.local/share}/syncbin/version.txt" ]]; then
-        OLD=$(cat "${XDG_DATA_HOME:-~/.local/share}/syncbin/version.txt")
+        OLD=$(cat "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt")
     else
         OLD=$(cat version.txt)
     fi
@@ -81,11 +81,7 @@ NEWARRAY=("${(s/./)NEW}")
 NEWMAJOR=$NEWARRAY[1]
 NEWMINOR=$NEWARRAY[2]
 
-if [[ -w "${XDG_DATA_HOME:-~/.local/share}/syncbin/version.txt" ]]; then
-    echo "$NEW" > "${XDG_DATA_HOME:-~/.local/share}/syncbin/version.txt"
-else
-    echo '[ !! ]' "Could not write to ${XDG_DATA_HOME:-~/.local/share}/syncbin/version.txt, this might break syncbin updates" >&2
-fi
+(mkdir -p "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" && touch "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt" &> /dev/null && echo "$NEW" > "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt" 2> /dev/null) || echo '[ !! ]' "Could not write to ${XDG_DATA_HOME:-~/.local/share}/syncbin/version.txt, this might break syncbin updates" >&2
 
 if [[ ${NEWMAJOR} -lt ${OLDMAJOR} ]]; then
     echo '[ !! ]' "Attempted to downgrade syncbin from ${OLD} to ${NEW}, aborting" >&2
