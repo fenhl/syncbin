@@ -274,6 +274,24 @@ if [ "${OSName}" = "Debian" ]; then
     fi
 fi
 
+# install lns
+
+if which lns > /dev/null 2>&1; then
+    # lns already installed
+elif yesno 'lns not found, download and install now?'; then
+    mkdir -p ~/bin &&
+    cd ~/bin
+    if (which curl > /dev/null 2>&1 && curl -Ls http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -) || (which wget > /dev/null 2>&1 && wget -qO - http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -); then
+        rm lns.tar.gz
+        mv lns .lnsdir
+        mv .lnsdir/lns lns
+        rm -r .lnsdir
+        chmod +x lns
+    else
+        echo '[ !! ] failed to install lns' >&2
+    fi
+fi
+
 # install syncbin
 
 githubinstall fenhl syncbin || exit 1

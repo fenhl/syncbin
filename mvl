@@ -1,0 +1,12 @@
+#!/bin/sh
+
+USAGE=$'Usage:
+  mvl <sourcefile> <target>'
+
+if [ "$#" = 2 ]; then
+    mv "$@" &&
+    lns "$2" "$1"
+else
+    echo $USAGE >&2
+    exit 1
+fi

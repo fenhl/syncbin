@@ -13,12 +13,12 @@ else
         alias ll='ls -BFahl "$@" | less'
         alias mkcd="take"
         if ! (which pip3 &> /dev/null); then
-            if which pip-3.2 &> /dev/null; then
-                alias pip3="pip-3.2"
+            if which pip-3.4 &> /dev/null; then
+                alias pip3="pip-3.4"
             elif which pip-3.3 &> /dev/null; then
                 alias pip3="pip-3.3"
-            elif which pip-3.4 &> /dev/null; then
-                alias pip3="pip-3.4"
+            elif which pip-3.2 &> /dev/null; then
+                alias pip3="pip-3.2"
             fi
         fi
         alias pip3i="pip3 install --target /opt/py"
@@ -28,7 +28,7 @@ else
         alias retab="tab; logout"
         alias rr="rm -rf"
         alias sudo="sudo -p '[sudo] Password for %p:' "
-        alias syncbin-version="cat ${HUB}/fenhl/syncbin/version.txt"
+        alias syncbin-version="cat ${HUB:-/opt/hub}/fenhl/syncbin/version.txt"
         if ! (which tac &> /dev/null); then
             alias tac="tail -r"
         fi

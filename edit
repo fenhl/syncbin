@@ -1,14 +1,1 @@
-#!/bin/bash
-
-USAGE=$'Usage:
-  edit <command>'
-
-if [ "$#" -ne 1 ]; then
-    echo "$USAGE" >&2
-else
-    if which "$1" &> /dev/null; then
-        ${EDITOR} $(which "$1")
-    else
-        ${EDITOR} "$1"
-    fi
-fi
+python/edit.py
