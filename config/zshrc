@@ -29,9 +29,10 @@ source $ZSH/oh-my-zsh.sh
 
 printf '[==..] defining environment variables and aliases\r'
 
+unsetopt hist_verify # don't “verify” history expansions (meaning I have to hit return twice), run them directly
 setopt interactive_comments # allow comments in interactive shells
 setopt list_packed # try to make menu completion more compact
-setopt no_hist_verify # don't “verify” history expansions (meaning I have to hit return twice), run them directly
+unsetopt share_history # don't share history between different sessions
 
 # ^O edits last viewed file if the line buffer is empty
 #TODO fix me
