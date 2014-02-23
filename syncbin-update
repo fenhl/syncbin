@@ -53,11 +53,11 @@ if [[ $# -eq 0 ]]; then
     else
         OLD=$(cat version.txt)
     fi
-    git fetch
+    git fetch --quiet
     if [[ $(git rev-parse HEAD) == $(git rev-parse @{u}) ]]; then
         exit 0
     else
-        git pull --rebase > /dev/null
+        git pull --rebase --quiet
         if [[ $? -ne 0 ]]; then
             exit 1
         fi
