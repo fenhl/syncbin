@@ -14,6 +14,6 @@ with open('/dev/null', 'a') as dev_null:
 gem = subprocess.Popen(['gem', 'outdated'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 out, _ = gem.communicate()
 out = out.decode('utf-8')
-if out != '':
+if gem.returncode == 0 and out != '':
     print('[ruby] Gem updates available. Install with `sudo gem update`. Outdated gems:')
     print(out[:-1] if out.endswith('\n') else out)
