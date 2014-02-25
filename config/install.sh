@@ -31,7 +31,7 @@ githubinstall () {
         else
             [ -d ${HUB}/"$1"/"$2" ] && rm -r ${HUB}/"$1"/"$2"
             cd ${HUB}/"$1"
-            git clone git@github.com:"$1"/"$2".git || return 1
+            git clone git@github.com:"$1"/"$2".git || git clone https://github.com/"$1"/"$2".git || return 1
         fi
     elif which ruby > /dev/null 2>&1 && which hub > /dev/null 2>&1; then
         echo " using hub\r"'[ ** ]'
