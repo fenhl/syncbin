@@ -23,7 +23,7 @@ githubinstall () {
         return 1
     fi
     
-    if which hub > /dev/null 2>&1; then
+    if which ruby > /dev/null 2>&1 && which hub > /dev/null 2>&1; then
         echo " using hub\r"'[ ** ]'
         if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; hub branch > /dev/null 2>&1; }; then
             cd ${HUB}/"$1"/"$2"
@@ -277,7 +277,7 @@ fi
 # install lns
 
 if which lns > /dev/null 2>&1; then
-    # lns already installed
+    : # lns already installed
 elif yesno 'lns not found, download and install now?'; then
     mkdir -p ~/bin &&
     cd ~/bin
