@@ -23,17 +23,7 @@ githubinstall () {
         return 1
     fi
     
-    if which ruby > /dev/null 2>&1 && which hub > /dev/null 2>&1; then
-        echo " using hub\r"'[ ** ]'
-        if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; hub branch > /dev/null 2>&1; }; then
-            cd ${HUB}/"$1"/"$2"
-            hub pull || return 1
-        else
-            [ -d ${HUB}/"$1"/"$2" ] && rm -r ${HUB}/"$1"/"$2"
-            cd ${HUB}/"$1"
-            hub clone "$1"/"$2" || return 1
-        fi
-    elif which git > /dev/null 2>&1; then
+    if which git > /dev/null 2>&1; then
         echo " using git\r"'[ ** ]'
         if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; git branch > /dev/null 2>&1; }; then
             cd ${HUB}/"$1"/"$2"
@@ -42,6 +32,16 @@ githubinstall () {
             [ -d ${HUB}/"$1"/"$2" ] && rm -r ${HUB}/"$1"/"$2"
             cd ${HUB}/"$1"
             git clone git@github.com:"$1"/"$2".git || return 1
+        fi
+    elif which ruby > /dev/null 2>&1 && which hub > /dev/null 2>&1; then
+        echo " using hub\r"'[ ** ]'
+        if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; hub branch > /dev/null 2>&1; }; then
+            cd ${HUB}/"$1"/"$2"
+            hub pull || return 1
+        else
+            [ -d ${HUB}/"$1"/"$2" ] && rm -r ${HUB}/"$1"/"$2"
+            cd ${HUB}/"$1"
+            hub clone "$1"/"$2" || return 1
         fi
     else
         echo "\r"'[!!!!]' "missing git command" >&2
