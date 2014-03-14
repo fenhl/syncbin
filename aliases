@@ -7,6 +7,7 @@ else
     case "$1" in
     define)
         alias accio=". accio"
+        alias adu="sudo apt-get update && sudo apt-get dist-upgrade"
         alias chmox="chmod +x"
         alias doch='sudo $(fc -ln -1)'
         function g { # from https://github.com/pengwynn/dotfiles/blob/master/git/git.zsh
