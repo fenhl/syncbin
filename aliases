@@ -50,6 +50,7 @@ else
                 command rm -rf .
             fi
         }
+        alias rt="t retweet"
         alias sudo="sudo -p '[sudo] Password for %p:' "
         alias syncbin-version="cat ${HUB:-/opt/hub}/fenhl/syncbin/version.txt"
         if ! (which tac &> /dev/null); then
