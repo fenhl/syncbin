@@ -56,6 +56,9 @@ else
         if ! (which tac &> /dev/null); then
             alias tac="tail -r"
         fi
+        if ! (which tweet &> /dev/null); then
+            alias tweet="t update"
+        fi
         alias view="less" # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
         if [ -x ~/bin/aliases ]; then
             . ~/bin/aliases define
