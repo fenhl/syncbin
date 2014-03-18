@@ -107,6 +107,17 @@ function git_status { # uses modified code from oh-my-git, see the LICENSE
             has_git_status="flags"
             git_prompt=${git_prompt}"+"
         fi
+        head_branch=$(git ls-remote 2> /dev/null | grep '\tHEAD' | cut -f1)
+        head_branch=$(git ls-remote --heads 2> /dev/null | grep '^'${head_branch} | cut -f2 | cut -d'/' -f3)
+        if [[ "${head_branch}" != "${current_branch}" ]]; then
+            if [[ ${has_git_status} == "no" ]]; then
+                git_prompt="[git: "
+            elif [[ ${has_git_status} == "flags" ]]; then
+                git_prompt=${git_prompt}" "
+            fi
+            has_git_status="branch"
+            git_prompt="${git_prompt}${current_branch}"
+        fi
         if [[ ${has_git_status} != "no" ]]; then
             has_git_status="end"
             git_prompt=${git_prompt}"]"
