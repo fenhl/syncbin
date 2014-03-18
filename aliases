@@ -10,6 +10,9 @@ else
         alias adu="sudo apt-get update && sudo apt-get dist-upgrade"
         alias chmox="chmod +x"
         alias doch='sudo $(fc -ln -1)'
+        if alias g > /dev/null; then
+            unalias g
+        fi
         function g { # from https://github.com/pengwynn/dotfiles/blob/master/git/git.zsh
             if [ "$#" -gt 0 ]; then
                 git "$@"
