@@ -79,28 +79,28 @@ function git_status { # uses modified code from oh-my-git, see the LICENSE
     if [[ -n $current_commit_hash ]]; then
         current_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
         git_status=$(git status --porcelain 2> /dev/null)
-        if [[ $git_status =~ ($'\n'|^)'\?\?' ]]; then
+        if [[ $git_status =~ ($'\n'|^)'\?\?' ]]; then # untracked files
             if [[ ${has_git_status} == "no" ]]; then
                 git_prompt="[git: "
             fi
             has_git_status="flags"
             git_prompt=${git_prompt}"?"
         fi
-        if [[ $git_status =~ ($'\n'|^).?D ]]; then
+        if [[ $git_status =~ ($'\n'|^).?D ]]; then # removed files
             if [[ ${has_git_status} == "no" ]]; then
                 git_prompt="[git: "
             fi
             has_git_status="flags"
             git_prompt=${git_prompt}"-"
         fi
-        if [[ $git_status =~ ($'\n'|^).?M ]]; then
+        if [[ $git_status =~ ($'\n'|^).?M ]]; then # changed files
             if [[ ${has_git_status} == "no" ]]; then
                 git_prompt="[git: "
             fi
             has_git_status="flags"
             git_prompt=${git_prompt}"≠"
         fi
-        if [[ $git_status =~ ($'\n'|^)A ]]; then
+        if [[ $git_status =~ ($'\n'|^)A ]]; then # added files
             if [[ ${has_git_status} == "no" ]]; then
                 git_prompt="[git: "
             fi
