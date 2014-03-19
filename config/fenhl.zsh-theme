@@ -107,8 +107,8 @@ function git_status { # uses modified code from oh-my-git, see the LICENSE
             has_git_status="flags"
             git_prompt=${git_prompt}"+"
         fi
-        head_branch=$(git ls-remote 2> /dev/null | grep '\tHEAD' | cut -f1)
-        head_branch=$(git ls-remote --heads 2> /dev/null | grep '^'${head_branch} | cut -f2 | cut -d'/' -f3)
+        head_branch=$(git for-each-ref --format=$'%(objectname)\t%(refname)' 2> /dev/null | grep '\trefs/remotes/origin/HEAD' | cut -f1)
+        head_branch=$(git for-each-ref --format=$'%(objectname)\t%(refname)' 2> /dev/null | grep '^'${head_branch}$'\t'refs/remotes/origin/ | grep -v /HEAD'$' | cut -f2 | cut -d'/' -f4)
         if [[ "${head_branch}" != "${current_branch}" ]]; then
             if [[ ${has_git_status} == "no" ]]; then
                 git_prompt="[git: "
