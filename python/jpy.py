@@ -32,9 +32,6 @@ true = True
 false = False
 null = None
 
-def help():
-    print(__doc__)
-
 def load(filename):
     path = os.path.abspath(os.path.expanduser(filename))
     with open(path, 'a'):
