@@ -1,0 +1,51 @@
+#!/bin/zsh
+
+printf '[===.] running startup scripts: syncbin-hasinet  \r'
+
+if where syncbin-hasinet &> /dev/null; then
+    syncbin-hasinet
+    SYNCBINHASINET=$?
+else
+    SYNCBINHASINET=0
+fi
+if [[ $SYNCBINHASINET -eq 0 ]]; then
+    printf '[===.] running startup scripts: apt-get-wrapper\r'
+    if where apt-get-wrapper &> /dev/null; then
+        apt-get-wrapper
+    fi
+    printf '[===.] running startup scripts: softwareupdate-wrapper\r'
+    if where softwareupdate-wrapper &> /dev/null; then
+        softwareupdate-wrapper
+    fi
+    printf '[===.] running startup scripts: brew                  \r'
+    if where brew &> /dev/null; then
+        brew update > /dev/null
+        brew upgrade > /dev/null
+    fi
+    printf '[===.] running startup scripts: gem \r'
+    if where gem-wrapper &> /dev/null; then
+        gem-wrapper
+    fi
+    printf '[===.] running startup scripts: hub\r'
+    #if where hub &> /dev/null; then
+    #    if [[ -d /opt/hub/fenhl/syncbin ]]; then
+    #        cd /opt/hub/fenhl/syncbin &&
+    #        hub pull > /dev/null &&
+    #        cd - > /dev/null
+    #    elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
+    #        cd ${HOME}/hub/fenhl/syncbin &&
+    #        hub pull > /dev/null &&
+    #        cd - > /dev/null
+    #    fi
+    #fi
+    printf '[===.] running startup scripts: compinit\r'
+    if where compinit &> /dev/null; then
+        compinit -D -u
+    fi
+    printf '[===.] running startup scripts: syncbin-update\r'
+    syncbin update
+fi
+printf '[===.] running startup scripts: zshrc         \r'
+if where zshrc &> /dev/null; then
+    . zshrc
+fi

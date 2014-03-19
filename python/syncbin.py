@@ -3,6 +3,8 @@
 """Config and helper tool for Fenhl's syncbin.
 
 Usage:
+  syncbin hasinet
+  syncbin startup
   syncbin update [<old> <new>]
   syncbin -h | --help
   syncbin --version
@@ -26,7 +28,11 @@ except:
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='syncbin ' + __version__)
-    if arguments['update']:
+    if arguments['hasinet']:
+        sys.exit(subprocess.call(['syncbin-hasinet']))
+    elif arguments['startup']:
+        sys.exit(subprocess.call(['syncbin-startup']))
+    elif arguments['update']:
         if arguments['<old>'] is None:
             sys.exit(subprocess.call(['syncbin-update']))
         else:
