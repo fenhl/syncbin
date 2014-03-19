@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+if [[ "$(whoami)" == "root" ]]; then
+    pip3 list --outdated | sed 's/(.*//g' | xargs pip3 install -U
+else
+    pip3 list --outdated | sed 's/(.*//g' | xargs sudo pip3 install -U
+fi
