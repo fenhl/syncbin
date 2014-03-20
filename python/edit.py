@@ -34,4 +34,8 @@ def run(path):
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='edit from fenhl/syncbin ' + __version__)
-    sys.exit(run(resolve(arguments['<command_or_file>'])))
+    try:
+        cmd_or_file = resolve(arguments['<command_or_file>'])
+    except subprocess.CalledProcessError:
+        sys.exit('[!!!!] edit: command ' + repr(arguments['<command_or_file>']) + ' not found')
+    sys.exit(run(cmd_or_file))
