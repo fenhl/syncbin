@@ -54,17 +54,20 @@ if [[ $# -eq 0 ]]; then
         OLD=$(cat version.txt)
     fi
     git fetch --quiet
-    if [[ $(git rev-parse HEAD) == $(git rev-parse @{u}) ]]; then
-        exit 0
-    else
+    PATCHED="n"
+    if [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
+        PATCHED="y"
         git pull --rebase --quiet > /dev/null
         if [[ $? -ne 0 ]]; then
             exit 1
         fi
-        NEW=$(cat version.txt)
+    fi
+    NEW=$(cat version.txt)
+    if [[ $PATCHED == "y" ]] || [[ "${OLD}" != "${NEW}" ]]; then
         syncbin-update ${OLD} ${NEW}
         exit $?
     fi
+    exit 0
 elif [[ $# -eq 2 ]]; then
     OLD=$1
     NEW=$2
