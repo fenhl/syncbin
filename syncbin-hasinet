@@ -1,0 +1,8 @@
+#!/bin/sh
+
+ping_func(){
+    results=$(ping -c 1 -t 5 -q isup.me &> /dev/null)
+    return $1
+}
+
+ping_func
