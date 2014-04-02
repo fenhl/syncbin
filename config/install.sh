@@ -55,6 +55,8 @@ OSName=$(uname -s)
 if [ "${OSName}" = "Linux" ]; then
     if which lsb_release > /dev/null 2>&1; then
         OSName=$(lsb_release -si)
+    elif [ -r /etc/redhat-release ]; then
+        OSName=$(cat /etc/redhat-release | cut -d' ' -f1)
     else
         printf ": could not get Linux distro\r[FAIL]"
         echo
