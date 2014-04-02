@@ -17,7 +17,7 @@ else
         sleep 1
         printf '[==..]\r'
     done
-    trap 'rm -rf "$lockdir"' 0 # remove directory when script finishes
+    trap 'rm -rf "$lockdir"' 0 # remove lock when script finishes
 fi
 
 printf '[===.] running startup scripts: syncbin-hasinet\r'
@@ -71,3 +71,4 @@ printf '[===.] running startup scripts: zshrc         \r'
 if where zshrc &> /dev/null; then
     . zshrc
 fi
+rm -rf "$lockdir" # remove lock
