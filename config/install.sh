@@ -56,7 +56,8 @@ if [ "${OSName}" = "Linux" ]; then
     if which lsb_release > /dev/null 2>&1; then
         OSName=$(lsb_release -si)
     else
-        echo ": could not get Linux distro\r[FAIL]"
+        printf ": could not get Linux distro\r[FAIL]"
+        echo
         yesno 'continue anyway?' || exit 1
         printf "[....] getting OS"
     fi
