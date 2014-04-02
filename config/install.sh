@@ -24,7 +24,8 @@ githubinstall () {
     fi
     
     if which git > /dev/null 2>&1; then
-        echo " using git\r"'[ ** ]'
+        printf " using git\r"'[ ** ]'
+        echo
         if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; git branch > /dev/null 2>&1; }; then
             cd ${HUB}/"$1"/"$2"
             git pull origin master || return 1
@@ -34,7 +35,8 @@ githubinstall () {
             git clone git@github.com:"$1"/"$2".git || git clone https://github.com/"$1"/"$2".git || return 1
         fi
     elif which ruby > /dev/null 2>&1 && which hub > /dev/null 2>&1; then
-        echo " using hub\r"'[ ** ]'
+        printf " using hub\r"'[ ** ]'
+        echo
         if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; hub branch > /dev/null 2>&1; }; then
             cd ${HUB}/"$1"/"$2"
             hub pull || return 1
