@@ -4,6 +4,7 @@
 
 Usage:
   syncbin hasinet
+  syncbin install
   syncbin startup
   syncbin update [<old> <new>]
   syncbin -h | --help
@@ -30,6 +31,8 @@ if __name__ == '__main__':
     arguments = docopt(__doc__, version='syncbin ' + __version__)
     if arguments['hasinet']:
         sys.exit(subprocess.call(['syncbin-hasinet']))
+    elif arguments['install']:
+        sys.exit(subprocess.call(['sh', os.path.join(os.environ.get('HUB', '/opt/hub'), 'fenhl', 'syncbin', 'config', 'install.sh')]))
     elif arguments['startup']:
         sys.exit(subprocess.call(['syncbin-startup']))
     elif arguments['update']:
