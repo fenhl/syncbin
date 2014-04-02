@@ -19,7 +19,7 @@ Installation
 The following *should* install `syncbin` and a couple of other things like [homebrew][], [lns][], [oh-my-zsh][], [zsh-completions][]:
 
 ```sh
-wget -O syncbin-install.sh https://raw.github.com/fenhl/syncbin/master/config/install.sh && sh syncbin-install.sh && rm syncbin-install.sh
+wget -qO syncbin-install.sh https://raw.github.com/fenhl/syncbin/master/config/install.sh && sh syncbin-install.sh && rm syncbin-install.sh
 ```
 
 It is tested on Debian wheezy, OS X Mavericks, and CentOS 6.5. If it doesn't work for you, feel free to open an issue.
