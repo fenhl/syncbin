@@ -23,11 +23,11 @@ DISABLE_CORRECTION="true"
 
 plugins=(autojump brew git mosh osx pip zsh-syntax-highlighting)
 
-printf '[=...] updating omz     \r'
+printf '[....] updating omz     \r'
 
 source $ZSH/oh-my-zsh.sh
 
-printf '[==..] defining environment variables and aliases\r'
+printf '[=...] defining environment variables and aliases\r'
 
 unsetopt hist_verify # don't “verify” history expansions (meaning I have to hit return twice), run them directly
 setopt interactive_comments # allow comments in interactive shells

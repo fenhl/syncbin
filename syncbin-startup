@@ -1,6 +1,26 @@
 #!/bin/zsh
 
-printf '[===.] running startup scripts: syncbin-hasinet  \r'
+lockdir=/tmp/syncbin-startup.lock
+
+if [[ "$1" == "--ignore-lock" ]]; then
+    echo '[ !! ] warning: releasing startup lock           ' >&2
+    rm -rf "$lockdir"
+else
+    printf '[==..] acquiring startup lock                    \r'
+    until mkdir "${lockdir}" &> /dev/null; do
+        sleep 1
+        printf '[.==.]\r'
+        sleep 1
+        printf '[..==]\r'
+        sleep 1
+        printf '[.==.]\r'
+        sleep 1
+        printf '[==..]\r'
+    done
+    trap 'rm -rf "$lockdir"' 0 # remove directory when script finishes
+fi
+
+printf '[===.] running startup scripts: syncbin-hasinet\r'
 
 if where syncbin-hasinet &> /dev/null; then
     syncbin-hasinet
@@ -44,6 +64,8 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     fi
     printf '[===.] running startup scripts: syncbin-update\r'
     syncbin update
+else
+    echo '[ !! ] warning: no internet connection, skipping startup scripts' >&2
 fi
 printf '[===.] running startup scripts: zshrc         \r'
 if where zshrc &> /dev/null; then
