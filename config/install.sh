@@ -70,7 +70,8 @@ else
     exit 1
 fi
 
-echo ": ${OSName}\r[ ok ]"
+printf ": ${OSName}\r[ ok ]"
+echo
 
 # modify APT sources.list
 
