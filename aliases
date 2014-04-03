@@ -22,6 +22,9 @@ else
                 return $?
             fi
         }
+        if alias ga > /dev/null; then
+            unalias ga
+        fi
         alias http="python3 -m SimpleHTTPServer"
         alias l="ls -BFahl"
         alias ll='ls -BFahl "$@" | less'
