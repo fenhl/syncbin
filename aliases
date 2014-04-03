@@ -16,9 +16,10 @@ else
         function g { # from https://github.com/pengwynn/dotfiles/blob/master/git/git.zsh
             if [ "$#" -gt 0 ]; then
                 git "$@"
+                return $?
             else
-                #echo "Last commit: $(time_since_last_commit) ago"
                 git status --short --branch
+                return $?
             fi
         }
         alias http="python3 -m SimpleHTTPServer"
@@ -42,15 +43,19 @@ else
         function rm { # remove current directory when called without arguments
             if [ "$#" -gt 0 ]; then
                 command rm "$@"
+                return $?
             else
                 command rm -r .
+                return $?
             fi
         }
         function rr {
             if [ "$#" -gt 0 ]; then
                 command rm -rf "$@"
+                return $?
             else
                 command rm -rf .
+                return $?
             fi
         }
         alias rt="t retweet"
