@@ -27,7 +27,12 @@ else
         fi
         alias http="python3 -m SimpleHTTPServer"
         alias l="ls -BFahl"
-        alias ll='ls -BFahl "$@" | less'
+        if alias ll > /dev/null; then
+            unalias ll
+        fi
+        function ll {
+            CLICOLOR_FORCE=1 ls -BFGahl "$@" | less
+        }
         alias mkcd="take"
         if ! (which pip3 &> /dev/null); then
             if which pip-3.4 &> /dev/null; then
