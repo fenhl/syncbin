@@ -1,8 +1,7 @@
-#-------------------------------------------------------------------------------
+#!/bin/zsh
 # Fenhl's (http://fenhl.net/) personal oh-my-zsh theme
-#-------------------------------------------------------------------------------
 
-function user {
+function syncbin-prompt-user {
     if [[ $(whoami) == $DEFAULT_USER ]]; then
         if [[ $(whoami) == root ]]; then
             echo '#'
@@ -16,7 +15,7 @@ function user {
     fi
 }
 
-function host {
+function syncbin-prompt-host {
     if hostname -f &> /dev/null; then
         if [[ $DEFAULT_HOST == $(hostname -f) ]] || $(which localhost &> /dev/null) && [[ $(localhost) == "fenubookair" ]]; then
             echo ' '
@@ -28,7 +27,7 @@ function host {
     fi
 }
 
-function path {
+function syncbin-prompt-path {
     if [[ $PWD == '/' ]]; then
         if [[ $PWD == $HOME ]]; then
             echo '/'
@@ -64,7 +63,7 @@ function path {
     fi
 }
 
-function prompt_symbol {
+function syncbin-prompt-symbol {
     if [[ $(type accio) == "accio is an alias for . accio" ]]; then
         echo '%%'
     else
@@ -72,7 +71,7 @@ function prompt_symbol {
     fi
 }
 
-function git_status { # uses modified code from oh-my-git, see the LICENSE
+function syncbin-prompt-git-status { # uses modified code from oh-my-git, see the LICENSE
     has_git_status="no"
     git_prompt=""
     current_commit_hash=$(git rev-parse HEAD 2> /dev/null)
@@ -125,7 +124,7 @@ function git_status { # uses modified code from oh-my-git, see the LICENSE
     fi
 }
 
-function battery_charge {
+function syncbin-prompt-battery-charge {
     if which batcharge &> /dev/null; then
         echo `batcharge --zsh` 2> /dev/null
     else
@@ -133,7 +132,7 @@ function battery_charge {
     fi
 }
 
-function disk_space {
+function syncbin-prompt-disk-space {
     if which diskspace &> /dev/null; then
         echo `diskspace --zsh` 2> /dev/null
     else
@@ -141,6 +140,6 @@ function disk_space {
     fi
 }
 
-PROMPT='[$(user)$(host)$(path)$(prompt_symbol)] '
-RPROMPT='%F{red}$(git_status)$(battery_charge)$(disk_space)%(?..[exit: %?])%f'
+PROMPT='[$(syncbin-prompt-user)$(syncbin-prompt-host)$(syncbin-prompt-path)$(syncbin-prompt-symbol)] '
+RPROMPT='%F{red}$(syncbin-prompt-git-status)$(syncbin-prompt-battery-charge)$(syncbin-prompt-disk-space)%(?..[exit: %?])%f'
 PROMPT2='zsh %_> '
