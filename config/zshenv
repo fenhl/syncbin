@@ -58,9 +58,9 @@ export CUPS_SERVER=print.coli.uni-saarland.de
 
 # Python modules and interactive mode config
 if [[ -n ${PYTHONPATH} ]]; then
-    export PYTHONPATH="/opt/py:/opt/hub/fenhl/syncbin/python:${HOME}/hub/fenhl/syncbin/python:/usr/lib/python3.4:/usr/lib/python3.3:${PYTHONPATH}"
+    export PYTHONPATH="/opt/py:${HOME}/py:/opt/hub/fenhl/syncbin/python:${HOME}/hub/fenhl/syncbin/python:/usr/lib/python3.5:/usr/lib/python3.4:/usr/lib/python3.3:${PYTHONPATH}"
 else
-    export PYTHONPATH="/opt/py:/opt/hub/fenhl/syncbin/python:${HOME}/hub/fenhl/syncbin/python:/usr/lib/python3.4:/usr/lib/python3.3"
+    export PYTHONPATH="/opt/py:${HOME}/py:/opt/hub/fenhl/syncbin/python:${HOME}/hub/fenhl/syncbin/python:/usr/lib/python3.5:/usr/lib/python3.4:/usr/lib/python3.3"
 fi
 export PYTHONSTARTUP="${HUB}/fenhl/syncbin/config/pythonstartup.py"
 
