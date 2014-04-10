@@ -21,7 +21,7 @@ COMPLETION_WAITING_DOTS="true"
 DISABLE_CORRECTION="true"
 #DISABLE_UNTRACKED_FILES_DIRTY="true" # disable marking untracked files under VCS as dirty. This makes repository status check for large repositories much, much faster.
 
-plugins=(autojump brew git mosh osx pip zsh-syntax-highlighting)
+plugins=(autojump brew command-not-found encode64 git mosh osx pip zsh-syntax-highlighting)
 
 printf '[....] updating omz     \r'
 
@@ -80,11 +80,6 @@ bindkey . rationalise_dot
 
 # additional completions
 fpath=(~/.config/syncbin/zsh-completions /usr/local/share/zsh-completions /opt/hub/zsh-users/zsh-completions/src $fpath)
-
-# load command-not-found handler
-if [[ -r /etc/zsh_command_not_found ]]; then
-    . /etc/zsh_command_not_found
-fi
 
 # access the online help, for brew
 if where brew &> /dev/null; then
