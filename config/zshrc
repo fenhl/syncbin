@@ -21,7 +21,7 @@ COMPLETION_WAITING_DOTS="true"
 DISABLE_CORRECTION="true"
 #DISABLE_UNTRACKED_FILES_DIRTY="true" # disable marking untracked files under VCS as dirty. This makes repository status check for large repositories much, much faster.
 
-plugins=(autojump brew command-not-found encode64 git mosh osx pip zsh-syntax-highlighting)
+plugins=(autojump brew command-not-found encode64 git mosh osx pip ruby zsh-syntax-highlighting)
 
 printf '[....] updating omz     \r'
 
