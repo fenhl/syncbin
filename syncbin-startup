@@ -1,8 +1,40 @@
 #!/bin/zsh
 
+DESCRIPTION=$'Run startup scripts for Fenhl\'s syncbin'
+
+USAGE=$'Usage:
+. syncbin-startup [options]
+  syncbin-startup -h | --help'
+
+OPTIONS=$'Options:
+  -h, --help          Print this message and exit.
+  --ignore-lock       Release and ignore the lock that prevents this script from running multiple times at once.
+  --no-internet-test  Do not run syncbin-hasinet to test for internet connectivity, but run all other startup scripts regardless.'
+
 lockdir=/tmp/syncbin-startup.lock
 
-if [[ "$1" == "--ignore-lock" ]]; then
+IGNOREINET=1
+IGNORELOCK=1
+
+while [[ $# -gt "0" ]]; do
+    if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+        echo "$DESCRIPTION"
+        echo "$USAGE"
+        echo "$OPTIONS"
+        exit 0
+    fi
+    if [[ "$1" == "--no-internet-test" ]]; then
+        IGNOREINET=0
+    elif [[ "$1" == "--ignore-lock" ]]; then
+        IGNORELOCK=0
+    else
+        echo $USAGE >&2
+        exit 1
+    fi
+    shift
+done
+
+if [[ "$IGNORELOCK" == "0" ]]; then
     echo '[ !! ] warning: releasing startup lock           ' >&2
     rm -rf "$lockdir"
 else
@@ -22,7 +54,7 @@ fi
 
 printf '[===.] running startup scripts: syncbin-hasinet\r'
 
-if where syncbin-hasinet &> /dev/null; then
+if [[ "$IGNOREINET" == "1" ]] && where syncbin-hasinet &> /dev/null; then
     syncbin-hasinet
     SYNCBINHASINET=$?
 else
