@@ -53,7 +53,8 @@ if [[ $# -eq 0 ]]; then
     else
         OLD=$(cat version.txt)
     fi
-    git fetch --quiet readonly master || git fetch --quiet
+    git fetch --quiet readonly master
+    git fetch --quiet
     PATCHED="n"
     if [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
         PATCHED="y"
