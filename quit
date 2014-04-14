@@ -1,0 +1,12 @@
+#!/bin/zsh
+
+APPLICATION="Terminal"
+
+if [[ $# -gt "1" ]]; then
+    exit 1
+elif [[ $# -eq "1" ]]; then
+    APPLICATION="$1"
+fi
+
+echo 'tell application "'"${APPLICATION}"'" to quit' | osascript
+
