@@ -19,9 +19,11 @@ import sys
 
 import re
 import subprocess
-import syncbin
-
-__version__ = syncbin.__version__
+try:
+    import syncbin
+    __version__ = syncbin.__version__
+except:
+    __version__ = '0.0'
 
 def format_space(num_bytes):
     if num_bytes >= 2 ** 50:
