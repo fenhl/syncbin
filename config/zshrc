@@ -78,6 +78,9 @@ rationalise_dot () {
 zle -N rationalise_dot
 bindkey . rationalise_dot
 
+# completion style
+zstyle ":completion:*:descriptions" format "%B%d%b" # always show completion type in menu completion
+
 # additional completions
 fpath=(~/.config/syncbin/zsh-completions /usr/local/share/zsh-completions /opt/hub/zsh-users/zsh-completions/src $fpath)
 
