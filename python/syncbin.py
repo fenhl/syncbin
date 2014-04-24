@@ -31,7 +31,10 @@ except:
     __version__ = '0.0'
 
 def bootstrap(setup):
-    sys.exit('[!!!!] no such setup: ' + repr(setup)) #TODO
+    if setup == 'debian-root':
+        subprocess.check_call(['apt-get', 'install', 'ntp'])
+    else:
+        sys.exit('[!!!!] no such setup: ' + repr(setup)) #TODO
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='fenhl/syncbin ' + __version__)
