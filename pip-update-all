@@ -1,7 +1,24 @@
 #!/bin/zsh
 
+if [[ -z ${PIP} ]]; then
+    if where pip3 &> /dev/null; then
+        PIP=pip3
+    elif where pip-3.5 &> /dev/null; then
+        PIP=pip-3.5
+    elif where pip-3.4 &> /dev/null; then
+        PIP=pip-3.4
+    elif where pip-3.3 &> /dev/null; then
+        PIP=pip-3.3
+    elif where pip-3.2 &> /dev/null; then
+        PIP=pip-3.2
+    else
+        echo '[!!!!] no pip3 found' >&2
+        exit 1
+    fi
+fi
+
 if [[ "$(whoami)" == "root" ]]; then
-    pip3 list --outdated | sed 's/(.*//g' | xargs pip3 install -U
+    $PIP list --outdated | sed 's/(.*//g' | xargs $PIP install -U
 else
-    pip3 list --outdated | sed 's/(.*//g' | xargs sudo pip3 install -U
+    $PIP list --outdated | sed 's/(.*//g' | xargs sudo $PIP install -U
 fi
