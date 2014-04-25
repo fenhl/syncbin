@@ -9,6 +9,15 @@ else
         alias accio=". accio"
         alias adu="sudo apt-get update && sudo apt-get dist-upgrade"
         alias chmox="chmod +x"
+        function date {
+            if [ "$#" -gt 0 ]; then
+                command date "$@"
+                return $?
+            else
+                command date -u '+[date] %Y-%m-%d %H:%M:%S'
+                return $?
+            fi
+        }
         alias doch='sudo $(fc -ln -1)'
         if alias g > /dev/null; then
             unalias g
