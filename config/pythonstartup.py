@@ -13,4 +13,4 @@ def namespace(initial=None):
     if initial is None:
         initial = {'__name__': '__console__', '__doc__': None}
     code.InteractiveConsole(locals=initial).interact('')
-    return {k: v for k, v in initial.items() if not k.startswith('__'))
+    return {k: v for k, v in initial.items() if not k.startswith('__')}
