@@ -1,8 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 
-if ! (which aptitude &> /dev/null); then
+if where aptitude > /dev/null 2>&1; then
+    : # aptitude found, continue
+else
     exit 2
 fi
+
+sudo -n aptitude update > /dev/null 2>&1 # if passwordless sudo is enabled, pull updates
 
 PACKAGES=$(aptitude upgrade -s | grep '^Inst' | wc -l)
 
@@ -12,11 +16,11 @@ if [ ${PACKAGES} != "0" ]; then
     else
         UPDATES='updates'
     fi
-    if [ $(lsb_release -si) == 'Debian' ] && [ $(wget -q http://http.debian.net/debian/dists/stable/Release -O - | sed -n 's/Version: //p') != $(lsb_release -r | sed -n "s/Release:\t//p") ]; then
+    if [ $(lsb_release -si) = 'Debian' ] && [ $(wget -q http://http.debian.net/debian/dists/stable/Release -O - | sed -n 's/Version: //p') != $(lsb_release -r | sed -n "s/Release:\t//p") ]; then
         echo '[dpkg]' release ${RELEASE} and ${PACKAGES} ${UPDATES} available '       '
     else
         echo '[dpkg]' ${PACKAGES} ${UPDATES} available '                     '
     fi
-elif [ $(lsb_release -si) == 'Debian' ] && [ $(wget -q http://http.debian.net/debian/dists/stable/Release -O - | sed -n 's/Version: //p') != $(lsb_release -r | sed -n "s/Release:\t//p") ]; then
+elif [ $(lsb_release -si) = 'Debian' ] && [ $(wget -q http://http.debian.net/debian/dists/stable/Release -O - | sed -n 's/Version: //p') != $(lsb_release -r | sed -n "s/Release:\t//p") ]; then
     echo '[dpkg]' release ${RELEASE} 'available. Install with `sudo apitude update && sudo aptitude full-upgrade`.'
 fi
