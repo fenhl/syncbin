@@ -4,7 +4,6 @@ if ! (which apt-get &> /dev/null); then
     exit 2
 fi
 
-RELEASE=$(wget -q http://http.debian.net/debian/dists/stable/Release -O - | sed -n 's/Version: //p')
 PACKAGES=$(apt-get upgrade -s | grep '^Inst' | wc -l)
 
 if [ ${PACKAGES} != "0" ]; then
@@ -13,11 +12,11 @@ if [ ${PACKAGES} != "0" ]; then
     else
         UPDATES='updates'
     fi
-    if [ ${RELEASE} != $(lsb_release -r | sed -n "s/Release:\t//p") ]; then
+    if [ $(lsb_release -si) == 'Debian' ] && [ $(wget -q http://http.debian.net/debian/dists/stable/Release -O - | sed -n 's/Version: //p') != $(lsb_release -r | sed -n "s/Release:\t//p") ]; then
         echo '[dpkg]' release ${RELEASE} and ${PACKAGES} ${UPDATES} available '       '
     else
         echo '[dpkg]' ${PACKAGES} ${UPDATES} available '                     '
     fi
-elif [ ${RELEASE} != $(lsb_release -r | sed -n "s/Release:\t//p") ]; then
+elif [ $(lsb_release -si) == 'Debian' ] && [ $(wget -q http://http.debian.net/debian/dists/stable/Release -O - | sed -n 's/Version: //p') != $(lsb_release -r | sed -n "s/Release:\t//p") ]; then
     echo '[dpkg]' release ${RELEASE} 'available. Install with `sudo apt-get update && sudo apt-get dist-upgrade`.'
 fi
