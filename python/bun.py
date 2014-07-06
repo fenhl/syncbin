@@ -16,6 +16,7 @@ Options:
 import sys
 
 from docopt import docopt
+import json
 import syncbin
 import termios
 import tty
@@ -36,9 +37,9 @@ if __name__ == '__main__':
     arguments = docopt(__doc__, version='bun from fenhl/syncbin ' + __version__)
     if len(arguments['<string>']):
         for string_arg in arguments['<string>']:
-            print(repr(string_arg))
+            print(json.dumps(string_arg))
     else:
         getch = getch_loop()
         for _ in range(int(arguments['--number-of-characters'])):
-            print(repr(next(getch)), end='\r\n')
+            print(json.dumps(next(getch)), end='\r\n')
         del getch
