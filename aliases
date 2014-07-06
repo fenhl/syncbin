@@ -52,7 +52,8 @@ else
                 alias pip3="pip-3.2"
             fi
         fi
-        alias pip3i="pip3 install --target /opt/py"
+        alias mysql="mysql --silent"
+        alias pip3i="pip3 install"
         alias png2gif="convert -delay 10 -loop 0 *.png animaion.gif"
         alias pw='pwgen -1cnsy $1 1'
         alias py="python3 -q"
@@ -78,7 +79,7 @@ else
         }
         alias rt="t retweet"
         alias ssync="rsync --rsh=ssh"
-        alias sudo="sudo -p '[sudo] Password for %p:' "
+        alias sudo="sudo -p '[sudo] Password for %p:'"
         alias syncbin-version="cat ${HUB:-/opt/hub}/fenhl/syncbin/version.txt"
         if ! (which tac &> /dev/null); then
             alias tac="tail -r"
