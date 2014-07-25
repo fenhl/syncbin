@@ -4,7 +4,8 @@
 
 Usage:
   playlist
-  playlist addfrom <path>
+  playlist add-from <path>
+  playlist add-random <path>
   playlist -h | --help
   playlist --version
 
@@ -15,9 +16,12 @@ Options:
 
 import sys
 
+sys.path.append('/opt/py')
+
 from docopt import docopt
 import os
 import pathlib
+import random
 import subprocess
 import syncbin
 
@@ -27,7 +31,7 @@ mpd_root = pathlib.Path(os.environ.get('MPD_ROOT', '/Users/fenhl/Music'))
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='playlist from fenhl/syncbin ' + __version__)
-    if arguments['addfrom']:
+    if arguments['add-from']:
         path = pathlib.Path(arguments['<path>'])
         if (mpd_root / path).is_dir():
             sys.exit(subprocess.call(['mpc', 'add', str(path)]))
@@ -38,5 +42,7 @@ if __name__ == '__main__':
                     found = True
                 if found:
                     subprocess.call(['mpc', 'add', str(file.relative_to(mpd_root))])
+    elif arguments['add-random']:
+        sys.exit(subprocess.call(['mpc', 'add', random.choice(subprocess.check_output(['mpc', 'ls', arguments['<path>']]).decode('utf-8'))]))
     else:
         sys.exit(subprocess.call(['mpc', 'playlist', "--format=%position% %file%"]))
