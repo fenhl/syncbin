@@ -34,14 +34,16 @@ if __name__ == '__main__':
     if arguments['add-from']:
         path = pathlib.Path(arguments['<path>'])
         if (mpd_root / path).is_dir():
-            sys.exit(subprocess.call(['mpc', 'add', str(path)]))
+            found = True
+            dir_iterator = (mpd_root / path).iterdir()
         else:
             found = False
-            for file in sorted((mpd_root / path).parent.iterdir()):
-                if file.name.startswith(path.name):
-                    found = True
-                if found:
-                    subprocess.call(['mpc', 'add', str(file.relative_to(mpd_root))])
+            dir_iterator = (mpd_root / path).parent.iterdir()
+        for file in sorted(dir_iterator):
+            if file.name.startswith(path.name):
+                found = True
+            if found:
+                subprocess.call(['mpc', 'add', str(file.relative_to(mpd_root))])
     elif arguments['add-random']:
         sys.exit(subprocess.call(['mpc', 'add', random.choice(subprocess.check_output(['mpc', 'ls', arguments['<path>']]).decode('utf-8').strip().split('\n'))]))
     else:
