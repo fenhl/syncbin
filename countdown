@@ -5,4 +5,4 @@ if [ -z $DATE ]; then
 fi
 TIME=$1
 
-echo 'http://www.timeanddate.com/counters/fullscreen.html?mode=a&iso='${DATE}T${TIME}'&csz=1'
+echo 'http://www.timeanddate.com/counters/fullscreen.html?mode=a&iso='${DATE}T${TIME}'&p0=1440&csz=1'
