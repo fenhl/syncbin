@@ -57,6 +57,18 @@ else
         alias png2gif="convert -delay 10 -loop 0 *.png animaion.gif"
         alias pw='pwgen -1cnsy $1 1'
         alias py="python3 -q"
+        function release {
+            git checkout -b release-"$1" &&
+            ${EDITOR} README.md &&
+            git commit -am 'Version bump' &&
+            git checkout master &&
+            git merge release-"$1" &&
+            git push &&
+            git checkout dev &&
+            git merge release-"$1" &&
+            git push &&
+            git branch -d release-"$1"
+        }
         alias relog=": $@; zsh; logout"
         alias retab="tab; logout"
         function rm { # remove current directory when called without arguments
