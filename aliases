@@ -52,6 +52,10 @@ else
                 alias pip3="pip-3.2"
             fi
         fi
+        function mnt {
+            sudo mkdir "$2" &&
+            sudo mount "$1" "$2"
+        }
         alias mysql="mysql --silent"
         alias pip3i="pip3 install"
         alias png2gif="convert -delay 10 -loop 0 *.png animaion.gif"
@@ -99,6 +103,10 @@ else
         if ! (which tweet &> /dev/null); then
             alias tweet="t update"
         fi
+        function umnt {
+            sudo umount "$1" &&
+            sudo rmdir "$1"
+        }
         alias view="less" # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
         if [ -x ~/bin/aliases ]; then
             . ~/bin/aliases define
