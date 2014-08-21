@@ -1,0 +1,20 @@
+#!/bin/sh
+
+echo '[ ** ] releasing version' "$1" &&
+git checkout -b --quiet release-"$1" &&
+${EDITOR} README.md &&
+printf '[....]\r' &&
+git commit --all --message='Version bump' --quiet &&
+printf '[....] merging into master\r' &&
+git checkout --quiet master &&
+git merge --quiet release-"$1" &&
+printf '[=...] pushing master     \r' &&
+git push &&
+printf '[==..] merging into dev\r' &&
+git checkout --quiet dev &&
+git merge release-"$1" &&
+printf '[===.] pushing dev     \r' &&
+git push &&
+printf '[====] deleting release branch\r' &&
+git branch -d release-"$1" &&
+printf '[ ok ] released               \n'
