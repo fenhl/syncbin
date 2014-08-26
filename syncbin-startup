@@ -81,6 +81,11 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         gem-wrapper
     fi
     printf '[===.] running startup scripts: hub\r'
+    if [[ -d /opt/hub ]] && [[ -d ~/hub ]]; then
+        echo '[ !! ] warning: /opt/hub and ~/hub both exist' >&2
+        printf '[===.] running startup scripts: hub\r'
+    fi
+    #TODO add a script that updates the hubdirs and labdirs
     #if where hub &> /dev/null; then
     #    if [[ -d /opt/hub/fenhl/syncbin ]]; then
     #        cd /opt/hub/fenhl/syncbin &&
