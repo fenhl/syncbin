@@ -20,5 +20,5 @@ fi
 if [[ "$(whoami)" == "root" ]]; then
     $PIP list --outdated --allow-all-external | grep '(' | sed 's/(.*//g' | xargs $PIP install -U --allow-all-external
 else
-    $PIP list --outdated --allow-all-external | grep '(' | sed 's/(.*//g' | xargs sudo $PIP install -U --allow-all-external
+    sudo $PIP list --outdated --allow-all-external | grep '(' | sed 's/(.*//g' | xargs sudo $PIP install -U --allow-all-external
 fi
