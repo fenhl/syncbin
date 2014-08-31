@@ -57,6 +57,7 @@ else
             sudo mount "$1" "$2"
         }
         alias mysql="mysql --silent"
+        alias pause="mpc current --wait && mpc pause"
         alias pip3i="pip3 install"
         alias png2gif="convert -delay 10 -loop 0 *.png animaion.gif"
         alias pw='pwgen -1cnsy $1 1'
