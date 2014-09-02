@@ -12,7 +12,7 @@ OPTIONS=$'Options:
   --no-internet-test  Do not run `syncbin-hasinet\' to test for internet connectivity, but run all other startup scripts regardless.'
 
 function print-progress {
-    if where clear-eol; then
+    if where clear-eol &> /dev/null; then
         printf '['"$1"'] '
         clear-eol
         printf "$2"'\r'
