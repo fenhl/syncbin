@@ -11,6 +11,16 @@ OPTIONS=$'Options:
   --ignore-lock       Release and ignore the lock that prevents this script from running multiple times at once.
   --no-internet-test  Do not run `syncbin-hasinet\' to test for internet connectivity, but run all other startup scripts regardless.'
 
+function print-progress {
+    if where clear-eol; then
+        printf '['"$1"'] '
+        clear-eol
+        printf "$2"'\r'
+    else
+        printf '['"$1"'] '"$2"'\r'
+    fi
+}
+
 lockdir=/tmp/syncbin-startup.lock
 
 IGNOREINET=1
@@ -40,21 +50,25 @@ if [[ "$IGNORELOCK" == "0" ]]; then
     echo '[ !! ] warning: releasing startup lock           ' >&2
     rm -rf "$lockdir"
 else
-    printf '[==..] acquiring startup lock                    \r'
+    print-progress '=...' 'acquiring startup lock'
     until mkdir "${lockdir}" &> /dev/null; do
         sleep 1
-        printf '[.==.]\r'
+        printf '[.=..]\r'
         sleep 1
-        printf '[..==]\r'
+        printf '[..=.]\r'
         sleep 1
-        printf '[.==.]\r'
+        printf '[...=]\r'
         sleep 1
-        printf '[==..]\r'
+        printf '[..=.]\r'
+        sleep 1
+        printf '[.=..]\r'
+        sleep 1
+        printf '[=...]\r'
     done
     trap 'rm -rf "$lockdir"' 0 # remove lock when script finishes
 fi
 
-printf '[===.] running startup scripts: syncbin-hasinet\r'
+print-progress '==..' 'running startup scripts: syncbin-hasinet'
 
 if [[ "$IGNOREINET" == "1" ]] && where syncbin-hasinet &> /dev/null; then
     syncbin-hasinet
@@ -63,27 +77,27 @@ else
     SYNCBINHASINET=0
 fi
 if [[ $SYNCBINHASINET -eq 0 ]]; then
-    printf '[===.] running startup scripts: apt-get-wrapper\r'
+    print-progress '===.' 'running startup scripts: apt'
     if where apt-get-wrapper &> /dev/null; then
         apt-get-wrapper
     fi
-    printf '[===.] running startup scripts: softwareupdate-wrapper\r'
+    print-progress '===.' 'running startup scripts: softwareupdate'
     if where softwareupdate-wrapper &> /dev/null; then
         softwareupdate-wrapper
     fi
-    printf '[===.] running startup scripts: brew                  \r'
+    print-progress '===.' 'running startup scripts: brew'
     if where brew &> /dev/null; then
         brew update > /dev/null
         brew upgrade > /dev/null
     fi
-    printf '[===.] running startup scripts: gem \r'
+    print-progress '===.' 'running startup scripts: gem'
     if where gem-wrapper &> /dev/null; then
         gem-wrapper
     fi
-    printf '[===.] running startup scripts: hub\r'
+    print-progress '===.' 'running startup scripts: hub'
     if [[ -d /opt/hub ]] && [[ -d ~/hub ]]; then
         echo '[ !! ] warning: /opt/hub and ~/hub both exist' >&2
-        printf '[===.] running startup scripts: hub\r'
+        print-progress '===.' 'running startup scripts: hub'
     fi
     #TODO add a script that updates the hubdirs and labdirs
     #if where hub &> /dev/null; then
@@ -97,16 +111,16 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     #        cd - > /dev/null
     #    fi
     #fi
-    printf '[===.] running startup scripts: compinit\r'
+    print-progress '===.' 'running startup scripts: compinit'
     if where compinit &> /dev/null; then
         compinit -D -u
     fi
-    printf '[===.] running startup scripts: syncbin-update\r'
+    print-progress '===.' 'running startup scripts: syncbin-update'
     syncbin update
 else
     echo '[ !! ] warning: no internet connection, skipping startup scripts' >&2
 fi
-printf '[===.] running startup scripts: zshrc         \r'
+print-progress '====' 'running startup scripts: zshrc'
 if where zshrc &> /dev/null; then
     . zshrc
 fi
