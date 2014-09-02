@@ -1,33 +1,34 @@
 # don't show input while loading
 stty -echo
 
-printf '[....] loading oh-my-zsh\r'
+#printf '[....] loading oh-my-zsh\r'
+#
+#if [[ -d /opt/hub/robbyrussell/oh-my-zsh ]]; then
+#    ZSH=/opt/hub/robbyrussell/oh-my-zsh
+#else
+#    ZSH=${HOME}/hub/robbyrussell/oh-my-zsh
+#fi
+#ZSH_THEME="fenhl"
+# autoupdate
+#DISABLE_UPDATE_PROMPT=true
+#export UPDATE_ZSH_DAYS=1
+#
+#plugins=(autojump brew command-not-found encode64 git mosh osx pip ruby terinalapp zsh-syntax-highlighting) #TODO load these manually or replace them
+#
+#printf '[....] updating omz     \r'
+#
+#source $ZSH/oh-my-zsh.sh
 
-if [[ -d /opt/hub/robbyrussell/oh-my-zsh ]]; then
-    ZSH=/opt/hub/robbyrussell/oh-my-zsh
-else
-    ZSH=${HOME}/hub/robbyrussell/oh-my-zsh
-fi
-ZSH_THEME="fenhl"
+printf '[....] defining environment variables and aliases\r'
+
+# theme settings
 DEFAULT_USER="fenhl"
 DEFAULT_HOST="fenubookair.local"
-
-# autoupdate
-DISABLE_UPDATE_PROMPT=true
-export UPDATE_ZSH_DAYS=1
 
 CASE_SENSITIVE="true"
 COMPLETION_WAITING_DOTS="true"
 DISABLE_CORRECTION="true"
 #DISABLE_UNTRACKED_FILES_DIRTY="true" # disable marking untracked files under VCS as dirty. This makes repository status check for large repositories much, much faster.
-
-plugins=(autojump brew command-not-found encode64 git mosh osx pip ruby terinalapp zsh-syntax-highlighting)
-
-printf '[....] updating omz     \r'
-
-source $ZSH/oh-my-zsh.sh
-
-printf '[=...] defining environment variables and aliases\r'
 
 unsetopt hist_verify # don't “verify” history expansions (meaning I have to hit return twice), run them directly
 setopt interactive_comments # allow comments in interactive shells
@@ -79,10 +80,10 @@ zle -N rationalise_dot
 bindkey . rationalise_dot
 
 # completion style
-zstyle ":completion:*:descriptions" format "%B%d%b" # always show completion type in menu completion
+#zstyle ":completion:*:descriptions" format "%B%d%b" # always show completion type in menu completion
 
 # additional completions
-fpath=(~/.config/syncbin/zsh-completions /usr/local/share/zsh-completions /opt/hub/zsh-users/zsh-completions/src $fpath)
+fpath=(~/.config/syncbin/zsh-completions /usr/local/share/zsh-completions /opt/hub/zsh-users/zsh-completions/src ~/hub/zsh-users/zsh-completions/src $fpath)
 
 # access the online help, for brew
 if where brew &> /dev/null; then
@@ -95,9 +96,9 @@ fi
 if [[ -d /opt/hub/fenhl/syncbin ]]; then
     . /opt/hub/fenhl/syncbin/aliases define
     . /opt/hub/fenhl/syncbin/aliases define-suffix
-elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
-    . ${HOME}/hub/fenhl/syncbin/aliases define
-    . ${HOME}/hub/fenhl/syncbin/aliases define-suffix
+elif [[ -d ~/hub/fenhl/syncbin ]]; then
+    . ~/hub/fenhl/syncbin/aliases define
+    . ~/hub/fenhl/syncbin/aliases define-suffix
 fi
 
 # startup scripts
