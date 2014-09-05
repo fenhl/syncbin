@@ -6,9 +6,10 @@ if [ $# -ne 1 ]; then
 else
     case "$1" in
     define)
-        alias accio=". accio"
-        alias adu="sudo aptitude update && sudo aptitude full-upgrade"
-        alias chmox="chmod +x"
+        alias -='cd -'
+        alias accio='. accio'
+        alias adu='sudo aptitude update && sudo aptitude full-upgrade'
+        alias chmox='chmod +x'
         function date {
             if [ "$#" -gt 0 ]; then
                 command date "$@"
@@ -34,29 +35,32 @@ else
         if alias ga > /dev/null; then
             unalias ga
         fi
-        alias http="python3 -m SimpleHTTPServer"
-        alias l="ls -BFahl"
+        alias history='fc -il 1'
+        alias http='python3 -m SimpleHTTPServer'
+        alias l='ls -BFahl'
         if alias ll > /dev/null; then
             unalias ll
         fi
         function ll {
             CLICOLOR_FORCE=1 ls -BFGahl "$@" | less
         }
-        alias mkcd="take"
+        alias mkcd='take'
         if ! (which pip3 &> /dev/null); then
-            if which pip-3.4 &> /dev/null; then
-                alias pip3="pip-3.4"
+            if which pip-3.5 &> /dev/null; then
+                alias pip3='pip-3.5'
+            elif which pip-3.4 &> /dev/null; then
+                alias pip3='pip-3.4'
             elif which pip-3.3 &> /dev/null; then
-                alias pip3="pip-3.3"
+                alias pip3='pip-3.3'
             elif which pip-3.2 &> /dev/null; then
-                alias pip3="pip-3.2"
+                alias pip3='pip-3.2'
             fi
         fi
         function mnt {
             sudo mkdir "$2" &&
             sudo mount "$1" "$2"
         }
-        alias mysql="mysql --silent"
+        alias mysql='mysql --silent'
         function pause {
             printf '[....] ' &&
             mpc current &&
@@ -67,12 +71,12 @@ else
             clear-eol &&
             mpc current
         }
-        alias pip3i="pip3 install"
-        alias png2gif="convert -delay 10 -loop 0 *.png animaion.gif"
+        alias pip3i='pip3 install'
+        alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'
         alias pw='pwgen -1cnsy $1 1'
-        alias py="python3 -q"
-        alias relog=": $@; zsh; logout"
-        alias retab="tab; logout"
+        alias py='python3 -q'
+        alias relog=': $@; zsh; logout'
+        alias retab='tab; logout'
         function rm { # remove current directory when called without arguments
             if [ "$#" -gt 0 ]; then
                 command rm "$@"
@@ -91,21 +95,21 @@ else
                 return $?
             fi
         }
-        alias rt="t retweet"
-        alias ssync="rsync --rsh=ssh"
-        alias sudo="sudo -p '[sudo] Password for %p:'"
-        alias syncbin-version="cat ${HUB:-/opt/hub}/fenhl/syncbin/version.txt"
+        alias rt='t retweet'
+        alias ssync='rsync --rsh=ssh'
+        alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"
+        alias syncbin-version='cat ${HUB:-/opt/hub}/fenhl/syncbin/version.txt'
         if ! (which tac &> /dev/null); then
-            alias tac="tail -r"
+            alias tac='tail -r'
         fi
         if ! (which tweet &> /dev/null); then
-            alias tweet="t update"
+            alias tweet='t update'
         fi
         function umnt {
             sudo umount "$1" &&
             sudo rmdir "$1"
         }
-        alias view="less" # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
+        alias view='less' # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
         if [ -x ~/bin/aliases ]; then
             . ~/bin/aliases define
         fi
