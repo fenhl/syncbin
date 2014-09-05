@@ -16,34 +16,23 @@ yesno () {
 githubinstall () {
     printf "[....] installing $2"
     
-    if mkdir -p ${HUB}/"$1" 2> /dev/null && [ -d ${HUB}/"$1" ]; then
-        cd ${HUB}/"$1"
+    if mkdir -p "${HUB}/$1/$2" 2> /dev/null && [ -d "${HUB}/$1/$2" ]; then
+        cd "${HUB}/$1/$2"
     else
-        echo "\r"'[!!!!]' "could not create directory ${HUB}/$1" >&2
+        echo "\r"'[!!!!]' "could not create directory ${HUB}/$1/$2" >&2
         return 1
     fi
     
     if which git > /dev/null 2>&1; then
         printf " using git\r"'[ ** ]'
         echo
-        if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; git branch > /dev/null 2>&1; }; then
-            cd ${HUB}/"$1"/"$2"
+        if [ -d "${HUB}/$1/$2/master" ] && { cd "${HUB}/$1/$2/master"; git branch > /dev/null 2>&1; }; then
+            cd "${HUB}/$1/$2/master"
             git pull origin master || return 1
         else
-            [ -d ${HUB}/"$1"/"$2" ] && rm -r ${HUB}/"$1"/"$2"
-            cd ${HUB}/"$1"
-            git clone git@github.com:"$1"/"$2".git || git clone https://github.com/"$1"/"$2".git || return 1
-        fi
-    elif which ruby > /dev/null 2>&1 && which hub > /dev/null 2>&1; then
-        printf " using hub\r"'[ ** ]'
-        echo
-        if [ -d ${HUB}/"$1"/"$2" ] && { cd ${HUB}/"$1"/"$2"; hub branch > /dev/null 2>&1; }; then
-            cd ${HUB}/"$1"/"$2"
-            hub pull || return 1
-        else
-            [ -d ${HUB}/"$1"/"$2" ] && rm -r ${HUB}/"$1"/"$2"
-            cd ${HUB}/"$1"
-            hub clone "$1"/"$2" || return 1
+            [ -d "${HUB}/$1/$2/master" ] && rm -r "${HUB}/$1/$2/master"
+            cd "${HUB}/$1/$2"
+            git clone git@github.com:"$1"/"$2".git master || git clone https://github.com/"$1"/"$2".git master || return 1
         fi
     else
         echo "\r"'[!!!!]' "missing git command" >&2
@@ -195,59 +184,34 @@ else
     exit 1
 fi
 
-# install hub
-
-if which hub > /dev/null 2>&1; then
-    : # found hub
-elif [ "${OSName}" = "OS X" ] && which brew > /dev/null 2>&1; then
-    echo '[ ** ] installing hub'
-    brew install hub
-else
-    if which gem > /dev/null 2>&1 && yesno 'hub not found, install using RubyGems?'; then
-        if gem install hub; then
-            : # successfully installed
-        elif which sudo > /dev/null 2>&1 && yesno 'could not install hub, try with sudo?'; then
-            sudo gem install hub
-        fi
-    fi
-fi
-
-if which hub > /dev/null 2>&1; then
-    : # found hub
-elif yesno 'hub not found, continue anyway?'; then
-    : # continue anyway
-else
-    exit 1
-fi
-
 # get hub directory
 
 HUB="unknown"
-if mkdir -p /opt/hub 2> /dev/null && [ -d /opt/hub ]; then
-    if [ -w /opt/hub ]; then
-        HUB=/opt/hub
+if mkdir -p /opt/git/github.com 2> /dev/null && [ -d /opt/git/github.com ]; then
+    if [ -w /opt/git/github.com ]; then
+        HUB=/opt/git/github.com
     else
-        if yesno 'no write access to /opt/hub, use anyway?'; then
-            HUB=/opt/hub
+        if yesno 'no write access to /opt/git/github.com, use anyway?'; then
+            HUB=/opt/git/github.com
         else
-            HUB=${HOME}/hub
+            HUB=${HOME}/git/github.com
         fi
     fi
 elif which sudo > /dev/null 2>&1; then
-    if yesno 'could not create /opt/hub, try using sudo?'; then
-        if sudo mkdir -p /opt/hub; then
-            HUB=/opt/hub
+    if yesno 'could not create /opt/git/github.com, try using sudo?'; then
+        if sudo mkdir -p /opt/git/github.com; then
+            HUB=/opt/git/github.com
         fi
     fi
 fi
 if [ ${HUB} = "unknown" ]; then
-    if yesno 'could not create /opt/hub, use anyway?'; then
-        HUB=/opt/hub
+    if yesno 'could not create /opt/git/github.com, use anyway?'; then
+        HUB=/opt/git/github.com
     else
-        HUB=${HOME}/hub
+        HUB=${HOME}/git/github.com
     fi
 fi
-echo "[ ** ] hub is at" ${HUB}
+echo "[ ** ] gitdir for GitHub is at" ${HUB}
 
 # install zsh-completions
 
@@ -301,16 +265,6 @@ fi
 # install syncbin
 
 githubinstall fenhl syncbin || exit 1
-
-# install oh-my-zsh
-
-githubinstall robbyrussell oh-my-zsh || exit 1
-
-if mkdir -p ${HUB}/robbyrussell/oh-my-zsh/custom/themes && [ -w ${HUB}/robbyrussell/oh-my-zsh/custom/themes ]; then
-    ln -fs ${HUB}/fenhl/syncbin/config/fenhl.zsh-theme ${HUB}/robbyrussell/oh-my-zsh/custom/themes/fenhl.zsh-theme
-else
-    echo '[ !! ]' "could not install oh-my-zsh theme"
-fi
 
 ln -fs ${HUB}/fenhl/syncbin/config/zshenv ~/.zshenv
 ln -fs ${HUB}/fenhl/syncbin/config/zshrc ~/.zshrc

@@ -1,7 +1,4 @@
-syncbin 1.0 patch notes
+syncbin 2.0 patch notes
 
-You should not see this file at all, something must have gone wrong in the
-update process. Best reinstall syncbin with:
-
-    wget https://raw.github.com/fenhl/syncbin/master/config/install.sh
-    sh install.sh && rm install.sh
+All symlinks to /opt/hub/fenhl/syncbin should be changed to /opt/git/github.com/fenhl/syncbin/master
+Make sure the directory infrastructure in /opt/git is up to date and that /opt/hub is removed or a symlink to /opt/git/github.com

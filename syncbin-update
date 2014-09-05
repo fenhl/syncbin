@@ -3,38 +3,28 @@
 githubinstall () {
     printf "[....] installing $2"
     
-    if [[ -d /opt/hub ]] && [[ -w /opt/hub ]]; then
-        HUB=/opt/hub
+    if [[ -d /opt/git/github.com ]] && [[ -w /opt/git/github.com ]]; then
+        HUB=/opt/git/github.com
     else
-        HUB=${HOME}/hub
+        HUB=${HOME}/git/github.com
     fi
     
-    if mkdir -p ${HUB}/"$1" 2> /dev/null && [[ -d ${HUB}/"$1" ]]; then
-        cd ${HUB}/"$1"
+    if mkdir -p "${HUB}/$1/$2" 2> /dev/null && [[ -d "${HUB}/$1/$2" ]]; then
+        cd ${HUB}/"$1"/"$2"
     else
-        echo "\r"'[!!!!]' "could not create directory ${HUB}/$1" >&2
+        echo "\r"'[!!!!]' "could not create directory ${HUB}/$1/$2" >&2
         return 1
     fi
     
     if where git &> /dev/null; then
         echo " using git\r"'[ ** ]'
-        if [[ -d ${HUB}/"$1"/"$2" ]] && { cd ${HUB}/"$1"/"$2"; git branch &> /dev/null; }; then
-            cd ${HUB}/"$1"/"$2"
+        if [[ -d "${HUB}/$1/$2/master" ]] && { cd "${HUB}/$1/$2/master"; git branch &> /dev/null; }; then
+            cd "${HUB}/$1/$2/master"
             git pull origin master || return 1
         else
-            [[ -d ${HUB}/"$1"/"$2" ]] && rm -r ${HUB}/"$1"/"$2"
-            cd ${HUB}/"$1"
-            git clone git@github.com:"$1"/"$2".git || git clone https://github.com/"$1"/"$2".git || return 1
-        fi
-    elif where ruby &> /dev/null && where hub &> /dev/null; then
-        echo " using hub\r"'[ ** ]'
-        if [[ -d ${HUB}/"$1"/"$2" ]] && { cd ${HUB}/"$1"/"$2"; hub branch &> /dev/null; }; then
-            cd ${HUB}/"$1"/"$2"
-            hub pull || return 1
-        else
-            [[ -d ${HUB}/"$1"/"$2" ]] && rm -r ${HUB}/"$1"/"$2"
-            cd ${HUB}/"$1"
-            hub clone "$1"/"$2" || return 1
+            [[ -d "${HUB}/$1/$2/master" ]] && rm -r "${HUB}/$1/$2/master"
+            cd "${HUB}/$1/$2"
+            git clone git@github.com:"$1"/"$2".git master || git clone https://github.com/"$1"/"$2".git master || return 1
         fi
     else
         echo "\r"'[!!!!]' "missing git command" >&2
@@ -43,10 +33,10 @@ githubinstall () {
 }
 
 if [[ $# -eq 0 ]]; then
-    if [[ -d /opt/hub/fenhl/syncbin ]]; then
-        cd /opt/hub/fenhl/syncbin
+    if [[ -d /opt/git/github.com/fenhl/syncbin/master ]]; then
+        cd /opt/git/github.com/fenhl/syncbin/master
     else
-        cd ~/hub/fenhl/syncbin
+        cd ~/git/github.com/fenhl/syncbin/master
     fi
     if [[ -r "${XDG_DATA_HOME:-~/.local/share}/syncbin/version.txt" ]]; then
         OLD=$(cat "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt")
@@ -100,46 +90,46 @@ if [[ ${NEWMINOR} -lt ${OLDMINOR} ]]; then
     exit 1
 fi
 if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
-    if [[ ${OLDMINOR} -lt 3 ]]; then # update to first version with working update script
-        echo '[ ** ] To update, the syncbin install script will re-run now.'
-        sh config/install.sh || echo '[ !! ] Updating syncbin failed, please run again manually.' >&2
-        exit 0
-    else
-        if [[ ${OLDMINOR} -lt 5 ]]; then
-            if [[ "$(uname -s)" == "Darwin" ]]; then
-                brew install zsh-completions
-            else
-                githubinstall zsh-users zsh-completions
-            fi
-        fi
-        if [[ ${OLDMINOR} -lt 6 ]]; then
-            if [[ "$(uname -s)" == "Linux" ]] && [[ "$(lsb_release -si)" == "Debian" ]]; then
-                if where "command-not-found" &> /dev/null; then
-                    : # command-not-found handler already installed
-                else
-                    echo '[ ** ] syncbin now supports command-not-found, install using `sudo apt-get install command-not-found`'
-                fi
-            fi
-        fi
-        if [[ ${OLDMINOR} -lt 7 ]]; then
-            if where lns &> /dev/null; then
-                # lns already installed
-            else
-                mkdir -p ~/bin &&
-                cd ~/bin
-                if (where curl &> /dev/null && curl -Ls http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -) || (where wget &> /dev/null && wget -qO - http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -); then
-                    rm -f lns.tar.gz
-                    mv lns .lnsdir
-                    mv .lnsdir/lns lns
-                    rm -rf .lnsdir
-                    chmod +x lns
-                    cd -
-                else
-                    echo '[ !! ] failed to install lns, you can install manually from http://www.chiark.greenend.org.uk/~sgtatham/utils/' >&2
-                fi
-            fi
-        fi
-    fi
+    #if [[ ${OLDMINOR} -lt 3 ]]; then # update to first version with working update script
+    #    echo '[ ** ] To update, the syncbin install script will re-run now.'
+    #    sh config/install.sh || echo '[ !! ] Updating syncbin failed, please run again manually.' >&2
+    #    exit 0
+    #else
+    #    if [[ ${OLDMINOR} -lt 5 ]]; then
+    #        if [[ "$(uname -s)" == "Darwin" ]]; then
+    #            brew install zsh-completions
+    #        else
+    #            githubinstall zsh-users zsh-completions
+    #        fi
+    #    fi
+    #    if [[ ${OLDMINOR} -lt 6 ]]; then
+    #        if [[ "$(uname -s)" == "Linux" ]] && [[ "$(lsb_release -si)" == "Debian" ]]; then
+    #            if where "command-not-found" &> /dev/null; then
+    #                : # command-not-found handler already installed
+    #            else
+    #                echo '[ ** ] syncbin now supports command-not-found, install using `sudo apt-get install command-not-found`'
+    #            fi
+    #        fi
+    #    fi
+    #    if [[ ${OLDMINOR} -lt 7 ]]; then
+    #        if where lns &> /dev/null; then
+    #            # lns already installed
+    #        else
+    #            mkdir -p ~/bin &&
+    #            cd ~/bin
+    #            if (where curl &> /dev/null && curl -Ls http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -) || (where wget &> /dev/null && wget -qO - http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -); then
+    #                rm -f lns.tar.gz
+    #                mv lns .lnsdir
+    #                mv .lnsdir/lns lns
+    #                rm -rf .lnsdir
+    #                chmod +x lns
+    #                cd -
+    #            else
+    #                echo '[ !! ] failed to install lns, you can install manually from http://www.chiark.greenend.org.uk/~sgtatham/utils/' >&2
+    #            fi
+    #        fi
+    #    fi
+    #fi
     echo '[ ** ]' "syncbin has been updated from ${OLD} to ${NEW}, relog for changes to take effect"
     exit 0
 fi
