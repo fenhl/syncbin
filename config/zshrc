@@ -36,6 +36,7 @@ COMPLETION_WAITING_DOTS="true"
 DISABLE_CORRECTION="true"
 #DISABLE_UNTRACKED_FILES_DIRTY="true" # disable marking untracked files under VCS as dirty. This makes repository status check for large repositories much, much faster.
 
+setopt auto_cd # using a directory as a command cds there instead
 unsetopt hist_verify # don't “verify” history expansions (meaning I have to hit return twice), run them directly
 setopt interactive_comments # allow comments in interactive shells
 setopt list_packed # try to make menu completion more compact
