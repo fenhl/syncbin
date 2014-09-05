@@ -94,23 +94,16 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     if where gem-wrapper &> /dev/null; then
         gem-wrapper
     fi
-    print-progress '===.' 'running startup scripts: hub'
-    if [[ -d /opt/hub ]] && [[ -d ~/hub ]]; then
-        echo '[ !! ] warning: /opt/hub and ~/hub both exist' >&2
-        print-progress '===.' 'running startup scripts: hub'
+    print-progress '===.' 'running startup scripts: gitdir'
+    if [[ -d /opt/hub ]]; then
+        echo '[ !! ] warning: /opt/hub exists' >&2
+        print-progress '===.' 'running startup scripts: gitdir'
     fi
-    #TODO add a script that updates the hubdirs and labdirs
-    #if where hub &> /dev/null; then
-    #    if [[ -d /opt/hub/fenhl/syncbin ]]; then
-    #        cd /opt/hub/fenhl/syncbin &&
-    #        hub pull > /dev/null &&
-    #        cd - > /dev/null
-    #    elif [[ -d ${HOME}/hub/fenhl/syncbin ]]; then
-    #        cd ${HOME}/hub/fenhl/syncbin &&
-    #        hub pull > /dev/null &&
-    #        cd - > /dev/null
-    #    fi
-    #fi
+    if [[ -d ~/hub ]]; then
+        echo '[ !! ] warning: ~/hub exists' >&2
+        print-progress '===.' 'running startup scripts: gitdir'
+    fi
+    #TODO add a script that updates the gitdirs
     print-progress '===.' 'running startup scripts: compinit'
     if where compinit &> /dev/null; then
         compinit -D -u

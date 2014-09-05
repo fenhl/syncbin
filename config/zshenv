@@ -15,10 +15,13 @@ PATH="/usr/local/opt/ruby/bin:${PATH}"
 PATH="/opt/local/sbin:${PATH}"
 PATH="/opt/local/bin:${PATH}"
 PATH="/opt/wurstmineberg/bin:${PATH}"
+PATH="/opt/git/github.com/fenhl/syncbin/master:${PATH}"
 PATH="/opt/hub/fenhl/syncbin:${PATH}"
+PATH="${HOME}/git/github.com/fenhl/syncbin/master:${PATH}"
 PATH="${HOME}/hub/fenhl/syncbin:${PATH}"
 PATH="${HOME}/bin:${PATH}"
 # appending to $PATH
+PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/3.5/bin"
 PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/3.4/bin"
 PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/3.3/bin"
 PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/2.7/bin"
@@ -46,11 +49,11 @@ else
 fi
 export MAILCHECK=60
 
-# github repos
-if [[ -d /opt/hub ]]; then
-    export HUB=/opt/hub
-elif [[ -d ~/hub ]]; then
-    export HUB=${HOME}/hub
+# git repos
+if [[ -d /opt/git ]]; then
+    export GITDIR=/opt/git
+elif [[ -d ~/git ]]; then
+    export GITDIR=${HOME}/git
 fi
 
 # print at university
@@ -58,11 +61,11 @@ export CUPS_SERVER=print.coli.uni-saarland.de
 
 # Python modules and interactive mode config
 if [[ -n ${PYTHONPATH} ]]; then
-    export PYTHONPATH="/opt/py:${HOME}/py:/opt/hub/fenhl/syncbin/python:${HOME}/hub/fenhl/syncbin/python:/usr/lib/python3.5:/usr/lib/python3.4:/usr/lib/python3.3:${PYTHONPATH}"
+    export PYTHONPATH="/opt/py:${HOME}/py:/opt/git/github.com/fenhl/syncbin/master/python:${HOME}/git/github.com/fenhl/syncbin/master/python:/usr/lib/python3.5:/usr/lib/python3.4:/usr/lib/python3.3:${PYTHONPATH}"
 else
-    export PYTHONPATH="/opt/py:${HOME}/py:/opt/hub/fenhl/syncbin/python:${HOME}/hub/fenhl/syncbin/python:/usr/lib/python3.5:/usr/lib/python3.4:/usr/lib/python3.3"
+    export PYTHONPATH="/opt/py:${HOME}/py:/opt/git/github.com/fenhl/syncbin/master/python:${HOME}/git/github.com/fenhl/syncbin/master/python:/usr/lib/python3.5:/usr/lib/python3.4:/usr/lib/python3.3"
 fi
-export PYTHONSTARTUP="${HUB}/fenhl/syncbin/config/pythonstartup.py"
+export PYTHONSTARTUP="${GITDIR}/fenhl/syncbin/master/config/pythonstartup.py"
 
 # TeX and LaTeX config
 export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"
