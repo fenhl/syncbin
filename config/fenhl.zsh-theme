@@ -140,6 +140,8 @@ function syncbin-prompt-disk-space {
     fi
 }
 
+setopt prompt_subst # make sure the functions in the prompts are actually called
+
 PROMPT='[$(syncbin-prompt-user)$(syncbin-prompt-host)$(syncbin-prompt-path)$(syncbin-prompt-symbol)] '
 RPROMPT='%F{red}$(syncbin-prompt-git-status)$(syncbin-prompt-battery-charge)$(syncbin-prompt-disk-space)%(?..[exit: %?])%f'
 PROMPT2='zsh %_> '
