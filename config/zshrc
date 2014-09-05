@@ -21,6 +21,12 @@ stty -echo
 
 printf '[....] defining environment variables and aliases\r'
 
+if [[ -d /opt/git/github.com/fenhl/syncbin/master/config ]]; then
+    . /opt/git/github.com/fenhl/syncbin/master/config/fenhl.zsh-theme
+elif [[ -d ~/git/github.com/fenhl/syncbin/master/config ]]; then
+    . ~/git/github.com/fenhl/syncbin/master/config
+fi
+
 # theme settings
 DEFAULT_USER="fenhl"
 DEFAULT_HOST="fenubookair.local"

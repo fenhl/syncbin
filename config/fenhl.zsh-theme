@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Fenhl's (http://fenhl.net/) personal oh-my-zsh theme
+# Fenhl's (http://fenhl.net/) personal zsh theme. Can be used with or without oh-my-zsh.
 
 function syncbin-prompt-user {
     if [[ $(whoami) == $DEFAULT_USER ]]; then
