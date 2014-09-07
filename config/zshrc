@@ -1,5 +1,5 @@
-# don't show input while loading
-stty -echo
+stty -echo # don't show input while loading
+stty -ixon # disable flow control
 
 #printf '[....] loading oh-my-zsh\r'
 #
