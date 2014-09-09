@@ -65,7 +65,7 @@ if [[ -n ${PYTHONPATH} ]]; then
 else
     export PYTHONPATH="/opt/py:${HOME}/py:/opt/git/github.com/fenhl/syncbin/master/python:${HOME}/git/github.com/fenhl/syncbin/master/python:/usr/lib/python3.5:/usr/lib/python3.4:/usr/lib/python3.3"
 fi
-export PYTHONSTARTUP="${GITDIR}/fenhl/syncbin/master/config/pythonstartup.py"
+export PYTHONSTARTUP="${GITDIR}/github.com/fenhl/syncbin/master/config/pythonstartup.py"
 
 # TeX and LaTeX config
 export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"
