@@ -35,6 +35,7 @@ else
         if alias ga > /dev/null; then
             unalias ga
         fi
+        alias gd='git diff --color | less -R'
         alias history='fc -il 1'
         alias http='python3 -m SimpleHTTPServer'
         alias l='ls -BFahl'
@@ -99,6 +100,15 @@ else
         alias rt='t retweet'
         alias ssync='rsync --rsh=ssh'
         alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"
+        if ! (which svg2pdf &> /dev/null); then
+            alias svg2pdf='cairosvg -f pdf'
+        fi
+        if ! (which svg2png &> /dev/null); then
+            alias svg2png='cairosvg -f png'
+        fi
+        if ! (which svg2ps &> /dev/null); then
+            alias svg2ps='cairosvg -f ps'
+        fi
         alias syncbin-version='cat ${HUB:-/opt/hub}/fenhl/syncbin/version.txt'
         if ! (which tac &> /dev/null); then
             alias tac='tail -r'
