@@ -49,7 +49,7 @@ function syncbin-prompt-path {
     fi
 }
 
-function syncbin-prompt-symbol {
+function syncbin-prompt-shell {
     if [[ $(type accio) == "accio is an alias for . accio" ]]; then
         echo '%%'
     else
