@@ -27,37 +27,23 @@ function syncbin-prompt-host {
     fi
 }
 
+function syncbin-prompt-background {
+    echo '  ' #TODO
+}
+
 function syncbin-prompt-path {
-    if [[ $PWD == '/' ]]; then
-        if [[ $PWD == $HOME ]]; then
-            echo '/'
-        else
-            echo '%B%F{white}/%b%f'
-        fi
+    if [[ $PWD == $HOME ]]; then
+        echo ' '
+    elif [[ $PWD == '/' ]]; then
+        echo '%B%F{white}/%b%f'
     elif (( $+path[(r)$PWD] )); then
-        if [[ $PWD == $HOME ]]; then
-            echo 'b'
-        else
-            echo '%B%F{white}b%b%f'
-        fi
+        echo '%B%F{white}b%b%f'
     elif git branch &> /dev/null; then
-        if [[ $PWD == $HOME ]]; then
-            echo 'g'
-        else
-            echo '%B%F{white}g%b%f'
-        fi
+        echo '%B%F{white}g%b%f'
     elif hg root &> /dev/null; then
-        if [[ $PWD == $HOME ]]; then
-            echo 'm'
-        else
-            echo '%B%F{white}m%b%f'
-        fi
+        echo '%B%F{white}m%b%f'
     elif ishome &> /dev/null; then 
-        if [[ $PWD == $HOME ]]; then
-            echo '~'
-        else
-            echo '%B%F{white}~%b%f'
-        fi
+        echo '%B%F{white}~%b%f'
     else
         echo '%B%F{white}.%b%f'
     fi
@@ -142,6 +128,6 @@ function syncbin-prompt-disk-space {
 
 setopt prompt_subst # make sure the functions in the prompts are actually called
 
-PROMPT='[$(syncbin-prompt-user)$(syncbin-prompt-host)$(syncbin-prompt-path)$(syncbin-prompt-symbol)] '
+PROMPT='[$(syncbin-prompt-user)$(syncbin-prompt-host)$(syncbin-prompt-path)$(syncbin-prompt-shell)] '
 RPROMPT='%F{red}$(syncbin-prompt-git-status)$(syncbin-prompt-battery-charge)$(syncbin-prompt-disk-space)%(?..[exit: %?])%f'
-PROMPT2='zsh %_> '
+PROMPT2='         zsh %_> '
