@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/zsh
+
 if which tac &> /dev/null; then
     tac $@ | less
 else

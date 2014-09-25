@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/zsh
+
 if [[ $(pwd) == / ]]; then
     printf '/'
 else
