@@ -9,6 +9,10 @@ else
         alias -- -='cd -'
         alias accio='. accio'
         alias adu='sudo aptitude update && sudo aptitude full-upgrade'
+        function brew-caveats {
+            brew info ${@:-$(brew list)} | awk '/^==> Caveats$/,/^[a-z][a-zA-Z0-9_+-]+: stable |^==> (Dependencies|Options)$/'
+        }
+        alias caveats='brew-caveats'
         alias chmox='chmod +x'
         function date {
             if [ "$#" -gt 0 ]; then
