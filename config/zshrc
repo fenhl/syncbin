@@ -13,7 +13,7 @@ stty -ixon # disable flow control
 #DISABLE_UPDATE_PROMPT=true
 #export UPDATE_ZSH_DAYS=1
 #
-#plugins=(autojump brew command-not-found encode64 git mosh osx pip ruby terinalapp zsh-syntax-highlighting) #TODO load these manually or replace them
+#plugins=(autojump brew command-not-found encode64 git mosh osx pip ruby terinalapp) #TODO load these manually or replace them
 #
 #printf '[....] updating omz     \r'
 #
@@ -86,11 +86,11 @@ bindkey . rationalise_dot
 #zstyle ":completion:*:descriptions" format "%B%d%b" # always show completion type in menu completion
 
 # additional completions
-fpath=(~/.config/syncbin/zsh-completions /usr/local/share/zsh-completions /opt/git/github.com/zsh-users/zsh-completions/master/src ~/git/github.com/zsh-users/zsh-completions/master/src $fpath)
+fpath=(~/.config/syncbin/zsh-completions /usr/local/share/zsh-completions /opt/git/github.com/zsh-users/zsh-completions/master/src ~/git/github.com/zsh-users/zsh-completions/master/src /usr/local/share/zsh-completions $fpath)
 
 # access the online help, for brew
 if where brew &> /dev/null; then
-    unalias run-help
+    unalias run-help &> /dev/null
     autoload run-help
     HELPDIR=/usr/local/share/zsh/helpfiles
 fi
@@ -103,6 +103,9 @@ fi
 . syncbin-startup
 
 printf '[====] starting zsh session   \r'
+
+# load syntax highlighting
+. /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # reënable input
 stty echo
