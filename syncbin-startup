@@ -21,6 +21,17 @@ function print-progress {
     fi
 }
 
+function print-warning {
+    if where clear-eol &> /dev/null; then
+        printf '[ !! ] '
+        clear-eol
+        printf 'warning: '"$2"'\n'
+    else
+        printf '[ !! ] warning: '"$2"'\n'
+    fi
+    print-progress "$2" "$3"
+}
+
 lockdir=/tmp/syncbin-startup.lock
 
 IGNOREINET=1
@@ -47,7 +58,7 @@ while [[ $# -gt "0" ]]; do
 done
 
 if [[ "$IGNORELOCK" == "0" ]]; then
-    echo '[ !! ] warning: releasing startup lock           ' >&2
+    print-warning 'releasing startup lock' '=...' 'acquiring startup lock'
     rm -rf "$lockdir"
 else
     print-progress '=...' 'acquiring startup lock'
@@ -68,7 +79,7 @@ else
     trap 'rm -rf "$lockdir"' 0 # remove lock when script finishes
 fi
 
-print-progress '==..' 'running startup scripts: syncbin-hasinet'
+print-progress '==..' 'running startup scripts: syncbin hasinet'
 
 if [[ "$IGNOREINET" == "1" ]] && where syncbin-hasinet &> /dev/null; then
     syncbin-hasinet
@@ -96,22 +107,22 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     fi
     print-progress '===.' 'running startup scripts: gitdir'
     if [[ -d /opt/hub ]]; then
-        echo '[ !! ] warning: /opt/hub exists' >&2
-        print-progress '===.' 'running startup scripts: gitdir'
+        print-warning '/opt/hub exists' '===.' 'running startup scripts: gitdir'
     fi
     if [[ -d ~/hub ]]; then
-        echo '[ !! ] warning: ~/hub exists' >&2
-        print-progress '===.' 'running startup scripts: gitdir'
+        print-warning '~/hub exists' '===.' 'running startup scripts: gitdir'
     fi
     #TODO add a script that updates the gitdirs
     print-progress '===.' 'running startup scripts: compinit'
     if where compinit &> /dev/null; then
         compinit -D -u
+    else
+        print-warning 'could not initialize completion: compinit not found' '===.' 'running startup scripts: compinit'
     fi
-    print-progress '===.' 'running startup scripts: syncbin-update'
+    print-progress '===.' 'running startup scripts: syncbin update'
     syncbin update
 else
-    echo '[ !! ] warning: no internet connection, skipping startup scripts' >&2
+    print-warning 'no internet connection, skipping startup scripts' '==..' 'running startup scripts: syncbin hasinet'
 fi
 print-progress '====' 'running startup scripts: zshrc'
 if where zshrc &> /dev/null; then
