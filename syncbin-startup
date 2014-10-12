@@ -114,11 +114,8 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     fi
     #TODO add a script that updates the gitdirs
     print-progress '===.' 'running startup scripts: compinit'
-    if where compinit &> /dev/null; then
-        compinit -D -u
-    else
-        print-warning 'could not initialize completion: compinit not found' '===.' 'running startup scripts: compinit'
-    fi
+    autoload -U compinit
+    compinit -D -u
     print-progress '===.' 'running startup scripts: syncbin update'
     syncbin update
 else
