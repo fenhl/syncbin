@@ -25,9 +25,9 @@ function print-warning {
     if where clear-eol &> /dev/null; then
         printf '[ !! ] '
         clear-eol
-        printf 'warning: '"$2"'\n'
+        printf 'warning: '"$1"'\n'
     else
-        printf '[ !! ] warning: '"$2"'\n'
+        printf '[ !! ] warning: '"$1"'\n'
     fi
     print-progress "$2" "$3"
 }
