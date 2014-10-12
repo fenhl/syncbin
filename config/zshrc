@@ -109,7 +109,15 @@ fi
 printf 'starting zsh session\r'
 
 # load syntax highlighting
-. /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [[ -d /usr/local/share/zsh-syntax-highlighting ]]; then # Homebrew
+    . /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [[ -d /opt/git/github.com/zsh-users/zsh-syntax-highlighting/master ]]; then # global gitdir
+    #TODO update in syncbin-startup
+    . /opt/git/github.com/zsh-users/zsh-syntax-highlighting/master/zsh-syntax-highlighting.zsh
+elif [[ -d ~/git/github.com/zsh-users/zsh-syntax-highlighting/master ]]; then # local gitdir
+    #TODO update in syncbin-startup
+    . ~/git/github.com/zsh-users/zsh-syntax-highlighting/master/zsh-syntax-highlighting.zsh
+fi
 
 # reënable input
 stty echo
