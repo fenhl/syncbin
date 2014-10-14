@@ -42,12 +42,12 @@ else
         alias gd='git diff --color | less -R'
         alias history='fc -il 1'
         alias http='python3 -m SimpleHTTPServer'
-        alias l='ls -BFahl'
+        alias l='ls -BFGahl'
         if alias ll > /dev/null; then
             unalias ll
         fi
         function ll {
-            CLICOLOR_FORCE=1 ls -BFGahl "$@" | less
+            CLICOLOR_FORCE=1 ls -BFGahl "$@" | less -R
         }
         alias mkcd='take'
         if ! (which pip3 &> /dev/null); then
