@@ -49,6 +49,11 @@ else
         function ll {
             CLICOLOR_FORCE=1 ls -BFGahl "$@" | less -R
         }
+        function mc {
+            cd /Applications
+            java -d64 -Xmx1024M -jar Minecraft.app/Contents/Resources/Java/Bootstrap.jar
+            return $?
+        }
         alias mkcd='take'
         if ! (which pip3 &> /dev/null); then
             if which pip-3.5 &> /dev/null; then
