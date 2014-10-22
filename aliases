@@ -117,6 +117,10 @@ else
         if ! (which tac &> /dev/null); then
             alias tac='tail -r'
         fi
+        function take {
+            mkdir -p "$1" &&
+            cd "$1"
+        }
         if ! (which tweet &> /dev/null); then
             alias tweet='t update'
         fi
