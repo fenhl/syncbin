@@ -4,14 +4,16 @@
 
 Usage:
   playlist
-  playlist add-from <path>
-  playlist add-random <path>
+  playlist [options] add-from <path>
+  playlist [options] add-random <path>
   playlist -h | --help
   playlist --version
 
 Options:
-  -h, --help  Print this message and exit.
-  --version   Print version info and exit.
+  -a, --all              Add all items in the directory. Overrides `--number'.
+  -h, --help             Print this message and exit.
+  -n, --number=<number>  Add this many items maximum. Set <number> to `all' to add all items in the directory. Defaults to `all' for `add-random', and `1' for `add-from'.
+  --version              Print version info and exit.
 """
 
 import sys
@@ -40,13 +42,26 @@ if __name__ == '__main__':
         else:
             found = False
             dir_iterator = (mpd_root / path).parent.iterdir()
-        for file in sorted(dir_iterator):
-            if file.name.startswith(path.name):
+        amount = float('inf') if arguments['--all'] or arguments['--number'] == 'all' else (float('inf') if arguments['--number'] is None else int(arguments['--number']))
+        i = 0
+        for f in sorted(dir_iterator):
+            if f.name.startswith(path.name):
                 found = True
             if found:
-                subprocess.call(['mpc', 'add', str(file.relative_to(mpd_root))])
+                if i >= amount:
+                    break
+                subprocess.call(['mpc', 'add', str(f.relative_to(mpd_root))])
+                i += 1
     elif arguments['add-random']:
-        sys.exit(subprocess.call(['mpc', 'add', random.choice(subprocess.check_output(['mpc', 'ls', arguments['<path>']]).decode('utf-8').strip().split('\n'))]))
+        tracks = subprocess.check_output(['mpc', 'ls', arguments['<path>']]).decode('utf-8').strip().split('\n')
+        random.shuffle(tracks)
+        amount = float('inf') if arguments['--all'] or arguments['--number'] == 'all' else (1 if arguments['--number'] is None else int(arguments['--number']))
+        for i, track in enumerate(tracks):
+            if i >= amount:
+                break
+            exit_status = subprocess.call(['mpc', 'add', track])
+            if exit_status != 0:
+                sys.exit(exit_status)
     else:
         mpc_playlist = subprocess.Popen(['mpc', 'playlist', '--format=%position% %file%'], stdout=subprocess.PIPE)
         for byte_line in mpc_playlist.stdout:
