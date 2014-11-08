@@ -5,20 +5,31 @@ if __name__ != '__main__':
 
 import sys
 
+sys.path.append('/opt/py')
+
+import basedir
+import datetime
 import subprocess
 
 with open('/dev/null', 'a') as dev_null:
     if subprocess.call(['which', 'softwareupdate'], stdout=dev_null, stderr=subprocess.STDOUT) != 0:
         sys.exit(2)
 
+data_file = basedir.data_dirs('syncbin/startup.json').lazy_json(existing_only=True, default={'lastSoftwareUpdate': '1970-01-01 00:00:00'}) #TODO remove existing_only in favor of adding correct error handling to lazyjson.MultiFile
+
+if datetime.datetime.strptime(data_file['lastSoftwareUpdate'].value(), '%Y-%m-%d %H:%M:%S') >= datetime.datetime.utcnow() - datetime.timedelta(hours=8):
+    sys.exit() # software update has run in the last 8 hours, no need to run again yet
+
 softwareupdate = subprocess.Popen(['softwareupdate', '--list'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 out, _ = softwareupdate.communicate()
 for line in out.decode('utf-8').splitlines():
     if line == 'No new software available.':
-        sys.exit(0)
+        data_file['lastSoftwareUpdate'] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+        sys.exit()
     if line.strip().startswith('*'):
         break
 else:
     sys.exit(1)
 
 print('[OS X] Software updates available. Install with `sudo softwareupdate -ir`.')
+data_file['lastSoftwareUpdate'] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
