@@ -135,6 +135,7 @@ else
             sudo rmdir "$1"
         }
         alias view='less' # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
+        alias whatismyip='curl ifconfig.me'
         if [ -x ~/bin/aliases ]; then
             . ~/bin/aliases define
         fi
