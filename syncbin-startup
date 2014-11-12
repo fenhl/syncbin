@@ -98,7 +98,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     fi
     print-progress '===.' 'running startup scripts: brew'
     if where brew &> /dev/null; then
-        brew update > /dev/null
+        brew update &> /dev/null
         brew upgrade > /dev/null
     fi
     print-progress '===.' 'running startup scripts: gem'
