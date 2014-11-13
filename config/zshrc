@@ -86,7 +86,7 @@ bindkey . rationalise_dot
 #zstyle ":completion:*:descriptions" format "%B%d%b" # always show completion type in menu completion
 
 # additional completions
-fpath=(~/.config/syncbin/zsh-completions /opt/git/github.com/fenhl/syncbin/master/zsh-completions ~/git/github.com/fenhl/syncbin/master/zsh-completions /usr/local/share/zsh-completions /opt/git/github.com/zsh-users/zsh-completions/master/src ~/git/github.com/zsh-users/zsh-completions/master/src $fpath)
+fpath=(~/.config/syncbin/zsh-completions /opt/git/github.com/fenhl/syncbin/master/zsh-completions ~/git/github.com/fenhl/syncbin/master/zsh-completions /usr/local/share/zsh-completions /opt/git/github.com/zsh-users/zsh-completions/master/src ~/git/github.com/zsh-users/zsh-completions/master/src /usr/local/share/zsh/functions $fpath)
 
 # access the online help, for brew
 if where brew &> /dev/null; then
