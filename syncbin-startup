@@ -116,6 +116,9 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     print-progress '===.' 'running startup scripts: compinit'
     autoload -U compinit
     compinit -D -u
+    print-progress '===.' 'running startup scripts: aliases'
+    . aliases define
+    . aliases define-suffix
     print-progress '===.' 'running startup scripts: syncbin update'
     syncbin update
 else

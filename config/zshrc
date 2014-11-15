@@ -19,7 +19,7 @@ stty -ixon # disable flow control
 #
 #source $ZSH/oh-my-zsh.sh
 
-printf '[....] defining environment variables and aliases\r'
+printf '[....] defining environment variables and behavior\r'
 
 . ${GITDIR}/github.com/fenhl/syncbin/master/config/fenhl.zsh-theme
 
@@ -94,10 +94,6 @@ if where brew &> /dev/null; then
     autoload run-help
     HELPDIR=/usr/local/share/zsh/helpfiles
 fi
-
-# add aliases from syncbin
-. ${GITDIR}/github.com/fenhl/syncbin/master/aliases define
-. ${GITDIR}/github.com/fenhl/syncbin/master/aliases define-suffix
 
 # startup scripts
 . syncbin-startup
