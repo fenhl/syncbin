@@ -1,5 +1,6 @@
 USAGE=$'Usage:
-  . aliases define'
+  . aliases define
+  . aliases define-suffix'
 
 if [ $# -ne 1 ]; then
     echo "$USAGE" >&2
@@ -143,9 +144,6 @@ else
         compdef umnt=umount
         alias view='less' # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
         alias whatismyip='curl ifconfig.me'
-        if [ -x ~/bin/aliases ]; then
-            . ~/bin/aliases define
-        fi
         ;;
     define-suffix)
         alias -s json=jpy
