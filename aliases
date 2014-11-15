@@ -86,6 +86,7 @@ else
             clear-eol &&
             mpc current
         }
+        alias pdb='python3 -m pdb'
         alias pip3i='pip3 install'
         alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'
         alias pw='pwgen -1cnsy $1 1'
