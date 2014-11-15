@@ -115,7 +115,7 @@ else
         compdef rr=rm
         alias rt='t retweet'
         alias ssync='rsync --rsh=ssh'
-        alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"
+        alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
         if ! (which svg2pdf &> /dev/null); then
             alias svg2pdf='cairosvg -f pdf'
         fi
