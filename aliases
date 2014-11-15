@@ -37,6 +37,7 @@ else
                 return $?
             fi
         }
+        compdef g=git
         if alias ga > /dev/null; then
             unalias ga
         fi
@@ -50,6 +51,7 @@ else
         function ll {
             CLICOLOR_FORCE=1 ls -BFGahl "$@" | less -R
         }
+        compdef ll=ls
         function mc {
             cd /Applications
             java -d64 -Xmx1024M -jar Minecraft.app/Contents/Resources/Java/Bootstrap.jar
@@ -71,6 +73,7 @@ else
             sudo mkdir "$2" &&
             sudo mount "$1" "$2"
         }
+        compdef mnt=mount
         alias mysql='mysql --silent'
         function pause {
             printf '[....] ' &&
@@ -107,6 +110,7 @@ else
                 return $?
             fi
         }
+        compdef rr=rm
         alias rt='t retweet'
         alias ssync='rsync --rsh=ssh'
         alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"
@@ -127,6 +131,7 @@ else
             mkdir -p "$1" &&
             cd "$1"
         }
+        compdef take=mkdir
         if ! (which tweet &> /dev/null); then
             alias tweet='t update'
         fi
@@ -134,6 +139,7 @@ else
             sudo umount "$1" &&
             sudo rmdir "$1"
         }
+        compdef umnt=umount
         alias view='less' # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
         alias whatismyip='curl ifconfig.me'
         if [ -x ~/bin/aliases ]; then
