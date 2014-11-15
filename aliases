@@ -6,6 +6,7 @@ if [ $# -ne 1 ]; then
 else
     case "$1" in
     define)
+        autoload -U compdef
         alias -- -='cd -'
         alias accio='. accio'
         alias adu='sudo aptitude update && sudo aptitude full-upgrade'
