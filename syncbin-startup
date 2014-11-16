@@ -113,17 +113,17 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         print-warning '~/hub exists' '===.' 'running startup scripts: gitdir'
     fi
     #TODO add a script that updates the gitdirs
-    print-progress '===.' 'running startup scripts: compinit'
-    autoload -U compinit
-    compinit -D -u
-    print-progress '===.' 'running startup scripts: aliases'
-    . aliases define
-    . aliases define-suffix
     print-progress '===.' 'running startup scripts: syncbin update'
     syncbin update
 else
-    print-warning 'no internet connection, skipping startup scripts' '==..' 'running startup scripts: syncbin hasinet'
+    print-warning 'no internet connection, skipping some startup scripts' '==..' 'running startup scripts: syncbin hasinet'
 fi
+print-progress '===.' 'running startup scripts: compinit'
+autoload -U compinit
+compinit -D -u
+print-progress '===.' 'running startup scripts: aliases'
+. aliases define
+. aliases define-suffix
 print-progress '====' 'running startup scripts: zshrc'
 if where zshrc &> /dev/null; then
     . zshrc
