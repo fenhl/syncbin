@@ -134,6 +134,7 @@ else
             cd "$1"
         }
         compdef take=mkdir
+        alias tf='tail -fn0'
         if ! (which tweet &> /dev/null); then
             alias tweet='t update'
         fi
