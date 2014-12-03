@@ -21,6 +21,9 @@ import json
 import lazyjson
 import os
 import subprocess
+import syncbin
+
+__version__ = syncbin.__version__
 
 files = []
 f = files
@@ -59,34 +62,37 @@ def ll(json_node):
     popen.communicate(input=json.dumps(json_node, sort_keys=True, indent=4, separators=(',', ': ')).encode('utf-8'))
 
 def keys(json_node):
-    if not isinstance(json_node, dict) and not isinstance(json_node, lazyjson.Dict):
+    if isinstance(json_node, lazyjson.Node):
+        key_list = [subnode.key_path[-1] for subnode in json_node]
+    elif isinstance(json_node, dict):
+        key_list = sorted(list(json_node.keys()))
+    else:
         print('[ !! ] not an object')
         return
-    key_list = sorted(list(json_node.keys()))
     if len(key_list) == 0:
         print('[ ** ] empty')
     else:
         for key in key_list:
-            if json_node[key] is None:
-                value_type = '[null] '
-            elif isinstance(json_node[key], dict) or isinstance(json_node[key], lazyjson.Dict):
-                value_type = '[obj ] '
-            elif isinstance(json_node[key], list) or isinstance(json_node[key], lazyjson.List):
-                value_type = '[arr ] '
-            elif isinstance(json_node[key], str):
-                value_type = '[str ] '
-            elif isinstance(json_node[key], bool):
-                value_type = '[bool] '
-            elif isinstance(json_node[key], int) or isinstance(json_node[key], float):
-                value_type = '[num ] '
-            else:
-                value_type = '[unkn] '
-            print(value_type + key)
+            print('[{}] {}'.format({
+                type(None): 'null',
+                dict: 'obj ',
+                list: 'arr ',
+                str: 'str ',
+                bool: 'bool',
+                int: 'num ',
+                float: 'num '
+            }.get(val_type(json_node, key), 'unkn'), key))
 
 def quit():
     sys.exit()
 
 q = quit
+
+def val_type(json_node, key):
+    if isinstance(json_node, lazyjson.Node):
+        return type(json_node[key].value())
+    else:
+        return type(json_node[key])
 
 if __name__ == '__main__':
     def displayhook(value):
