@@ -43,6 +43,7 @@ else
             unalias ga
         fi
         alias gd='git diff --color | less -R'
+        alias gpp='git push && cd ../master && g pull && cd -'
         alias history='fc -il 1'
         alias http='python3 -m SimpleHTTPServer'
         alias l='ls -BFGahl'
