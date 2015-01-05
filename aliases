@@ -8,6 +8,11 @@ else
     case "$1" in
     define)
         alias -- -='cd -'
+        function a2edit {
+            sudo nano /etc/apache2/sites-available/"$1"
+            sudo a2ensite "$1" > /dev/null
+            sudo service apache2 reload
+        }
         alias accio='. accio'
         alias adu='sudo aptitude update && sudo aptitude full-upgrade'
         function brew-caveats {
