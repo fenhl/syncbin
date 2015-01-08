@@ -1,23 +1,7 @@
 stty -echo # don't show input while loading
 stty -ixon # disable flow control
 
-#printf '[....] loading oh-my-zsh\r'
-#
-#if [[ -d /opt/hub/robbyrussell/oh-my-zsh ]]; then
-#    ZSH=/opt/hub/robbyrussell/oh-my-zsh
-#else
-#    ZSH=${HOME}/hub/robbyrussell/oh-my-zsh
-#fi
-#ZSH_THEME="fenhl"
-# autoupdate
-#DISABLE_UPDATE_PROMPT=true
-#export UPDATE_ZSH_DAYS=1
-#
 #plugins=(autojump brew command-not-found encode64 git mosh osx pip ruby terinalapp) #TODO load these manually or replace them
-#
-#printf '[....] updating omz     \r'
-#
-#source $ZSH/oh-my-zsh.sh
 
 printf '[....] defining environment variables and behavior\r'
 
@@ -86,7 +70,7 @@ bindkey . rationalise_dot
 #zstyle ":completion:*:descriptions" format "%B%d%b" # always show completion type in menu completion
 
 # additional completions
-fpath=(~/.config/syncbin/zsh-completions /opt/git/github.com/fenhl/syncbin/master/zsh-completions ~/git/github.com/fenhl/syncbin/master/zsh-completions /usr/local/share/zsh-completions /opt/git/github.com/zsh-users/zsh-completions/master/src ~/git/github.com/zsh-users/zsh-completions/master/src /usr/local/share/zsh/functions $fpath)
+fpath=(~/.config/syncbin/zsh-completions /opt/git/github.com/fenhl/syncbin/master/zsh-completions ~/git/github.com/fenhl/syncbin/master/zsh-completions /usr/local/share/zsh-completions /opt/git/github.com/zsh-users/zsh-completions/master/src ~/git/github.com/zsh-users/zsh-completions/master/src /usr/local/share/zsh/functions /usr/local/share/zsh/site-functions $fpath)
 
 # access the online help, for brew
 if where brew &> /dev/null; then
