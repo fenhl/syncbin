@@ -29,6 +29,18 @@ else
                 return $?
             fi
         }
+        function dawg {
+            if [ "$#" -eq 2 ]; then
+                mkdir /tmp/dawg &&
+                mv "$1" /tmp/dawg/dawg &&
+                mkdir "$1" &&
+                mv /tmp/dawg/dawg "$1"/"$2" &&
+                rmdir /tmp/dawg
+            else
+                echo 'Usage: dawg <dir> <subdir>' >&2
+                exit 1
+            fi
+        }
         alias doch='sudo $(fc -ln -1)'
         alias fav='t fave'
         if alias g > /dev/null; then
@@ -144,11 +156,24 @@ else
         if ! (which tweet &> /dev/null); then
             alias tweet='t update'
         fi
+        function udawg {
+            if [ "$#" -eq 2 ]; then
+                mkdir /tmp/dawg &&
+                mv "$1"/"$2" /tmp/dawg/dawg &&
+                rmdir "$1" &&
+                mv /tmp/dawg/dawg "$1" &&
+                rmdir /tmp/dawg
+            else
+                echo 'Usage: undawg <dir> <subdir>' >&2
+                exit 1
+            fi
+        }
         function umnt {
             sudo umount "$1" &&
             sudo rmdir "$1"
         }
         compdef umnt=umount
+        alias undawg='udawg'
         alias view='less' # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
         alias whatismyip='curl ifconfig.me'
         ;;
