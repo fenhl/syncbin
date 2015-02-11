@@ -110,8 +110,8 @@ else
         alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'
         alias pw='pwgen -1cnsy $1 1'
         alias py='python3 -q'
-        alias relog=': $@; zsh; logout'
-        alias retab='tab; logout'
+        alias relog=': $@; zsh && logout'
+        alias retab='tab && logout'
         function rm { # remove current directory when called without arguments
             if [ "$#" -gt 0 ]; then
                 command rm "$@"
