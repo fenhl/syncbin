@@ -98,9 +98,9 @@ else
             printf '[....] ' &&
             mpc current &&
             up &&
+            mpc single on > /dev/null &&
             mpc current --wait > /dev/null &&
-            mpc pause > /dev/null &&
-            mpc seek 0 > /dev/null &&
+            mpc single off > /dev/null &&
             printf '[ ok ] ' &&
             clear-eol &&
             mpc current
