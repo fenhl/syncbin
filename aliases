@@ -94,17 +94,7 @@ else
         }
         compdef mnt=mount
         alias mysql='mysql --silent'
-        function pause {
-            printf '[....] ' &&
-            mpc current &&
-            up &&
-            mpc single on > /dev/null &&
-            mpc current --wait > /dev/null &&
-            mpc single off > /dev/null &&
-            printf '[ ok ] ' &&
-            clear-eol &&
-            mpc current
-        }
+        alias pause='playlist pause-after-current'
         alias pdb='python3 -m pdb'
         alias pip3i='pip3 install'
         alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'

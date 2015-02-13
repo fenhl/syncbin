@@ -6,6 +6,7 @@ Usage:
   playlist
   playlist [options] add-from <path>
   playlist [options] add-random <path>
+  playlist pause-after-current
   playlist -h | --help
   playlist --version
 
@@ -20,7 +21,8 @@ import sys
 
 sys.path.append('/opt/py')
 
-from docopt import docopt
+import blessings
+import docopt
 import os
 import pathlib
 import random
@@ -33,7 +35,7 @@ __version__ = syncbin.__version__
 mpd_root = pathlib.Path(os.environ.get('MPD_ROOT', '/Users/fenhl/Music'))
 
 if __name__ == '__main__':
-    arguments = docopt(__doc__, version='playlist from fenhl/syncbin ' + __version__)
+    arguments = docopt.docopt(__doc__, version='playlist from fenhl/syncbin ' + __version__)
     if arguments['add-from']:
         path = pathlib.Path(arguments['<path>'])
         if (mpd_root / path).is_dir():
@@ -62,6 +64,16 @@ if __name__ == '__main__':
             exit_status = subprocess.call(['mpc', 'add', track])
             if exit_status != 0:
                 sys.exit(exit_status)
+    elif arguments['pause-after-current']:
+        terminal = blessings.Terminal()
+        print('[....] ', end='', flush=True)
+        subprocess.check_call(['mpc', 'current'])
+        print(terminal.move_up(), end='', flush=True)
+        subprocess.check_call(['mpc', 'single', 'on'], stdout=subprocess.DEVNULL)
+        subprocess.check_call(['mpc', 'current', '--wait'], stdout=subprocess.DEVNULL)
+        subprocess.check_call(['mpc', 'single', 'off'], stdout=subprocess.DEVNULL)
+        print('[ ok ] ', end=terminal.clear_eol, flush=True)
+        sys.exit(subprocess.call(['mpc', 'current']))
     else:
         mpc_playlist = subprocess.Popen(['mpc', 'playlist', '--format=%position% %file%'], stdout=subprocess.PIPE)
         for byte_line in mpc_playlist.stdout:
