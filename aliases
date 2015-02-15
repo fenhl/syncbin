@@ -122,6 +122,7 @@ else
         }
         compdef rr=rm
         alias rt='t retweet'
+        alias rustup='curl -s https://static.rust-lang.org/rustup.sh | sudo sh'
         alias ssync='rsync --rsh=ssh'
         alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
         if ! (which svg2pdf &> /dev/null); then
