@@ -59,6 +59,9 @@ else
         if alias ga > /dev/null; then
             unalias ga
         fi
+        function gco {
+            git checkout "$1" 2>/dev/null || g checkout -b "$1"
+        }
         alias gd='git diff --color | less -R'
         alias gpp='git push && cd ../master && g pull && cd -'
         alias history='fc -il 1'
