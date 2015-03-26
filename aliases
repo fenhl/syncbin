@@ -63,6 +63,7 @@ else
             git checkout "$1" 2>/dev/null || g checkout -b "$1"
         }
         alias gd='git diff --color | less -R'
+        alias git-delete-merged-branches='git branch --merged | grep -v "\*" | xargs -n 1 git branch -d'
         alias gpp='git push && cd ../master && g pull && cd -'
         alias history='fc -il 1'
         alias http='python3 -m http.server'
