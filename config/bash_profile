@@ -3,12 +3,12 @@ PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
 PATH="/Library/Frameworks/Python.framework/Versions/3.3/bin:${PATH}"
 PATH="/opt/local/sbin:${PATH}"
 PATH="/opt/local/bin:${PATH}"
-PATH="${HOME}/hub/fenhl/syncbin:${PATH}"
-PATH="/opt/hub/fenhl/syncbin:${PATH}"
+PATH="${HOME}/git/github.com/fenhl/syncbin/master:${PATH}"
+PATH="/opt/git/github.com/fenhl/syncbin/master:${PATH}"
 PATH="${HOME}/bin:${PATH}"
 export PATH
 
-export PYTHONPATH="/opt/py:/usr/lib/python3.3"
+export PYTHONPATH="/opt/py:/usr/lib/python3.3:/usr/lib/python3.4"
 
 export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"
 
@@ -17,14 +17,55 @@ export CUPS_SERVER=print.coli.uni-saarland.de
 export EDITOR=nano
 
 # add aliases from syncbin
-if [[ -d /opt/hub/fenhl/syncbin ]]; then
-    . /opt/hub/fenhl/syncbin/aliases define
-elif [[ -d ~/hub/fenhl/syncbin ]]; then
-    . ~/hub/fenhl/syncbin/aliases define
+if [[ -d /opt/git/github.com/fenhl/syncbin/master ]]; then
+    . /opt/git/github.com/fenhl/syncbin/master/aliases define
+elif [[ -d ~/git/github.com/fenhl/syncbin/master ]]; then
+    . ~/git/github.com/fenhl/syncbin/master/aliases define
 fi
 
 # Fenhl short prompt, bash edition
-PS1="\$(if [[ \$? == 0 ]]; then echo \"[\[\033[1;37m\]??\$(short_prompt_path)\\$\[\033[m\]]\"; else echo \"\[\033[1;31m\][\[\033[1;37m\]??\$(short_prompt_path)\\$\[\033[1;31m\]]\"; fi)\[\e[0m\] "
+
+function syncbin-prompt-user {
+    if [[ $(whoami) == root ]]; then
+        echo '#'
+    elif [[ $(whoami) == fenhl ]]; then
+        echo ' '
+    else
+        echo $(whoami | cut -c 1)
+    fi
+}
+
+function syncbin-prompt-host {
+    if hostname -f > /dev/null 2>&1; then
+        if [[ $(hostname -f) == fenubookair.local ]] || $(which localhost > /dev/null 2>&1) && [[ $(localhost) == fenubookair ]]; then
+            echo ' '
+        else
+            echo $(hostname -f | cut -c 1)
+        fi
+    else
+        echo '?'
+    fi
+}
+
+function syncbin-prompt-path {
+    if [[ "$PWD" == "$HOME" ]]; then
+        echo ' '
+    elif [[ "$PWD" == '/' ]]; then
+        echo '/'
+    elif git branch > /dev/null 2>&1; then
+        echo 'g'
+    elif hg root > /dev/null 2>&1; then
+        echo 'm'
+    else
+        echo '.'
+    fi
+}
+
+function syncbin-prompt-shell {
+    echo '$'
+}
+
+PS1="\$(if [[ \$? == 0 ]]; then echo \"[\[\033[1;37m\]\$(syncbin-prompt-user)\$(syncbin-prompt-host)\$(syncbin-prompt-path)\$(syncbin-prompt-shell)\[\033[m\]]\"; else echo \"\[\033[1;31m\][\[\033[1;37m\]??\$(short_prompt_path)\\$\[\033[1;31m\]]\"; fi)\[\e[0m\] "
 PS2="bash> "
 
 export CLICOLOR=1
