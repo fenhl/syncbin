@@ -16,7 +16,7 @@ githubinstall () {
         return 1
     fi
     
-    if where git &> /dev/null; then
+    if which git &> /dev/null; then
         echo " using git\r"'[ ** ]'
         if [[ -d "${HUB}/$1/$2/master" ]] && { cd "${HUB}/$1/$2/master"; git branch &> /dev/null; }; then
             cd "${HUB}/$1/$2/master"
@@ -55,7 +55,11 @@ if [[ $# -eq 0 ]]; then
     fi
     NEW=$(cat version.txt)
     if [[ $PATCHED == "y" ]] || [[ "${OLD}" != "${NEW}" ]]; then
-        syncbin-update ${OLD} ${NEW}
+        if which zsh &> /dev/null; then
+            syncbin-update ${OLD} ${NEW}
+        else
+            bash syncbin-update ${OLD} ${NEW}
+        fi
         exit $?
     fi
     exit 0
@@ -104,7 +108,7 @@ if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
     #    fi
     #    if [[ ${OLDMINOR} -lt 6 ]]; then
     #        if [[ "$(uname -s)" == "Linux" ]] && [[ "$(lsb_release -si)" == "Debian" ]]; then
-    #            if where "command-not-found" &> /dev/null; then
+    #            if which "command-not-found" &> /dev/null; then
     #                : # command-not-found handler already installed
     #            else
     #                echo '[ ** ] syncbin now supports command-not-found, install using `sudo apt-get install command-not-found`'
@@ -112,12 +116,12 @@ if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
     #        fi
     #    fi
     #    if [[ ${OLDMINOR} -lt 7 ]]; then
-    #        if where lns &> /dev/null; then
+    #        if which lns &> /dev/null; then
     #            # lns already installed
     #        else
     #            mkdir -p ~/bin &&
     #            cd ~/bin
-    #            if (where curl &> /dev/null && curl -Ls http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -) || (where wget &> /dev/null && wget -qO - http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -); then
+    #            if (which curl &> /dev/null && curl -Ls http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -) || (which wget &> /dev/null && wget -qO - http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -); then
     #                rm -f lns.tar.gz
     #                mv lns .lnsdir
     #                mv .lnsdir/lns lns
