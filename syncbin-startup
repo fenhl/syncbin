@@ -101,6 +101,10 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         if [[ -d "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" ]] && [[ -w "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" ]]; then
             brew update &>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log
             brew upgrade &>>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log 2>&2
+        else
+            print-warning 'cannot log brew output' '===.' 'running startup scripts: brew'
+            brew update &> /dev/null
+            brew upgrade > /dev/null
         fi
     fi
     print-progress '===.' 'running startup scripts: gem'
