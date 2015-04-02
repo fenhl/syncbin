@@ -128,8 +128,8 @@ print-progress '===.' 'running startup scripts: compinit'
 autoload -U compinit
 compinit -D -u
 print-progress '===.' 'running startup scripts: aliases'
-. aliases define
-. aliases define-suffix
+. aliases zsh
+. aliases zsh-suffix
 print-progress '====' 'running startup scripts: zshrc'
 if where zshrc &> /dev/null; then
     . zshrc

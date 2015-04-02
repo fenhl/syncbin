@@ -1,25 +1,55 @@
 USAGE=$'Usage:
-  . aliases define
-  . aliases define-suffix'
+  . aliases bash
+  . aliases sh
+  . aliases zsh
+  . aliases zsh-suffix'
 
 if [ $# -ne 1 ]; then
     echo "$USAGE" >&2
 else
     case "$1" in
-    define)
+    bash)
+        alias doch='sudo $(fc -ln -1)'
+        alias relog=': $@; bash && logout'
+        alias view='more'
+        alias where='which -a'
+        . "$0" sh
+        ;;
+    sh)
+        alias accio='. accio'
+        alias adu='sudo aptitude update && sudo aptitude full-upgrade'
+        alias chmox='chmod +x'
+        alias fav='t fave'
+        alias gd='git diff --color | less -R'
+        alias git-delete-merged-branches='git branch --merged | grep -v "\*" | xargs -n 1 git branch -d'
+        alias gpp='git push && cd ../master && g pull && cd -'
+        alias http='python3 -m http.server'
+        alias l='ls -BFGahl'
+        alias mysql='mysql --silent'
+        alias pause='playlist pause-after-current'
+        alias pdb='python3 -m pdb'
+        alias pip3i='pip3 install'
+        alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'
+        alias pw='pwgen -1cnsy $1 1'
+        alias py='python3 -q'
+        alias rt='t retweet'
+        alias rustup='curl -s https://static.rust-lang.org/rustup.sh | sudo sh -s --'
+        alias ssync='rsync --rsh=ssh'
+        alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
+        alias tf='tail -fn0'
+        alias whatismyip='curl ifconfig.me'
+        ;;
+    zsh)
         alias -- -='cd -'
         function a2edit {
             sudo nano /etc/apache2/sites-available/"$1"
             sudo a2ensite "$1" > /dev/null
             sudo service apache2 reload
         }
-        alias accio='. accio'
-        alias adu='sudo aptitude update && sudo aptitude full-upgrade'
         function brew-caveats {
             brew info ${@:-$(brew list)} | awk '/^==> Caveats$/,/^[a-z][a-zA-Z0-9_+-]+: stable |^==> (Dependencies|Options)$/'
         }
         alias caveats='brew-caveats'
-        alias chmox='chmod +x'
         function date {
             if [ "$#" -gt 0 ]; then
                 command date "$@"
@@ -42,7 +72,6 @@ else
             fi
         }
         alias doch='sudo $(fc -ln -1)'
-        alias fav='t fave'
         if alias g > /dev/null; then
             unalias g
         fi
@@ -62,12 +91,7 @@ else
         function gco {
             git checkout "$1" 2>/dev/null || g checkout -b "$1"
         }
-        alias gd='git diff --color | less -R'
-        alias git-delete-merged-branches='git branch --merged | grep -v "\*" | xargs -n 1 git branch -d'
-        alias gpp='git push && cd ../master && g pull && cd -'
         alias history='fc -il 1'
-        alias http='python3 -m http.server'
-        alias l='ls -BFGahl'
         if alias ll > /dev/null; then
             unalias ll
         fi
@@ -97,13 +121,6 @@ else
             sudo mount "$1" "$2"
         }
         compdef mnt=mount
-        alias mysql='mysql --silent'
-        alias pause='playlist pause-after-current'
-        alias pdb='python3 -m pdb'
-        alias pip3i='pip3 install'
-        alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'
-        alias pw='pwgen -1cnsy $1 1'
-        alias py='python3 -q'
         alias relog=': $@; zsh && logout'
         alias retab='tab && logout'
         function rm { # remove current directory when called without arguments
@@ -125,10 +142,6 @@ else
             fi
         }
         compdef rr=rm
-        alias rt='t retweet'
-        alias rustup='curl -s https://static.rust-lang.org/rustup.sh | sudo sh -s --'
-        alias ssync='rsync --rsh=ssh'
-        alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
         if ! (which svg2pdf &> /dev/null); then
             alias svg2pdf='cairosvg -f pdf'
         fi
@@ -147,7 +160,6 @@ else
             cd "$1"
         }
         compdef take=mkdir
-        alias tf='tail -fn0'
         if ! (which tweet &> /dev/null); then
             alias tweet='t update'
         fi
@@ -170,9 +182,9 @@ else
         compdef umnt=umount
         alias undawg='udawg'
         alias view='less' # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
-        alias whatismyip='curl ifconfig.me'
+        . "$0" sh
         ;;
-    define-suffix)
+    zsh-suffix)
         alias -s json=jpy
         alias -s log=ssel
         alias -s txt=less

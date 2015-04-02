@@ -56,9 +56,6 @@ elif [[ -d ~/git ]]; then
     export GITDIR=${HOME}/git
 fi
 
-# print at university
-export CUPS_SERVER=print.coli.uni-saarland.de
-
 # Python modules and interactive mode config
 if [[ -n ${PYTHONPATH} ]]; then
     export PYTHONPATH="/opt/py:${HOME}/py:/opt/git/github.com/fenhl/syncbin/master/python:${HOME}/git/github.com/fenhl/syncbin/master/python:/usr/lib/python3.5:/usr/lib/python3.4:/usr/lib/python3.3:${PYTHONPATH}"
