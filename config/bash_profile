@@ -104,7 +104,7 @@ export PYTHONSTARTUP="${GITDIR}/github.com/fenhl/syncbin/master/config/pythonsta
 export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"
 
 # update syncbin
-. syncbin-update
+bash syncbin-update
 
 # add aliases from syncbin
 if [[ -d /opt/git/github.com/fenhl/syncbin/master ]]; then
