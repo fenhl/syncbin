@@ -98,8 +98,10 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     fi
     print-progress '===.' 'running startup scripts: brew'
     if where brew &> /dev/null; then
-        brew update &> /dev/null
-        brew upgrade > /dev/null
+        if [[ -d "${XDG_DATA_HOME:-~/.local/share}/syncbin" ]] && [[ -w "${XDG_DATA_HOME:-~/.local/share}/syncbin" ]]; then
+            brew update &>! ${XDG_DATA_HOME:-~/.local/share}/syncbin/brew.log
+            brew upgrade &>>! ${XDG_DATA_HOME:-~/.local/share}/syncbin/brew.log 2>&2
+        fi
     fi
     print-progress '===.' 'running startup scripts: gem'
     if where gem-wrapper &> /dev/null; then
