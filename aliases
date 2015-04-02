@@ -13,7 +13,7 @@ else
         alias relog=': $@; bash && logout'
         alias view='more'
         alias where='which -a'
-        . "$0" sh
+        . "$BASH_SOURCE" sh
         ;;
     sh)
         alias accio='. accio'
