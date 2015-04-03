@@ -99,8 +99,11 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     print-progress '===.' 'running startup scripts: brew'
     if where brew &> /dev/null; then
         if [[ -d "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" ]] && [[ -w "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" ]]; then
-            brew update &>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log
-            brew upgrade &>>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log 2>&2
+            BREWUPDATEOUTPUT=$(brew update)
+            if [[ "$BREWUPDATEOUTPUT" != "Already up-to-date." ]]; then
+                echo "$BREWUPDATEOUTPUT" >! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log
+                brew upgrade &>>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log 2>&2
+            fi
         else
             print-warning 'cannot log brew output' '===.' 'running startup scripts: brew'
             brew update &> /dev/null
