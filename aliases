@@ -21,7 +21,6 @@ else
         alias chmox='chmod +x'
         alias fav='t fave'
         alias gd='git diff --color | less -R'
-        alias git-delete-merged-branches='git branch --merged | grep -v "\*" | xargs -n 1 git branch -d'
         alias gpp='git push && cd ../master && g pull && cd -'
         alias http='python3 -m http.server'
         alias l='ls -BFGahl'
