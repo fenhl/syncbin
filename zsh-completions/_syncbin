@@ -1,0 +1,133 @@
+#compdef syncbin
+
+_message_next_arg()
+{
+    argcount=0
+    for word in "${words[@][2,-1]}"
+    do
+        if [[ $word != -* ]] ; then
+            ((argcount++))
+        fi
+    done
+    if [[ $argcount -le ${#myargs[@]} ]] ; then
+        _message -r $myargs[$argcount]
+        if [[ $myargs[$argcount] =~ ".*file.*" || $myargs[$argcount] =~ ".*path.*" ]] ; then
+            _files
+        fi
+    fi
+}
+
+_syncbin ()
+{
+    local context state state_descr line
+    typeset -A opt_args
+
+    _arguments -C \
+        ':command:->command' \
+		'(-h)-h[Print this message and exit.]' \
+		'(--help)--help[Print this message and exit.]' \
+		'(-h)-h[Print this message and exit.]' \
+		'(--help)--help[Print this message and exit.]' \
+		'(--version)--version[Print version info and exit.]' \
+        '*::options:->options'
+
+    case $state in
+        (command)
+            local -a subcommands
+            subcommands=(
+				'install'
+				'bootstrap'
+				'startup'
+				'update'
+				'hasinet'
+            )
+            _values 'syncbin' $subcommands
+        ;;
+
+        (options)
+            case $line[1] in
+                install)
+                    _syncbin-install
+                ;;
+                bootstrap)
+                    _syncbin-bootstrap
+                ;;
+                startup)
+                    _syncbin-startup
+                ;;
+                update)
+                    _syncbin-update
+                ;;
+                hasinet)
+                    _syncbin-hasinet
+                ;;
+            esac
+        ;;
+    esac
+
+}
+
+_syncbin-install ()
+{
+    local context state state_descr line
+    typeset -A opt_args
+
+    _arguments -C \
+        ':command:->command' \
+        
+}
+
+_syncbin-bootstrap ()
+{
+    local context state state_descr line
+    typeset -A opt_args
+
+    if [[ $words[$CURRENT] == -* ]] ; then
+        _arguments -C \
+        ':command:->command' \
+
+    else
+        myargs=('<setup>')
+        _message_next_arg
+    fi
+}
+
+_syncbin-startup ()
+{
+    local context state state_descr line
+    typeset -A opt_args
+
+    _arguments -C \
+        ':command:->command' \
+		'(--ignore-lock)--ignore-lock[When used with the `startup'\'' subcommand, release and ignore the lock that prevents the startup script from running multiple times at once.]' \
+		'(--no-internet-test)--no-internet-test[When used with the `startup'\'' subcommand, do not run `syncbin-hasinet'\'' to test for internet connectivity, but run all other startup scripts regardless.]' \
+        
+}
+
+_syncbin-update ()
+{
+    local context state state_descr line
+    typeset -A opt_args
+
+    if [[ $words[$CURRENT] == -* ]] ; then
+        _arguments -C \
+        ':command:->command' \
+
+    else
+        myargs=('<old>' '<new>')
+        _message_next_arg
+    fi
+}
+
+_syncbin-hasinet ()
+{
+    local context state state_descr line
+    typeset -A opt_args
+
+    _arguments -C \
+        ':command:->command' \
+        
+}
+
+
+_syncbin "$@"
