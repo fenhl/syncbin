@@ -71,7 +71,8 @@ else
     exit 1
 fi
 
-if [[ "$0" == "-zsh" ]] || [[ "$0" == "zsh" ]]; then
+if [[ -z "$BASH" ]]; then
+    # $BASH is unset, assume Zsh
     OLDARRAY=("${(s/./)OLD}")
     OLDMAJOR=$OLDARRAY[1]
     OLDMINOR=$OLDARRAY[2]
@@ -79,7 +80,8 @@ if [[ "$0" == "-zsh" ]] || [[ "$0" == "zsh" ]]; then
     NEWARRAY=("${(s/./)NEW}")
     NEWMAJOR=$NEWARRAY[1]
     NEWMINOR=$NEWARRAY[2]
-elif [[ "$0" == "-bash" ]] || [[ "$0" == "bash" ]]; then
+else
+    # bash
     IFS='.' read -a OLDARRAY <<< "$OLD"
     OLDMAJOR="${OLDARRAY[0]}"
     OLDMINOR="${OLDARRAY[1]}"
@@ -87,9 +89,6 @@ elif [[ "$0" == "-bash" ]] || [[ "$0" == "bash" ]]; then
     IFS='.' read -a NEWARRAY <<< "$NEW"
     NEWMAJOR="${NEWARRAY[0]}"
     NEWMINOR="${NEWARRAY[1]}"
-else
-    echo '[ !! ]' "Failed to read version number, incompatible shell"
-    exit 1
 fi
 
 (mkdir -p "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" && touch "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt" &> /dev/null && echo "$NEW" > "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt" 2> /dev/null) || echo '[ !! ]' "Could not write to ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt, this might break syncbin updates" >&2
