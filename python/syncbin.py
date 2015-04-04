@@ -47,9 +47,20 @@ if __name__ == '__main__':
     elif arguments['startup']:
         sys.exit(subprocess.call(['syncbin-startup'] + (['--ignore-lock'] if arguments['--ignore-lock'] else []) + (['--no-internet-test'] if arguments['--no-internet-test'] else [])))
     elif arguments['update']:
-        if arguments['<old>'] is None:
-            sys.exit(subprocess.call(['syncbin-update']))
+        try:
+            with open('/dev/null', 'a') as dev_null:
+                subprocess.check_call(['which', 'zsh'], stdout=dev_null)
+        except subprocess.CalledProcessError:
+            # Zsh missing, use bash
+            if arguments['<old>'] is None:
+                sys.exit(subprocess.call(['bash', 'syncbin-update']))
+            else:
+                sys.exit(subprocess.call(['bash', 'syncbin-update', arguments['<old>'], arguments['<new>']]))
         else:
-            sys.exit(subprocess.call(['syncbin-update', arguments['<old>'], arguments['<new>']]))
+            # use Zsh
+            if arguments['<old>'] is None:
+                sys.exit(subprocess.call(['syncbin-update']))
+            else:
+                sys.exit(subprocess.call(['syncbin-update', arguments['<old>'], arguments['<new>']]))
     else:
         raise NotImplementedError('unknown subcommand')
