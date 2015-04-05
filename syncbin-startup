@@ -118,6 +118,12 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     if where gem-wrapper &> /dev/null; then
         gem-wrapper
     fi
+    print-progress '===.' 'running startup scripts: rustup'
+    if where multirust &> /dev/null; then
+        rustup --quiet --no-project
+    elif where rustc &> /dev/null; then
+        print-warning 'multirust not installed' '===.' 'running startup scripts: rustup'
+    fi
     print-progress '===.' 'running startup scripts: gitdir'
     if [[ -d /opt/hub ]]; then
         print-warning '/opt/hub exists' '===.' 'running startup scripts: gitdir'
