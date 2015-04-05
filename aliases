@@ -141,7 +141,15 @@ else
         }
         compdef mnt=mount
         alias relog=': $@; zsh && logout'
-        alias retab='tab && logout'
+        function retab {
+            if where tab &> /dev/null; then
+                tab "$@"
+                logout
+            else
+                where tab
+                return $?
+            fi
+        }
         function rm { # remove current directory when called without arguments
             if [ "$#" -gt 0 ]; then
                 command rm "$@"
