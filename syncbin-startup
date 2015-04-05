@@ -11,6 +11,10 @@ OPTIONS=$'Options:
   --ignore-lock       Release and ignore the lock that prevents this script from running multiple times at once.
   --no-internet-test  Do not run `syncbin-hasinet\' to test for internet connectivity, but run all other startup scripts regardless.'
 
+function is-omz-plugin {
+    [[ -f "$1"/plugins/"$2"/"$2".plugin.zsh ]] || [[ -f "$1"/plugins/"$2"/_"$2" ]]
+}
+
 function print-progress {
     if where clear-eol &> /dev/null; then
         printf '['"$1"'] '
@@ -124,13 +128,25 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     #TODO add a script that updates the gitdirs
     print-progress '===.' 'running startup scripts: syncbin update'
     syncbin update
+    print-progress '===.' 'running startup scripts: oh-my-zsh'
+    oh-my-zsh update
 else
     print-warning 'no internet connection, skipping some startup scripts' '==..' 'running startup scripts: syncbin hasinet'
 fi
-print-progress '===.' 'running startup scripts: compinit'
+print-progress '====' 'running startup scripts: oh-my-zsh'
+for plugin ($OMZ_PLUGINS); do
+    if is-omz-plugin ${HOME}/git/github.com/robbyrussell/oh-my-zsh/master $plugin; then
+        fpath=(${HOME}/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin $fpath)
+    elif is-omz-plugin /opt/git/github.com/robbyrussell/oh-my-zsh/master $plugin; then
+        fpath=(/opt/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin $fpath)
+    else
+        print-warning 'unknown oh-my-zsh plugin: '"$plugin" '====' 'running startup scripts: oh-my-zsh'
+    fi
+done
+print-progress '====' 'running startup scripts: compinit'
 autoload -U compinit
 compinit -D -u
-print-progress '===.' 'running startup scripts: aliases'
+print-progress '====' 'running startup scripts: aliases'
 . aliases zsh
 . aliases zsh-suffix
 print-progress '====' 'running startup scripts: zshrc'

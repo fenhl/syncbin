@@ -1,7 +1,7 @@
 stty -echo # don't show input while loading
 stty -ixon # disable flow control
 
-#plugins=(autojump brew command-not-found encode64 git mosh osx pip ruby terinalapp) #TODO load these manually or replace them
+OMZ_PLUGINS=(autojump command-not-found encode64 osx ruby terinalapp)
 
 printf '[....] defining environment variables and behavior\r'
 

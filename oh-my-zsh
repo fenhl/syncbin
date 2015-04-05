@@ -1,0 +1,26 @@
+#!/bin/zsh
+
+USAGE=$'Usage:
+  oh-my-zsh update'
+
+if [ $# -ne 1 ]; then
+    echo "$USAGE" >&2
+    exit 1
+else
+    case "$1" in
+    update)
+        if cd /opt/git/github.com/robbyrussell/oh-my-zsh/master && git pull --quiet; then
+            : # updated global gitdir successfully
+        elif cd "${HOME}"/git/github.com/robbyrussell/oh-my-zsh/master && git pull --quiet; then
+            : # updated local gitdir successfully
+        else
+            echo '[ !! ] oh-my-zsh update failed' >&2
+            exit 1
+        fi
+        ;;
+    *)
+        echo "$USAGE" >&2
+        exit 1
+        ;;
+    esac
+fi
