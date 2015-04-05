@@ -53,7 +53,6 @@ else
         alias pw='pwgen -1cnsy $1 1'
         alias py='python3 -q'
         alias rt='t retweet'
-        alias rustup='curl -s https://static.rust-lang.org/rustup.sh | sudo sh -s --'
         alias ssync='rsync --rsh=ssh'
         alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
         alias tf='tail -fn0'
