@@ -210,7 +210,7 @@ else
         alias undawg='udawg'
         alias view='less' # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
         # define aliases from loaded oh-my-zsh plugins
-        for plugin ($OMZ_PLUGINS); do
+        for plugin in $OMZ_PLUGINS; do
             if [ -f ${HOME}/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin/$plugin.plugin.zsh ]; then
                 . ${HOME}/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin/$plugin.plugin.zsh
             elif [ -f /opt/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin/$plugin.plugin.zsh ]; then
