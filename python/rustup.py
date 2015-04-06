@@ -78,7 +78,11 @@ if __name__ == '__main__':
         if subprocess.call(['git', 'branch'], stdout=dev_null, stderr=dev_null) == 0:
             set_status(3, 'updating repo     ')
             subprocess.check_call(['git', 'fetch', '--quiet'])
-            subprocess.check_call(['git', 'merge', '--quiet', 'FETCH_HEAD'], stdout=dev_null)
+            try:
+                subprocess.check_call(['git', 'merge', '--quiet', 'FETCH_HEAD'], stdout=dev_null)
+            except subprocess.CalledProcessError:
+                subprocess.check_call(['git', 'merge', '--abort'])
+                raise
         elif not QUIET:
             print('[ ** ]', 'not a git repo, skipping repo update step')
     set_status(4, 'updating crates')
