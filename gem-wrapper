@@ -11,9 +11,19 @@ with open('/dev/null', 'a') as dev_null:
     if subprocess.call(['which', 'gem'], stdout=dev_null, stderr=subprocess.STDOUT) != 0:
         sys.exit(2)
 
+if not os.path.exists(next(iter(basedir.data_dirs('syncbin/startup.json')))):
+    with open(next(iter(basedir.data_dirs('syncbin/startup.json'))), 'w') as f:
+        print('{}', file=f)
+
+data_file = basedir.data_dirs('syncbin/startup.json').lazy_json(existing_only=True, default={'lastGemUpdate': '1970-01-01 00:00:00'}) #TODO remove existing_only in favor of adding correct error handling to lazyjson.MultiFile
+
+if datetime.datetime.strptime(data_file['lastGemUpdate'].value(), '%Y-%m-%d %H:%M:%S') >= datetime.datetime.utcnow() - datetime.timedelta(hours=2):
+    sys.exit() # gem update check has run in the last 2 hours, no need to run again yet
+
 gem = subprocess.Popen(['gem', 'outdated'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 out, _ = gem.communicate()
 out = out.decode('utf-8')
 if gem.returncode == 0 and out != '':
     print('[ruby] Gem updates available. Install with `sudo gem update`. Outdated gems:')
     print(out[:-1] if out.endswith('\n') else out)
+data_file['lastGemUpdate'] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
