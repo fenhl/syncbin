@@ -5,6 +5,9 @@ if __name__ != '__main__':
 
 import sys
 
+import basedir
+import datetime
+import os.path
 import subprocess
 
 with open('/dev/null', 'a') as dev_null:
