@@ -9,9 +9,9 @@ if [ $# -ne 1 ]; then
 else
     case "$1" in
     update)
-        if cd /opt/git/github.com/robbyrussell/oh-my-zsh/master && git pull --quiet; then
+        if cd /opt/git/github.com/robbyrussell/oh-my-zsh/master &> /dev/null && git pull --quiet; then
             : # updated global gitdir successfully
-        elif cd "${HOME}"/git/github.com/robbyrussell/oh-my-zsh/master && git pull --quiet; then
+        elif cd "${HOME}"/git/github.com/robbyrussell/oh-my-zsh/master &> /dev/null && git pull --quiet; then
             : # updated local gitdir successfully
         else
             echo '[ !! ] oh-my-zsh update failed' >&2
