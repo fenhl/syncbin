@@ -1,7 +1,7 @@
 stty -echo # don't show input while loading
 stty -ixon # disable flow control
 
-OMZ_PLUGINS=(autojump command-not-found encode64 osx ruby terinalapp)
+OMZ_PLUGINS=(autojump command-not-found encode64 osx ruby terminalapp)
 
 printf '[....] defining environment variables and behavior\r'
 
