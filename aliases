@@ -29,7 +29,10 @@ else
             fi
         }
         function gco {
-            git checkout "$1" 2>/dev/null || g checkout -b "$1"
+            git checkout "$@" 2>/dev/null || g checkout -b "$@"
+        }
+        function gd {
+            git diff --color "$@" | less -R
         }
         alias relog=': $@; bash && logout'
         alias view='more'
@@ -41,7 +44,6 @@ else
         alias adu='sudo aptitude update && sudo aptitude full-upgrade'
         alias chmox='chmod +x'
         alias fav='t fave'
-        alias gd='git diff --color | less -R'
         alias gpp='git push && cd ../master && g pull && cd -'
         alias http='python3 -m http.server'
         alias l='ls -BFGahl'
@@ -108,7 +110,10 @@ else
             unalias ga
         fi
         function gco {
-            git checkout "$1" 2>/dev/null || g checkout -b "$1"
+            git checkout "$@" 2>/dev/null || g checkout -b "$@"
+        }
+        function gd {
+            git diff --color "$@" | less -R
         }
         alias history='fc -il 1'
         if alias ll > /dev/null; then
