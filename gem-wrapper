@@ -23,8 +23,14 @@ data_file = basedir.data_dirs('syncbin/startup.json').lazy_json(existing_only=Tr
 if 'lastGemUpdate' in data_file and datetime.datetime.strptime(data_file['lastGemUpdate'].value(), '%Y-%m-%d %H:%M:%S') >= datetime.datetime.utcnow() - datetime.timedelta(hours=2):
     sys.exit() # gem update check has run in the last 2 hours, no need to run again yet
 
-gem = subprocess.Popen(['gem', 'outdated'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-out, _ = gem.communicate()
+try:
+    out = subprocess.check_output(['gem', 'outdated'], stderr=subprocess.STDOUT, timeout=30)
+except subprocess.CalledProcessError:
+    sys.exit('\r' + ' ' * len('[....] running startup scripts: gem') + '\r[ !! ] gem update check failed')
+except subprocess.TimeoutExpired:
+    sys.exit('\r' + ' ' * len('[....] running startup scripts: gem') + '\r[ !! ] gem update check timed out')
+except KeyboardInterrupt:
+    sys.exit('\r' + ' ' * len('[....] running startup scripts: gem') + '\r[ !! ] gem update check cancelled')
 out = out.decode('utf-8')
 if gem.returncode == 0 and out != '':
     print('[ruby] Gem updates available. Install with `sudo gem update`. Outdated gems:')
