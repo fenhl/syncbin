@@ -25,8 +25,14 @@ data_file = basedir.data_dirs('syncbin/startup.json').lazy_json(existing_only=Tr
 if 'lastSoftwareUpdate' in data_file and datetime.datetime.strptime(data_file['lastSoftwareUpdate'].value(), '%Y-%m-%d %H:%M:%S') >= datetime.datetime.utcnow() - datetime.timedelta(hours=8):
     sys.exit() # software update check has run in the last 8 hours, no need to run again yet
 
-softwareupdate = subprocess.Popen(['softwareupdate', '--list'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-out, _ = softwareupdate.communicate()
+try:
+    out = subprocess.check_output(['softwareupdate', '--list'], stderr=subprocess.STDOUT, timeout=50)
+except subprocess.CalledProcessError:
+    sys.exit('\r' + ' ' * len('[....] running startup scripts: softwareupdate') + '\r[ !! ] Software update check failed')
+except subprocess.TimeoutExpired:
+    sys.exit('\r' + ' ' * len('[....] running startup scripts: softwareupdate') + '\r[ !! ] Software update check timed out')
+except KeyboardInterrupt:
+    sys.exit('\r' + ' ' * len('[....] running startup scripts: softwareupdate') + '\r[ !! ] Software update check cancelled')
 for line in out.decode('utf-8').splitlines():
     if line == 'No new software available.':
         data_file['lastSoftwareUpdate'] = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
