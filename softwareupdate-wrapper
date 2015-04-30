@@ -27,6 +27,8 @@ if 'lastSoftwareUpdate' in data_file and datetime.datetime.strptime(data_file['l
 
 try:
     out = subprocess.check_output(['softwareupdate', '--list'], stderr=subprocess.STDOUT, timeout=50)
+except TypeError:
+    sys.exit('\r' + ' ' * len('[....] running startup scripts: softwareupdate') + '\r[ !! ] Software update check failed: outdated Python') # timeout kwarg added in Python 3.3
 except subprocess.CalledProcessError:
     sys.exit('\r' + ' ' * len('[....] running startup scripts: softwareupdate') + '\r[ !! ] Software update check failed')
 except subprocess.TimeoutExpired:
