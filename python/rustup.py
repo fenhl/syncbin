@@ -97,6 +97,7 @@ if __name__ == '__main__':
         sys.exit(cargo_build.returncode)
     exit_status = subprocess.call(['cargo', 'test'])
     if exit_status == 0 and arguments['--run']:
+        os.rmdir(LOCKDIR) # unlock
         try:
             sys.exit(subprocess.call(['cargo', 'run']))
         except KeyboardInterrupt:
