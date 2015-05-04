@@ -36,7 +36,53 @@ function print-warning {
     print-progress "$2" "$3"
 }
 
-lockdir=/tmp/syncbin-startup.lock
+function lockdir {
+    echo /tmp/syncbin-startup-"$1".lock
+}
+
+function lock {
+    if [[ "$IGNORELOCK" == "0" ]]; then
+        print-warning 'releasing startup lock' "$2" 'acquiring startup lock: '"$1"
+        rm -rf "$lockdir"
+    else
+        print-progress "$2" 'acquiring startup lock: '"$1"
+        until mkdir "$(lockdir $1)" &> /dev/null; do
+            sleep 1
+            if [[ "$2" == '=...' ]]; then
+                printf '[.=..]\r'
+                sleep 1
+                printf '[..=.]\r'
+                sleep 1
+                printf '[...=]\r'
+                sleep 1
+                printf '[..=.]\r'
+                sleep 1
+                printf '[.=..]\r'
+                sleep 1
+                printf '[=...]\r'
+            fi
+        done
+        trap 'rm -rf '"$(lockdir $1)" HUP TERM INT # remove lock when script finishes
+    fi
+}
+
+function try-lock {
+    if [[ "$IGNORELOCK" == "0" ]]; then
+        print-warning 'releasing startup lock' "$2" 'acquiring startup lock: '"$1"
+        rm -rf "$lockdir"
+    else
+        if mkdir "$(lockdir $1)" &> /dev/null; then
+            trap 'rm -rf '"$(lockdir $1)" HUP TERM INT # remove lock when script finishes
+        else
+            return 1
+        fi
+    fi
+}
+
+function unlock {
+    rmdir "$(lockdir $1)" # remove lock
+    trap ':' HUP TERM INT # neutralize trap
+}
 
 IGNOREINET=1
 IGNORELOCK=1
@@ -61,29 +107,9 @@ while [[ $# -gt "0" ]]; do
     shift
 done
 
-if [[ "$IGNORELOCK" == "0" ]]; then
-    print-warning 'releasing startup lock' '=...' 'acquiring startup lock'
-    rm -rf "$lockdir"
-else
-    print-progress '=...' 'acquiring startup lock'
-    until mkdir "${lockdir}" &> /dev/null; do
-        sleep 1
-        printf '[.=..]\r'
-        sleep 1
-        printf '[..=.]\r'
-        sleep 1
-        printf '[...=]\r'
-        sleep 1
-        printf '[..=.]\r'
-        sleep 1
-        printf '[.=..]\r'
-        sleep 1
-        printf '[=...]\r'
-    done
-    trap 'rm -rf "$lockdir"' 0 # remove lock when script finishes
-fi
+lock syncbin-omz '=...'
 
-print-progress '==..' 'running startup scripts: syncbin hasinet'
+print-progress '==..' 'running startup script: syncbin hasinet'
 
 if [[ "$IGNOREINET" == "1" ]] && where syncbin-hasinet &> /dev/null; then
     syncbin-hasinet
@@ -91,72 +117,84 @@ if [[ "$IGNOREINET" == "1" ]] && where syncbin-hasinet &> /dev/null; then
 else
     SYNCBINHASINET=0
 fi
+unlock syncbin-omz
 if [[ $SYNCBINHASINET -eq 0 ]]; then
-    print-progress '===.' 'running startup scripts: apt'
     if where apt-get-wrapper &> /dev/null; then
+        lock debian '==..'
+        print-progress '===.' 'running startup script: apt'
         apt-get-wrapper
+        unlock debian
     fi
-    print-progress '===.' 'running startup scripts: softwareupdate'
     if where softwareupdate-wrapper &> /dev/null; then
-        softwareupdate-wrapper
+        try-lock softwareupdate '===.' && { # don't wait for this lock, one check at a time is enough
+            print-progress '===.' 'running startup script: softwareupdate'
+            softwareupdate-wrapper
+        }
+        unlock softwareupdate
     fi
-    print-progress '===.' 'running startup scripts: brew'
+    lock ruby '===.'
+    print-progress '===.' 'running startup script: brew'
     if where brew &> /dev/null; then
         if [[ -d "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" ]] && [[ -w "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" ]]; then
             BREWUPDATEOUTPUT=$(brew update)
             if [[ "$BREWUPDATEOUTPUT" != "Already up-to-date." ]]; then
                 echo "$BREWUPDATEOUTPUT" >! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log
-                brew upgrade &>>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log 2>&2
+                brew upgrade --all &>>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log 2>&2
             fi
         else
-            print-warning 'cannot log brew output' '===.' 'running startup scripts: brew'
+            print-warning 'cannot log brew output' '===.' 'running startup script: brew'
             brew update &> /dev/null
             brew upgrade > /dev/null
         fi
     fi
-    print-progress '===.' 'running startup scripts: gem'
+    print-progress '===.' 'running startup script: gem'
     if where gem-wrapper &> /dev/null; then
         gem-wrapper
     fi
-    print-progress '===.' 'running startup scripts: rustup'
+    unlock ruby
+    print-progress '===.' 'running startup script: rustup'
+    # rustup has its own lock
     if where multirust &> /dev/null; then
         rustup --quiet --no-project
     elif where rustc &> /dev/null; then
-        print-warning 'multirust not installed' '===.' 'running startup scripts: rustup'
+        print-warning 'multirust not installed' '===.' 'running startup script: rustup'
     fi
-    print-progress '===.' 'running startup scripts: gitdir'
+    print-progress '===.' 'running startup script: gitdir'
     if [[ -d /opt/hub ]]; then
-        print-warning '/opt/hub exists' '===.' 'running startup scripts: gitdir'
+        print-warning '/opt/hub exists' '===.' 'running startup script: gitdir'
     fi
     if [[ -d ~/hub ]]; then
-        print-warning '~/hub exists' '===.' 'running startup scripts: gitdir'
+        print-warning '~/hub exists' '===.' 'running startup script: gitdir'
     fi
     #TODO add a script that updates the gitdirs
-    print-progress '===.' 'running startup scripts: syncbin update'
+    lock syncbin-omz '===.'
+    print-progress '===.' 'running startup script: syncbin update'
     syncbin update
-    print-progress '===.' 'running startup scripts: oh-my-zsh'
+    print-progress '===.' 'running startup script: oh-my-zsh'
     oh-my-zsh update
+    unlock syncbin-omz
 else
-    print-warning 'no internet connection, skipping some startup scripts' '==..' 'running startup scripts: syncbin hasinet'
+    print-warning 'no internet connection, skipping some startup script' '==..' 'running startup script: syncbin hasinet'
 fi
-print-progress '====' 'running startup scripts: oh-my-zsh'
+lock syncbin-omz '===.'
+print-progress '====' 'running startup script: oh-my-zsh'
 for plugin ($OMZ_PLUGINS); do
     if is-omz-plugin ${HOME}/git/github.com/robbyrussell/oh-my-zsh/master $plugin; then
         fpath=(${HOME}/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin $fpath)
     elif is-omz-plugin /opt/git/github.com/robbyrussell/oh-my-zsh/master $plugin; then
         fpath=(/opt/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin $fpath)
     else
-        print-warning 'unknown oh-my-zsh plugin: '"$plugin" '====' 'running startup scripts: oh-my-zsh'
+        print-warning 'unknown oh-my-zsh plugin: '"$plugin" '====' 'running startup script: oh-my-zsh'
     fi
 done
-print-progress '====' 'running startup scripts: compinit'
+print-progress '====' 'running startup script: compinit'
 autoload -U compinit
 compinit -D -u
-print-progress '====' 'running startup scripts: aliases'
+print-progress '====' 'running startup script: aliases'
 . aliases zsh
 . aliases zsh-suffix
-print-progress '====' 'running startup scripts: zshrc'
+unlock syncbin-omz
+print-progress '====' 'running startup script: zshrc'
 if where zshrc &> /dev/null; then
     . zshrc
 fi
-rm -rf "$lockdir" # remove lock
