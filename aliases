@@ -51,7 +51,6 @@ else
         alias pdb='python3 -m pdb'
         alias pip3i='pip3 install'
         alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'
-        alias pw='pwgen -1cnsy $1 1'
         alias py='python3 -q'
         alias rt='t retweet'
         alias ssync='rsync --rsh=ssh'
@@ -149,6 +148,16 @@ else
             sudo mount "$1" "$2"
         }
         compdef mnt=mount
+        function pw {
+            if [[ $# -gt 0 ]]; then
+                while [[ $# -gt 0 ]]; do
+                    pwgen -1cnsy "$1" 1
+                    shift
+                done
+            else
+                echo $'Usage:\n  pw <length>' >&2
+            fi
+        }
         alias relog=': $@; zsh && logout'
         function retab {
             if where tab &> /dev/null; then
