@@ -102,6 +102,7 @@ if __name__ == '__main__':
         exit_status = subprocess.call(['cargo', 'test'])
     if exit_status == 0 and arguments['--run']:
         os.rmdir(LOCKDIR) # unlock
+        atexit.unregister(os.rmdir)
         try:
             sys.exit(subprocess.call(['cargo', 'run'] + (['--release'] if arguments['--release'] else [])))
         except KeyboardInterrupt:
