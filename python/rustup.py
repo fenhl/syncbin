@@ -11,6 +11,7 @@ Options:
   -h, --help     Print this message and exit.
   -q, --quiet    Don't print progress.
   --ignore-lock  Release and ignore the lock that prevents this script from running multiple times at once.
+  --release      Build with the `--release' flag and skip tests.
   --run          Add a `cargo run' step at the end.
   --no-project   Only update Rust itself, don't attempt to update any git repo or cargo project.
   --version      Print version info and exit.
@@ -92,14 +93,17 @@ if __name__ == '__main__':
             print('[!!!!]', 'updating crates: failed', file=sys.stderr)
             sys.exit(update_crates.returncode)
     set_status(5, 'update complete')
-    cargo_build = subprocess.Popen(['cargo', 'build'])
+    cargo_build = subprocess.Popen(['cargo', 'build'] + (['--release'] if arguments['--release'] else []))
     if cargo_build.wait() != 0:
         sys.exit(cargo_build.returncode)
-    exit_status = subprocess.call(['cargo', 'test'])
+    if arguments['--release']:
+        exit_status = 0
+    else:
+        exit_status = subprocess.call(['cargo', 'test'])
     if exit_status == 0 and arguments['--run']:
         os.rmdir(LOCKDIR) # unlock
         try:
-            sys.exit(subprocess.call(['cargo', 'run']))
+            sys.exit(subprocess.call(['cargo', 'run'] + (['--release'] if arguments['--release'] else [])))
         except KeyboardInterrupt:
             print()
             sys.exit(130)
