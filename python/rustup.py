@@ -8,11 +8,12 @@ Usage:
   rustup --version
 
 Options:
+  -R, --release  Build with the `--release' flag and skip tests.
+  -c, --crates   Update Cargo.lock even if not ignored.
   -h, --help     Print this message and exit.
   -q, --quiet    Don't print progress.
+  -r, --run      Add a `cargo run' step at the end.
   --ignore-lock  Release and ignore the lock that prevents this script from running multiple times at once.
-  --release      Build with the `--release' flag and skip tests.
-  --run          Add a `cargo run' step at the end.
   --no-project   Only update Rust itself, don't attempt to update any git repo or cargo project.
   --version      Print version info and exit.
 """
@@ -86,12 +87,16 @@ if __name__ == '__main__':
                 raise
         elif not QUIET:
             print('[ ** ]', 'not a git repo, skipping repo update step')
-    set_status(4, 'updating crates')
     with open('/dev/null', 'a') as dev_null:
-        update_crates = subprocess.Popen(['cargo', 'update'], stdout=dev_null)
-        if update_crates.wait() != 0:
-            print('[!!!!]', 'updating crates: failed', file=sys.stderr)
-            sys.exit(update_crates.returncode)
+        if os.path.exists('Cargo.lock'): # `cargo update` complains if no Cargo.lock exists yet
+            if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=dev_null) == 0):
+                set_status(4, 'updating crates')
+                update_crates = subprocess.Popen(['cargo', 'update'], stdout=dev_null)
+                if update_crates.wait() != 0:
+                    print('[!!!!]', 'updating crates: failed', file=sys.stderr)
+                    sys.exit(update_crates.returncode)
+            elif not QUIET:
+                print('[ ** ]', 'Cargo.lock tracked by git, skipping crates update step, `--crates` to override')
     set_status(5, 'update complete')
     cargo_build = subprocess.Popen(['cargo', 'build'] + (['--release'] if arguments['--release'] else []))
     if cargo_build.wait() != 0:
