@@ -44,14 +44,15 @@ if [[ $# -eq 0 ]]; then
         OLD=$(cat version.txt)
     fi
     git fetch readonly master &> /dev/null || git fetch &> /dev/null || {
-        echo '[ !! ] could not fetch syncbin update from remote'
+        echo '[ !! ] could not fetch syncbin update from remote' >&2
         exit 1
     }
     PATCHED="n"
-    if [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
+    if [[ $(git rev-parse HEAD) != $(git ls-remote readonly master | awk '{print $1}') ]] || [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
         PATCHED="y"
         git pull --rebase --quiet readonly master > /dev/null || git pull --rebase --quiet > /dev/null
         if [[ $? -ne 0 ]]; then
+            echo '[ !! ] could not pull syncbin update from remote' >&2
             exit 1
         fi
     fi
