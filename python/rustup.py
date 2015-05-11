@@ -89,7 +89,7 @@ if __name__ == '__main__':
             print('[ ** ]', 'not a git repo, skipping repo update step')
     with open('/dev/null', 'a') as dev_null:
         if os.path.exists('Cargo.lock'): # `cargo update` complains if no Cargo.lock exists yet
-            if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=dev_null) == 0):
+            if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=dev_null) == 0:
                 set_status(4, 'updating crates')
                 update_crates = subprocess.Popen(['cargo', 'update'], stdout=dev_null)
                 if update_crates.wait() != 0:
