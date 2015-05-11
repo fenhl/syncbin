@@ -41,6 +41,7 @@ else
         ;;
     sh)
         alias accio='. accio'
+        alias cargo-lock-to-png='cargo-lock-to-dot Cargo.lock | dot -Tpng > Cargo.png'
         alias chmox='chmod +x'
         alias fav='t fave'
         alias gpp='git push && cd ../master && g pull && cd -'
