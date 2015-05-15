@@ -84,7 +84,7 @@ if __name__ == '__main__':
         sys.exit()
     with open('/dev/null', 'a') as dev_null:
         if subprocess.call(['git', 'branch'], stdout=dev_null, stderr=dev_null) == 0:
-            set_status(3, 'updating repo     ')
+            set_status(3, 'updating repo       ')
             subprocess.check_call(['git', 'fetch', '--quiet'])
             try:
                 subprocess.check_call(['git', 'merge', '--quiet', 'FETCH_HEAD'], stdout=dev_null)
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     with open('/dev/null', 'a') as dev_null:
         if os.path.exists('Cargo.lock'): # `cargo update` complains if no Cargo.lock exists yet
             if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=dev_null) == 0:
-                set_status(4, 'updating crates')
+                set_status(4, 'updating crates     ')
                 update_crates = subprocess.Popen(['cargo', 'update'], stdout=dev_null)
                 if update_crates.wait() != 0:
                     print('[!!!!]', 'updating crates: failed', file=sys.stderr)
