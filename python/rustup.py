@@ -61,18 +61,24 @@ if __name__ == '__main__':
                 # lock acquired
                 atexit.register(os.rmdir, LOCKDIR)
                 break
-    set_status(1, 'updating Rust nightly')
+    set_status(0, 'updating Rust nightly')
     with open('/dev/null', 'a') as dev_null:
         update_nightly = subprocess.Popen(['multirust', 'update', 'nightly'], stdout=dev_null, stderr=dev_null)
         if update_nightly.wait() != 0:
             print('[!!!!]', 'updating Rust nightly: failed', file=sys.stderr)
             sys.exit(update_nightly.returncode)
-    set_status(3 if arguments['--no-project'] else 2, 'updating Rust beta   ')
+    set_status(1, 'updating Rust beta   ')
     with open('/dev/null', 'a') as dev_null:
         update_beta = subprocess.Popen(['multirust', 'update', 'beta'], stdout=dev_null, stderr=dev_null)
         if update_beta.wait() != 0:
             print('[!!!!]', 'updating Rust beta: failed', file=sys.stderr)
             sys.exit(update_beta.returncode)
+    set_status(2, 'updating Rust stable')
+    with open('/dev/null', 'a') as dev_null:
+        update_stable = subprocess.Popen(['multirust', 'update', 'stable'], stdout=dev_null, stderr=dev_null)
+        if update_stable.wait() != 0:
+            print('[!!!!]', 'updating Rust stable: failed', file=sys.stderr)
+            sys.exit(update_stable.returncode)
     if arguments['--no-project']:
         set_status(5, 'update complete   ')
         sys.exit()
