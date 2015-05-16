@@ -88,7 +88,7 @@ if [ "${OSName}" = "OS X" ]; then
     if which brew > /dev/null 2>&1; then
         : # brew is already installed
     elif which ruby > /dev/null 2>&1 && yesno 'Homebrew not found, install now?'; then
-        ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
     if which brew > /dev/null 2>&1; then
         echo '[ ** ] updating Homebrew formulae...'
@@ -108,7 +108,7 @@ fi
 if [ "${OSName}" = "OS X" ]; then
     if which brew > /dev/null 2>&1; then
         echo '[ ** ] installing homebrew-cask'
-        brew tap phinze/homebrew-cask || GitInstallInstructions="install homebrew-cask and GitHub.app, then ${GitInstallInstructions}"
+        brew install caskroom/cask/brew-cask || GitInstallInstructions="install homebrew-cask and GitHub.app, then ${GitInstallInstructions}"
     else
         echo '[ !! ] Homebrew not found, skipping homebrew-cask install'
     fi
