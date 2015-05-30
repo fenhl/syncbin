@@ -83,6 +83,11 @@ get-update () {
                 return 1
             fi
         fi
+        if [[ -d /opt/git/github.com/fenhl/syncbin/master ]]; then
+            cd /opt/git/github.com/fenhl/syncbin/master
+        else
+            cd ~/git/github.com/fenhl/syncbin/master
+        fi
         NEW=$(cat version.txt)
         if [[ $PATCHED != "y" ]] && [[ "${OLD}" == "${NEW}" ]]; then
             PATCH="no"
