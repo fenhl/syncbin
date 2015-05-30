@@ -2,20 +2,20 @@
 
 githubinstall () {
     printf "[....] installing $2"
-    
+
     if [[ -d /opt/git/github.com ]] && [[ -w /opt/git/github.com ]]; then
         HUB=/opt/git/github.com
     else
         HUB=${HOME}/git/github.com
     fi
-    
+
     if mkdir -p "${HUB}/$1/$2" 2> /dev/null && [[ -d "${HUB}/$1/$2" ]]; then
         cd ${HUB}/"$1"/"$2"
     else
         echo "\r"'[!!!!]' "could not create directory ${HUB}/$1/$2" >&2
         return 1
     fi
-    
+
     if which git &> /dev/null; then
         echo " using git\r"'[ ** ]'
         if [[ -d "${HUB}/$1/$2/master" ]] && { cd "${HUB}/$1/$2/master"; git branch &> /dev/null; }; then
@@ -32,124 +32,168 @@ githubinstall () {
     fi
 }
 
-if [[ $# -eq 0 ]]; then
-    if [[ -d /opt/git/github.com/fenhl/syncbin/master ]]; then
-        cd /opt/git/github.com/fenhl/syncbin/master
+get-update () {
+    PATCH="yes"
+    if [[ $# -eq 0 ]]; then
+        get-update public || return 1
+        MODE="private"
+    elif [[ "$1" != "public" ]] && [[ "$1" != "private" ]]; then
+        echo '[ !! ] could not run syncbin update script, wrong arguments' >&2
+        return 1
     else
-        cd ~/git/github.com/fenhl/syncbin/master
+        MODE="$1"
     fi
-    if [[ -r "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt" ]]; then
-        OLD=$(cat "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt")
-    else
-        OLD=$(cat version.txt)
-    fi
-    git fetch readonly master &> /dev/null || git fetch &> /dev/null || {
-        echo '[ !! ] could not fetch syncbin update from remote' >&2
-        exit 1
-    }
-    PATCHED="n"
-    if [[ $(git rev-parse HEAD) != $(git ls-remote readonly master | awk '{print $1}') ]] || [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
-        PATCHED="y"
-        git pull --rebase --quiet readonly master > /dev/null || git pull --rebase --quiet > /dev/null
-        if [[ $? -ne 0 ]]; then
-            echo '[ !! ] could not pull syncbin update from remote' >&2
-            exit 1
-        fi
-    fi
-    NEW=$(cat version.txt)
-    if [[ $PATCHED == "y" ]] || [[ "${OLD}" != "${NEW}" ]]; then
-        if which zsh &> /dev/null; then
-            syncbin-update ${OLD} ${NEW}
+
+    if [[ $# -le 1 ]]; then
+        if [[ -d /opt/git/github.com/fenhl/syncbin/master ]]; then
+            cd /opt/git/github.com/fenhl/syncbin/master
         else
-            bash syncbin-update ${OLD} ${NEW}
+            cd ~/git/github.com/fenhl/syncbin/master
         fi
-        exit $?
+        if [[ -r "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt" ]]; then
+            OLD=$(cat "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt")
+        else
+            OLD=$(cat version.txt)
+        fi
+        if [[ "$MODE" == "private" ]]; then
+            if [[ -d /opt/git/fenhl.net/syncbin-private/master ]]; then
+                cd /opt/git/fenhl.net/syncbin-private/master
+            else
+                cd ~/git/fenhl.net/syncbin-private/master
+            fi
+        fi
+        git fetch readonly master &> /dev/null || git fetch &> /dev/null || {
+            if [[ "$MODE" == "private" ]]; then
+                echo '[ !! ] could not fetch syncbin-private update from remote' >&2
+            else
+                echo '[ !! ] could not fetch syncbin update from remote' >&2
+            fi
+            return 1
+        }
+        PATCHED="n"
+        if [[ $(git rev-parse HEAD) != $(git ls-remote readonly master | awk '{print $1}') ]] || [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
+            PATCHED="y"
+            git pull --rebase --quiet readonly master > /dev/null || git pull --rebase --quiet > /dev/null
+            if [[ $? -ne 0 ]]; then
+                if [[ "$MODE" == "private" ]]; then
+                    echo '[ !! ] could not pull syncbin-private update from remote' >&2
+                else
+                    echo '[ !! ] could not pull syncbin update from remote' >&2
+                fi
+                return 1
+            fi
+        fi
+        NEW=$(cat version.txt)
+        if [[ $PATCHED != "y" ]] && [[ "${OLD}" == "${NEW}" ]]; then
+            PATCH="no"
+        fi
+    elif [[ $# -eq 2 ]]; then
+        OLD="$1"
+        NEW="$2"
+    elif [[ $# -eq 3 ]]; then
+        OLD="$2"
+        NEW="$3"
+    else
+        echo '[ !! ] could not run syncbin update script, wrong arguments' >&2
+        return 1
     fi
-    exit 0
-elif [[ $# -eq 2 ]]; then
-    OLD=$1
-    NEW=$2
+}
+
+update-hooks () {
+    if [[ -z "$BASH" ]]; then
+        # $BASH is unset, assume Zsh
+        OLDARRAY=("${(s/./)OLD}")
+        OLDMAJOR=$OLDARRAY[1]
+        OLDMINOR=$OLDARRAY[2]
+
+        NEWARRAY=("${(s/./)NEW}")
+        NEWMAJOR=$NEWARRAY[1]
+        NEWMINOR=$NEWARRAY[2]
+    else
+        # bash
+        IFS='.' read -a OLDARRAY <<< "$OLD"
+        OLDMAJOR="${OLDARRAY[0]}"
+        OLDMINOR="${OLDARRAY[1]}"
+
+        IFS='.' read -a NEWARRAY <<< "$NEW"
+        NEWMAJOR="${NEWARRAY[0]}"
+        NEWMINOR="${NEWARRAY[1]}"
+    fi
+
+    (mkdir -p "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" && touch "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt" &> /dev/null && echo "$NEW" > "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt" 2> /dev/null) || echo '[ !! ]' "Could not write to ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt, this might break syncbin updates" >&2
+
+    if [[ ${NEWMAJOR} -lt ${OLDMAJOR} ]]; then
+        echo '[ !! ]' "Attempted to downgrade syncbin from ${OLD} to ${NEW}, aborting" >&2
+        exit 1
+    fi
+    if [[ ${NEWMAJOR} -gt ${OLDMAJOR} ]]; then
+        echo '[ ** ] A major revision of syncbin is available. Check the update instructions with `less ${GIT}/github.com/fenhl/syncbin/master/config/update.txt`'
+        exit 0
+    fi
+    if [[ ${NEWMINOR} -lt ${OLDMINOR} ]]; then
+        echo '[ !! ]' "Attempted to downgrade syncbin from ${OLD} to ${NEW}, aborting" >&2
+        exit 1
+    fi
+    if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
+        #if [[ ${OLDMINOR} -lt 3 ]]; then # update to first version with working update script
+        #    echo '[ ** ] To update, the syncbin install script will re-run now.'
+        #    sh config/install.sh || echo '[ !! ] Updating syncbin failed, please run again manually.' >&2
+        #    exit 0
+        #else
+        #    if [[ ${OLDMINOR} -lt 5 ]]; then
+        #        if [[ "$(uname -s)" == "Darwin" ]]; then
+        #            brew install zsh-completions
+        #        else
+        #            githubinstall zsh-users zsh-completions
+        #        fi
+        #    fi
+        #    if [[ ${OLDMINOR} -lt 6 ]]; then
+        #        if [[ "$(uname -s)" == "Linux" ]] && [[ "$(lsb_release -si)" == "Debian" ]]; then
+        #            if which "command-not-found" &> /dev/null; then
+        #                : # command-not-found handler already installed
+        #            else
+        #                echo '[ ** ] syncbin now supports command-not-found, install using `sudo apt-get install command-not-found`'
+        #            fi
+        #        fi
+        #    fi
+        #    if [[ ${OLDMINOR} -lt 7 ]]; then
+        #        if which lns &> /dev/null; then
+        #            # lns already installed
+        #        else
+        #            mkdir -p ~/bin &&
+        #            cd ~/bin
+        #            if (which curl &> /dev/null && curl -Ls http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -) || (which wget &> /dev/null && wget -qO - http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -); then
+        #                rm -f lns.tar.gz
+        #                mv lns .lnsdir
+        #                mv .lnsdir/lns lns
+        #                rm -rf .lnsdir
+        #                chmod +x lns
+        #                cd -
+        #            else
+        #                echo '[ !! ] failed to install lns, you can install manually from http://www.chiark.greenend.org.uk/~sgtatham/utils/' >&2
+        #            fi
+        #        fi
+        #    fi
+        #fi
+        echo '[ ** ]' "syncbin has been updated from ${OLD} to ${NEW}, relog for changes to take effect"
+        exit 0
+    fi
+    echo '[ ** ] syncbin has been patched, relog for changes to take effect'
+}
+
+if [[ $# -ge 1 ]] && [[ "$1" == "hooks" ]]; then
+    if [[ $# -eq 3 ]]; then
+        OLD="$2"
+        NEW="$3"
+        update-hooks
+        exit $?
+    else
+        echo '[ !! ]' 'missing version numbers to run hooks' >&2
+        exit 1
+    fi
 else
-    echo '[ !! ] could not run syncbin update script, wrong arguments' >&2
-    exit 1
+    get-update "$@" &&
+    if [[ "$PATCH" == "yes" ]]; then
+        syncbin update hooks "$OLD" "$NEW" || exit 1
+    fi
 fi
-
-if [[ -z "$BASH" ]]; then
-    # $BASH is unset, assume Zsh
-    OLDARRAY=("${(s/./)OLD}")
-    OLDMAJOR=$OLDARRAY[1]
-    OLDMINOR=$OLDARRAY[2]
-    
-    NEWARRAY=("${(s/./)NEW}")
-    NEWMAJOR=$NEWARRAY[1]
-    NEWMINOR=$NEWARRAY[2]
-else
-    # bash
-    IFS='.' read -a OLDARRAY <<< "$OLD"
-    OLDMAJOR="${OLDARRAY[0]}"
-    OLDMINOR="${OLDARRAY[1]}"
-    
-    IFS='.' read -a NEWARRAY <<< "$NEW"
-    NEWMAJOR="${NEWARRAY[0]}"
-    NEWMINOR="${NEWARRAY[1]}"
-fi
-
-(mkdir -p "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" && touch "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt" &> /dev/null && echo "$NEW" > "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt" 2> /dev/null) || echo '[ !! ]' "Could not write to ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/version.txt, this might break syncbin updates" >&2
-
-if [[ ${NEWMAJOR} -lt ${OLDMAJOR} ]]; then
-    echo '[ !! ]' "Attempted to downgrade syncbin from ${OLD} to ${NEW}, aborting" >&2
-    exit 1
-fi
-if [[ ${NEWMAJOR} -gt ${OLDMAJOR} ]]; then
-    echo '[ ** ] A major revision of syncbin is available. Check the update instructions with `less ${HUB}/fenhl/syncbin/config/update.txt`'
-    exit 0
-fi
-if [[ ${NEWMINOR} -lt ${OLDMINOR} ]]; then
-    echo '[ !! ]' "Attempted to downgrade syncbin from ${OLD} to ${NEW}, aborting" >&2
-    exit 1
-fi
-if [[ ${NEWMINOR} -gt ${OLDMINOR} ]]; then
-    #if [[ ${OLDMINOR} -lt 3 ]]; then # update to first version with working update script
-    #    echo '[ ** ] To update, the syncbin install script will re-run now.'
-    #    sh config/install.sh || echo '[ !! ] Updating syncbin failed, please run again manually.' >&2
-    #    exit 0
-    #else
-    #    if [[ ${OLDMINOR} -lt 5 ]]; then
-    #        if [[ "$(uname -s)" == "Darwin" ]]; then
-    #            brew install zsh-completions
-    #        else
-    #            githubinstall zsh-users zsh-completions
-    #        fi
-    #    fi
-    #    if [[ ${OLDMINOR} -lt 6 ]]; then
-    #        if [[ "$(uname -s)" == "Linux" ]] && [[ "$(lsb_release -si)" == "Debian" ]]; then
-    #            if which "command-not-found" &> /dev/null; then
-    #                : # command-not-found handler already installed
-    #            else
-    #                echo '[ ** ] syncbin now supports command-not-found, install using `sudo apt-get install command-not-found`'
-    #            fi
-    #        fi
-    #    fi
-    #    if [[ ${OLDMINOR} -lt 7 ]]; then
-    #        if which lns &> /dev/null; then
-    #            # lns already installed
-    #        else
-    #            mkdir -p ~/bin &&
-    #            cd ~/bin
-    #            if (which curl &> /dev/null && curl -Ls http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -) || (which wget &> /dev/null && wget -qO - http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz | tar -xzf -); then
-    #                rm -f lns.tar.gz
-    #                mv lns .lnsdir
-    #                mv .lnsdir/lns lns
-    #                rm -rf .lnsdir
-    #                chmod +x lns
-    #                cd -
-    #            else
-    #                echo '[ !! ] failed to install lns, you can install manually from http://www.chiark.greenend.org.uk/~sgtatham/utils/' >&2
-    #            fi
-    #        fi
-    #    fi
-    #fi
-    echo '[ ** ]' "syncbin has been updated from ${OLD} to ${NEW}, relog for changes to take effect"
-    exit 0
-fi
-echo '[ ** ] syncbin has been patched, relog for changes to take effect'

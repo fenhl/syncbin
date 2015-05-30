@@ -194,6 +194,18 @@ print-progress '====' 'running startup script: aliases'
 . aliases zsh
 . aliases zsh-suffix
 unlock syncbin-omz
+print-progress '====' 'running startup script: syncbin-private'
+if [[ -d /opt/git/fenhl.net/syncbin-private/master ]]; then
+    if [[ -x /opt/git/fenhl.net/syncbin-private/master/syncbin-startup ]]; then
+        . /opt/git/fenhl.net/syncbin-private/master/syncbin-startup
+    fi
+elif [[ -d ~/git/fenhl.net/syncbin-private/master ]]; then
+    if [[ -x ~/git/fenhl.net/syncbin-private/master/syncbin-startup ]]; then
+        . ~/git/fenhl.net/syncbin-private/master/syncbin-startup
+    fi
+else
+    print-warning 'syncbin-private not installed' '====' 'running startup script: syncbin-private'
+fi
 print-progress '====' 'running startup script: zshrc'
 if where zshrc &> /dev/null; then
     . zshrc

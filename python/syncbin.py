@@ -7,7 +7,7 @@ Usage:
   syncbin hasinet
   syncbin install
   syncbin startup [--ignore-lock] [--no-internet-test]
-  syncbin update [<old> <new>]
+  syncbin update [public | private | hooks] [<old> <new>]
   syncbin -h | --help
   syncbin --version
 
@@ -47,20 +47,27 @@ if __name__ == '__main__':
     elif arguments['startup']:
         sys.exit(subprocess.call(['syncbin-startup'] + (['--ignore-lock'] if arguments['--ignore-lock'] else []) + (['--no-internet-test'] if arguments['--no-internet-test'] else [])))
     elif arguments['update']:
+        mode = None
+        if arguments['public']:
+            mode = 'public'
+        elif arguments['private']:
+            mode = 'private'
+        elif arguments['hooks']:
+            mode = 'hooks'
         try:
             with open('/dev/null', 'a') as dev_null:
                 subprocess.check_call(['which', 'zsh'], stdout=dev_null)
         except subprocess.CalledProcessError:
             # Zsh missing, use bash
             if arguments['<old>'] is None:
-                sys.exit(subprocess.call(['bash', 'syncbin-update']))
+                sys.exit(subprocess.call(['bash', 'syncbin-update'] + ([] if mode is None else [mode])))
             else:
-                sys.exit(subprocess.call(['bash', 'syncbin-update', arguments['<old>'], arguments['<new>']]))
+                sys.exit(subprocess.call(['bash', 'syncbin-update', arguments['<old>'], arguments['<new>']] + ([] if mode is None else [mode])))
         else:
             # use Zsh
             if arguments['<old>'] is None:
-                sys.exit(subprocess.call(['syncbin-update']))
+                sys.exit(subprocess.call(['syncbin-update'] + ([] if mode is None else [mode])))
             else:
-                sys.exit(subprocess.call(['syncbin-update', arguments['<old>'], arguments['<new>']]))
+                sys.exit(subprocess.call(['syncbin-update', arguments['<old>'], arguments['<new>']] + ([] if mode is None else [mode])))
     else:
         raise NotImplementedError('unknown subcommand')
