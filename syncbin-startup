@@ -169,7 +169,11 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     #TODO add a script that updates the gitdirs
     lock syncbin-omz '===.'
     print-progress '===.' 'running startup script: syncbin update'
-    syncbin update
+    if [[ -d /opt/git/fenhl.net/syncbin-private/master ]] || [[ -d ~/git/fenhl.net/syncbin-private/master ]]; then
+        syncbin update
+    else
+        syncbin update public
+    fi
     print-progress '===.' 'running startup script: oh-my-zsh'
     oh-my-zsh update
     unlock syncbin-omz
