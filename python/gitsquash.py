@@ -24,7 +24,8 @@ __version__ = syncbin.__version__
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='git squash from fenhl/syncbin ' + __version__)
     n = int(arguments['<n>'])
+    commit_message = arguments['--message'] or subprocess.check_output(['git', 'log', '-1', '--pretty=format:%s', 'HEAD~{}'.format(n - 1)])
     if n < 2:
         sys.exit('[!!!!] must squash at least 2 commits')
     subprocess.check_call(['git', 'reset', '--soft', 'HEAD~{}'.format(n)])
-    sys.exit(subprocess.call(['git', 'commit', '-m', arguments['--message'] or subprocess.check_output(['git', 'log', '-1', '--pretty=format:%s', 'HEAD~{}'.format(n - 1)])]))
+    sys.exit(subprocess.call(['git', 'commit', '-m', commit_message]))
