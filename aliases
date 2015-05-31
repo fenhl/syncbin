@@ -41,6 +41,8 @@ else
         . aliases common
         ;;
     sh)
+        . aliases common
+        ;;
     common)
         alias accio='. accio'
         alias cargo-lock-to-png='cargo-lock-to-dot Cargo.lock | dot -Tpng > Cargo.png'
