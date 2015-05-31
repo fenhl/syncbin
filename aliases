@@ -1,5 +1,6 @@
 USAGE=$'Usage:
   . aliases bash
+  . aliases common
   . aliases sh
   . aliases zsh
   . aliases zsh-suffix'
@@ -37,9 +38,10 @@ else
         alias relog=': $@; bash && logout'
         alias view='more'
         alias where='which -a'
-        . "$BASH_SOURCE" sh
+        . aliases common
         ;;
     sh)
+    common)
         alias accio='. accio'
         alias cargo-lock-to-png='cargo-lock-to-dot Cargo.lock | dot -Tpng > Cargo.png'
         alias chmox='chmod +x'
@@ -242,7 +244,7 @@ else
             fi
         done
         # define Bourne shell aliases
-        . "$0" sh
+        . aliases common
         ;;
     zsh-suffix)
         alias -s json=jpy
