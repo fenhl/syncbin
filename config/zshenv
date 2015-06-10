@@ -66,3 +66,6 @@ export PYTHONSTARTUP="${GITDIR}/github.com/fenhl/syncbin/master/config/pythonsta
 
 # TeX and LaTeX config
 export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"
+
+# Atom config
+export ATOM_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}/atom"
