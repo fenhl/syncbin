@@ -3,7 +3,7 @@
 USAGE=$'Usage:
   git delete-merged-branches'
 
-if [ "$#" = 0 ]; then
+if [ "$#" -eq 0 ]; then
     git branch --merged | grep -v "\*" | xargs -n 1 git branch -d
     exit $?
 else

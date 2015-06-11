@@ -1,0 +1,12 @@
+#!/bin/sh
+
+USAGE=$'Usage:
+  git ignore <file>'
+
+if [ "$#" -eq 1 ]; then
+    echo "$1" >> .gitignore
+    exit $?
+else
+    echo $USAGE >&2
+    exit 1
+fi
