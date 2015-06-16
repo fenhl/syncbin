@@ -125,13 +125,14 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         apt-get-wrapper
         unlock debian
     fi
-    if where softwareupdate-wrapper &> /dev/null; then
-        try-lock softwareupdate '===.' && { # don't wait for this lock, one check at a time is enough
-            print-progress '===.' 'running startup script: softwareupdate'
-            softwareupdate-wrapper
-        }
-        unlock softwareupdate
-    fi
+    # softwareupdate consistently taking over a minute, disabling for now
+    #if where softwareupdate-wrapper &> /dev/null; then
+    #    try-lock softwareupdate '===.' && { # don't wait for this lock, one check at a time is enough
+    #        print-progress '===.' 'running startup script: softwareupdate'
+    #        softwareupdate-wrapper
+    #    }
+    #    unlock softwareupdate
+    #fi
     lock ruby '===.'
     print-progress '===.' 'running startup script: brew'
     if where brew &> /dev/null; then
