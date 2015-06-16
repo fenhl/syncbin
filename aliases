@@ -48,6 +48,7 @@ else
         alias cargo-lock-to-png='cargo-lock-to-dot Cargo.lock | dot -Tpng > Cargo.png'
         alias chmox='chmod +x'
         alias fav='t fave'
+        alias gp='git push'
         alias gpp='git push && cd ../master && g pull && cd -'
         alias http='python3 -m http.server'
         if [ -d /opt/git/github.com/jq-shell/jqsh/master ]; then
