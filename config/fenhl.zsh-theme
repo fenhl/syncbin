@@ -99,7 +99,11 @@ function syncbin-prompt-git-status { # uses modified code from oh-my-git, see th
             has_git_status="flags"
             git_prompt=${git_prompt}"+"
         fi
-        head_branch=$(git branch -a 2> /dev/null | grep '  remotes/origin/HEAD -> origin/' | cut -d'/' -f4)
+        if git branch -a 2> /dev/null | grep '  remotes/origin/HEAD -> origin/' &> /dev/null; then
+            head_branch=$(git branch -a 2> /dev/null | grep '  remotes/origin/HEAD -> origin/' | cut -d'/' -f4)
+        else
+            head_branch='master'
+        fi
         if [[ "${head_branch}" != "${current_branch}" ]]; then
             if [[ ${has_git_status} == "no" ]]; then
                 git_prompt="[git: "
