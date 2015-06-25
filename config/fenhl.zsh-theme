@@ -57,7 +57,7 @@ function syncbin-prompt-multirust-override {
     if ! where multirust &> /dev/null; then
         return 0 # multirust not installed
     fi
-    if multirust show-override | grep 'no override'; then
+    if multirust show-override | grep 'no override' &> /dev/null; then
         return 0 # no override
     fi
     multirust_override=$(multirust show-override | grep 'override toolchain' | awk '{print $4}')
