@@ -27,10 +27,6 @@ function syncbin-prompt-host {
     fi
 }
 
-function syncbin-prompt-background {
-    echo '  ' #TODO
-}
-
 function syncbin-prompt-path {
     if [[ $PWD == $HOME ]]; then
         echo ' '
@@ -55,6 +51,17 @@ function syncbin-prompt-shell {
     else
         echo '%B%F{white}%%%b%f'
     fi
+}
+
+function syncbin-prompt-multirust-override {
+    if ! where multirust &> /dev/null; then
+        return 0 # multirust not installed
+    fi
+    if multirust show-override | grep 'no override'; then
+        return 0 # no override
+    fi
+    multirust_override=$(multirust show-override | grep 'override toolchain' | awk '{print $4}')
+    echo "[rust: ${multirust_override}]"
 }
 
 function syncbin-prompt-git-status { # uses modified code from oh-my-git, see the LICENSE
@@ -129,5 +136,5 @@ function syncbin-prompt-disk-space {
 setopt prompt_subst # make sure the functions in the prompts are actually called
 
 PROMPT='[$(syncbin-prompt-user)$(syncbin-prompt-host)$(syncbin-prompt-path)$(syncbin-prompt-shell)] '
-RPROMPT='%F{red}$(syncbin-prompt-git-status)$(syncbin-prompt-battery-charge)$(syncbin-prompt-disk-space)%(?..[exit: %?])%f'
+RPROMPT='%F{red}$(syncbin-prompt-multirust-override)$(syncbin-prompt-git-status)$(syncbin-prompt-battery-charge)$(syncbin-prompt-disk-space)%(?..[exit: %?])%f'
 PROMPT2='         zsh %_> '
