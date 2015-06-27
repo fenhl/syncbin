@@ -159,6 +159,10 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         rustup --quiet --no-project
     elif where rustc &> /dev/null; then
         print-warning 'multirust not installed' '===.' 'running startup script: rustup'
+    elif ! multirust show-override | grep 'no override' &> /dev/null; then
+        print-warning 'multirust toolchain overridden for '"$(pwd)" '===.' 'running startup script: rustup'
+    elif [[ "$(multirust show-override | grep 'default toolchain' | awk '{print $4}')" != "stable" ]]; then
+        print-warning 'multirust not defaulting to stable' '===.' 'running startup script: rustup'
     fi
     print-progress '===.' 'running startup script: gitdir'
     if [[ -d /opt/hub ]]; then
