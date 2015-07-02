@@ -58,8 +58,10 @@ get-update () {
         if [[ "$MODE" == "private" ]]; then
             if [[ -d /opt/git/fenhl.net/syncbin-private/master ]]; then
                 cd /opt/git/fenhl.net/syncbin-private/master
-            else
+            elif [[ -d ~/git/fenhl.net/syncbin-private/master ]]; then
                 cd ~/git/fenhl.net/syncbin-private/master
+            else
+                return 0 # syncbin-private not installed, nothing to update
             fi
         fi
         git fetch readonly master &> /dev/null || git fetch &> /dev/null || {
