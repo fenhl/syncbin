@@ -1,7 +1,15 @@
 #!/bin/zsh
 
-if which tac &> /dev/null; then
-    tac $@ | less
+if [[ $# -ge 1 ]] && [[ "$1" == '--sudo' ]]; then
+    if where tac &> /dev/null; then
+        sudo tac "$@" | less
+    else
+        sudo tail -r "$@" | less
+    fi
 else
-    tail -r $@ | less
+    if where tac &> /dev/null; then
+        tac "$@" | less
+    else
+        tail -r "$@" | less
+    fi
 fi
