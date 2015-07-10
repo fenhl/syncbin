@@ -158,7 +158,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     if where multirust &> /dev/null; then
         if ! multirust show-override | grep 'no override' &> /dev/null; then
             print-warning 'multirust toolchain overridden for '"$(pwd)" '===.' 'running startup script: rustup'
-        elif [[ "$(multirust show-override | grep 'default toolchain' | awk '{print $4}')" != "stable" ]]; then
+        elif [[ "$(multirust show-default | grep 'default toolchain' | awk '{print $4}')" != "stable" ]]; then
             print-warning 'multirust not defaulting to stable' '===.' 'running startup script: rustup'
         fi
         rustup --quiet --no-project
