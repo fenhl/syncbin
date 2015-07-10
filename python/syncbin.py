@@ -62,12 +62,12 @@ if __name__ == '__main__':
             if arguments['<old>'] is None:
                 sys.exit(subprocess.call(['bash', 'syncbin-update'] + ([] if mode is None else [mode])))
             else:
-                sys.exit(subprocess.call(['bash', 'syncbin-update', arguments['<old>'], arguments['<new>']] + ([] if mode is None else [mode])))
+                sys.exit(subprocess.call(['bash', 'syncbin-update'] + ([] if mode is None else [mode]) + [arguments['<old>'], arguments['<new>']]))
         else:
             # use Zsh
             if arguments['<old>'] is None:
                 sys.exit(subprocess.call(['syncbin-update'] + ([] if mode is None else [mode])))
             else:
-                sys.exit(subprocess.call(['syncbin-update', arguments['<old>'], arguments['<new>']] + ([] if mode is None else [mode])))
+                sys.exit(subprocess.call(['syncbin-update'] + ([] if mode is None else [mode]) + [arguments['<old>'], arguments['<new>']]))
     else:
         raise NotImplementedError('unknown subcommand')
