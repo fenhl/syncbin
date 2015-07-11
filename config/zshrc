@@ -35,14 +35,25 @@ edit_last_or_accept_line_and_down_history () {
 zle -N edit_last_or_accept_line_and_down_history
 bindkey "^O" edit_last_or_accept_line_and_down_history
 
-# ^S inserts sudo
+# ^S inserts sudo, then inserts -u, then inserts -s
 insert_sudo () {
-    if [[ $LBUFFER == "sudo "* ]]; then
-        LBUFFER+="sudo "
+    if [[ "$BUFFER" == "sudo -su"* ]]; then
+        printf "\a"
+    elif [[ "$BUFFER" == "sudo -u"* ]]; then
+        buffer_suffix="${BUFFER#sudo -u}" # remove sudo -u prefix
+        BUFFER="sudo -su ${buffer_suffix# }" # remove leading space, if any
+        if [[ "$CURSOR" -ge 6 ]]; then
+            CURSOR=$(($CURSOR + 1))
+        fi
+    elif [[ "$BUFFER" == "sudo " ]]; then
+        CURSOR=5
+        zle -U -- "-u "
+    elif [[ "$BUFFER" == "sudo"* ]]; then
+        CURSOR=4
+        zle -U " -u "
     else
-        LBUFFER="sudo "$LBUFFER
-        #zle beginning-of-line
-        #zle -U "sudo "
+        BUFFER="sudo $BUFFER"
+        CURSOR=$(($CURSOR + 5))
     fi
 }
 zle -N insert_sudo
