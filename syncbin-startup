@@ -184,7 +184,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     oh-my-zsh update
     unlock syncbin-omz
 else
-    print-warning 'no internet connection, skipping some startup script' '==..' 'running startup script: syncbin hasinet'
+    print-warning 'no internet connection, skipping some startup scripts' '==..' 'running startup script: syncbin hasinet'
 fi
 lock syncbin-omz '===.'
 print-progress '====' 'running startup script: oh-my-zsh'
