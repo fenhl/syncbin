@@ -171,6 +171,15 @@ else
             fi
         }
         alias relog=': $@; zsh && logout'
+        function reset {
+            if [ "$#" -gt 0 ]; then
+                command reset "$@"
+                return $?
+            else
+                command reset
+                stty -ixon # disable flow control
+            fi
+        }
         function retab {
             if where tab &> /dev/null; then
                 tab "$@"
