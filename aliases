@@ -268,6 +268,7 @@ else
     zsh-suffix)
         alias -s json=jpy
         alias -s log=ssel
+        alias -s plist=pledit
         alias -s txt=less
         ;;
     *)
