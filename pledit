@@ -1,0 +1,100 @@
+#! /bin/zsh
+
+DESCRIPTION=$'Edit a property list file.'
+
+USAGE=$'Usage:
+  pledit <file>
+  pledit -h | --help'
+
+OPTIONS=$'Options:
+  -h, --help  Print this message and exit.'
+
+function print-progress {
+    if where clear-eol &> /dev/null; then
+        printf '['"$1"'] '
+        clear-eol
+        printf "$2"'\r'
+    else
+        printf '['"$1"'] '"$2"'\r'
+    fi
+}
+
+function print-warning {
+    if where clear-eol &> /dev/null; then
+        printf '[ !! ] '
+        clear-eol
+        printf 'warning: '"$1"'\n'
+    else
+        printf '[ !! ] warning: '"$1"'\n'
+    fi
+    print-progress "$2" "$3"
+}
+
+function lockdir {
+    echo /tmp/syncbin-pledit-"$1".lock
+}
+
+function working-copy {
+    echo "$(lockdir "$1")/$1"
+}
+function lock {
+    print-progress '....' 'pledit: acquiring lock: '"$(lockdir "$1")"
+    until mkdir "$(lockdir "$1")" &> /dev/null; do
+        sleep 1
+        printf '[    ]\r'
+        sleep 1
+        printf '[....]\r'
+    done
+    trap 'rm -rf '"$(lockdir "$1")" HUP TERM INT # remove lock when script finishes
+}
+
+function unlock {
+    rm "$(working-copy "$1")" # remove working copy
+    rmdir "$(lockdir "$1")" # remove lock
+    trap ':' HUP TERM INT # neutralize trap
+}
+
+if [[ $# -ne 1 ]]; then
+    echo "$USAGE" >&2
+    exit 1
+elif [[ x"$1" == x"-h" ]] || [[ x"$1" == x"--help" ]]; then
+    echo "$DESCRIPTION"
+    echo
+    echo "$USAGE"
+    echo
+    echo "$OPTIONS"
+    exit 0
+else
+    filename="$(basename "$1")"
+    lock "$filename"
+    print-progress '==..' 'pledit: converting to xml'
+    plutil -convert xml1 -o "$(working-copy "$filename")" -- "$1" || {
+        exit_code=$?
+        unlock "$filename"
+        exit $exit_code
+    }
+    "${VISUAL:-${EDITOR}}" "$(working-copy "$filename")" || {
+        exit_code=$?
+        unlock "$filename"
+        exit $exit_code
+    }
+    print-progress '===.' 'pledit: linting'
+    plutil -lint -s "$(working-copy "$filename")" || {
+        exit_code=$?
+        unlock "$filename"
+        exit $exit_code
+    }
+    print-progress '====' 'pledit: saving'
+    plutil -convert binary1 -o "$1" -- "$(working-copy "$filename")" || {
+        exit_code=$?
+        unlock "$filename"
+        exit $exit_code
+    }
+    unlock "$filename"
+    if where clear-eol &> /dev/null; then
+        echo '[ ok ] pledit'
+        clear-eol
+    else
+        echo '[ ok ] pledit        '
+    fi
+fi
