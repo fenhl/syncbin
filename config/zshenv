@@ -69,3 +69,6 @@ export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"
 
 # Atom config
 export ATOM_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}/atom"
+
+# Rust config
+export RUST_SRC_PATH="/opt/git/github.com/rust-lang/rust/master/src" # required by racer
