@@ -1,0 +1,11 @@
+#! /usr/bin/env python3
+
+import sys
+
+if __name__ != '__main__':
+    raise ImportError('This module is not for importing')
+
+ruler_size = 80
+if len(sys.argv) > 1:
+    ruler_size = int(sys.argv[1])
+print('=' * ruler_size)
