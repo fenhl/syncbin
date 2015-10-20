@@ -8,14 +8,15 @@ Usage:
   rustup --version
 
 Options:
-  -R, --release  Build with the `--release' flag and skip tests.
-  -c, --crates   Update Cargo.lock even if not ignored.
-  -h, --help     Print this message and exit.
-  -q, --quiet    Don't print progress.
-  -r, --run      Add a `cargo run' step at the end.
-  --ignore-lock  Release and ignore the lock that prevents this script from running multiple times at once.
-  --no-project   Only update Rust itself, don't attempt to update any git repo or cargo project.
-  --version      Print version info and exit.
+  -R, --release     Build with the `--release' flag and skip tests.
+  -c, --crates      Update Cargo.lock even if not ignored.
+  -h, --help        Print this message and exit.
+  -q, --quiet       Don't print progress.
+  -r, --run         Add a `cargo run' step at the end.
+  --all-toolchains  Update all Rust toolchains.
+  --ignore-lock     Release and ignore the lock that prevents this script from running multiple times at once.
+  --no-project      Only update Rust itself, don't attempt to update any git repo or cargo project.
+  --version         Print version info and exit.
 """
 
 import sys
@@ -34,6 +35,29 @@ except:
 
 LOCKDIR = '/tmp/syncbin-rustup.lock'
 QUIET = False
+
+def current_toolchain(cwd=None):
+    show_override = subprocess.Popen(['multirust', 'show-override'], stdout=subprocess.PIPE, cwd=cwd)
+    out, _ = show_override.communicate(timeout=5)
+    for line in out.decode('utf-8').split('\n'):
+        if line.startswith('multirust: override toolchain: '):
+            return line[len('multirust: override toolchain: '):]
+        if line.startswith('multirust: default toolchain: '):
+            return line[len('multirust: default toolchain: '):]
+    return 'stable'
+
+def multirust_update(toolchain=None):
+    if toolchain is None:
+        toolchain = current_toolchain()
+    update_popen = subprocess.Popen(['multirust', 'update', toolchain], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        if update_popen.wait(timeout=300) != 0:
+            print('[!!!!]', 'updating Rust {}: failed'.format(toolchain), file=sys.stderr)
+            sys.exit(update_popen.returncode)
+    except subprocess.TimeoutExpired:
+        update_popen.terminate()
+        print('[!!!!]', 'updating Rust {}: timed out'.format(toolchain), file=sys.stderr)
+        sys.exit(update_popen.returncode)
 
 def set_status(progress, message, newline=False):
     if QUIET:
@@ -61,26 +85,19 @@ if __name__ == '__main__':
                 # lock acquired
                 atexit.register(os.rmdir, LOCKDIR)
                 break
-    set_status(0, 'updating Rust nightly')
-    with open('/dev/null', 'a') as dev_null:
-        update_nightly = subprocess.Popen(['multirust', 'update', 'nightly'], stdout=dev_null, stderr=dev_null)
-        if update_nightly.wait() != 0:
-            print('[!!!!]', 'updating Rust nightly: failed', file=sys.stderr)
-            sys.exit(update_nightly.returncode)
-    set_status(1, 'updating Rust beta   ')
-    with open('/dev/null', 'a') as dev_null:
-        update_beta = subprocess.Popen(['multirust', 'update', 'beta'], stdout=dev_null, stderr=dev_null)
-        if update_beta.wait() != 0:
-            print('[!!!!]', 'updating Rust beta: failed', file=sys.stderr)
-            sys.exit(update_beta.returncode)
-    set_status(2, 'updating Rust stable')
-    with open('/dev/null', 'a') as dev_null:
-        update_stable = subprocess.Popen(['multirust', 'update', 'stable'], stdout=dev_null, stderr=dev_null)
-        if update_stable.wait() != 0:
-            print('[!!!!]', 'updating Rust stable: failed', file=sys.stderr)
-            sys.exit(update_stable.returncode)
+    if arguments['--all-toolchains']:
+        set_status(0, 'updating Rust nightly')
+        multirust_update('nightly')
+        set_status(1, 'updating Rust beta   ')
+        multirust_update('beta')
+        set_status(2, 'updating Rust stable')
+        multirust_update('stable')
+    else:
+        toolchain = current_toolchain()
+        set_status(0, 'updating Rust {}'.format(toolchain))
+        multirust_update(toolchain)
     if arguments['--no-project']:
-        set_status(5, 'update complete   ')
+        set_status(5, 'update complete     ')
         sys.exit()
     with open('/dev/null', 'a') as dev_null:
         if subprocess.call(['git', 'branch'], stdout=dev_null, stderr=dev_null) == 0:
