@@ -38,7 +38,7 @@ function syncbin-prompt-path {
         echo '%B%F{white}g%b%f'
     elif hg root &> /dev/null; then
         echo '%B%F{white}m%b%f'
-    elif ishome &> /dev/null; then 
+    elif ishome &> /dev/null; then
         echo '%B%F{white}~%b%f'
     else
         echo '%B%F{white}.%b%f'
