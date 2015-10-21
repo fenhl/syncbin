@@ -142,3 +142,11 @@ setopt prompt_subst # make sure the functions in the prompts are actually called
 PROMPT='[$(syncbin-prompt-user)$(syncbin-prompt-host)$(syncbin-prompt-path)$(syncbin-prompt-shell)] '
 RPROMPT='%F{red}$(syncbin-prompt-multirust-override)$(syncbin-prompt-git-status)$(syncbin-prompt-battery-charge)$(syncbin-prompt-disk-space)%(?..[exit: %?])%f'
 PROMPT2='       zsh %_> '
+
+ZSH_THEME_TERM_TAB_TITLE_IDLE=''
+
+function omz_termsupport_preexec {
+    title ''
+}
+
+update_terminalapp_cwd
