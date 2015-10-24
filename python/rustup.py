@@ -97,11 +97,11 @@ if __name__ == '__main__':
         set_status(0, 'updating Rust {}'.format(toolchain))
         multirust_update(toolchain)
     if arguments['--no-project']:
-        set_status(5, 'update complete     ')
+        set_status(5, 'update complete      ')
         sys.exit()
     with open('/dev/null', 'a') as dev_null:
         if subprocess.call(['git', 'branch'], stdout=dev_null, stderr=dev_null) == 0:
-            set_status(3, 'updating repo       ')
+            set_status(3, 'updating repo        ')
             subprocess.check_call(['git', 'fetch', '--quiet'])
             try:
                 subprocess.check_call(['git', 'merge', '--quiet', 'FETCH_HEAD'], stdout=dev_null)
