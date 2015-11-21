@@ -33,6 +33,9 @@ except:
 def bootstrap(setup):
     if setup == 'debian-root':
         subprocess.check_call(['apt-get', 'install', 'ntp'])
+    elif setup == 'python':
+        subprocess.check_call(['pip3', 'install', 'blessings'])
+        subprocess.check_call(['pip3', 'install', 'docopt'])
     else:
         sys.exit('[!!!!] no such setup: ' + repr(setup)) #TODO
 
