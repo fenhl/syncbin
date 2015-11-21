@@ -15,14 +15,14 @@ yesno () {
 
 githubinstall () {
     printf "[....] installing $2"
-    
+
     if mkdir -p "${HUB}/$1/$2" 2> /dev/null && [ -d "${HUB}/$1/$2" ]; then
         cd "${HUB}/$1/$2"
     else
         echo "\r"'[!!!!]' "could not create directory ${HUB}/$1/$2" >&2
         return 1
     fi
-    
+
     if which git > /dev/null 2>&1; then
         printf " using git\r"'[ ** ]'
         echo
@@ -32,7 +32,7 @@ githubinstall () {
         else
             [ -d "${HUB}/$1/$2/master" ] && rm -r "${HUB}/$1/$2/master"
             cd "${HUB}/$1/$2"
-            git clone git@github.com:"$1"/"$2".git master || git clone https://github.com/"$1"/"$2".git master || return 1
+            git clone https://github.com/"$1"/"$2".git master || return 1
         fi
     else
         echo "\r"'[!!!!]' "missing git command" >&2
@@ -266,9 +266,9 @@ fi
 
 githubinstall fenhl syncbin || exit 1
 
-ln -fs ${HUB}/fenhl/syncbin/config/zshenv ~/.zshenv
-ln -fs ${HUB}/fenhl/syncbin/config/zshrc ~/.zshrc
-ln -fs ${HUB}/fenhl/syncbin/config/bash_profile ~/.bash_profile
-ln -fs ${HUB}/fenhl/syncbin/config/profile ~/.profile
+ln -fs ${HUB}/fenhl/syncbin/master/config/zshenv ~/.zshenv
+ln -fs ${HUB}/fenhl/syncbin/master/config/zshrc ~/.zshrc
+ln -fs ${HUB}/fenhl/syncbin/master/config/bash_profile ~/.bash_profile
+ln -fs ${HUB}/fenhl/syncbin/master/config/profile ~/.profile
 
 echo '[ ** ] Looks like syncbin was successfully installed. You can now `chsh -s /bin/zsh` and relog.'
