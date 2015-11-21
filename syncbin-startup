@@ -16,7 +16,7 @@ function is-omz-plugin {
 }
 
 function print-progress {
-    if where clear-eol &> /dev/null; then
+    if where clear-eol &> /dev/null && where py-where &> /dev/null && py-where blessings &> /dev/null; then
         printf '['"$1"'] '
         clear-eol
         printf "$2"'\r'
@@ -26,7 +26,7 @@ function print-progress {
 }
 
 function print-warning {
-    if where clear-eol &> /dev/null; then
+    if where clear-eol &> /dev/null && where py-where &> /dev/null && py-where blessings &> /dev/null; then
         printf '[ !! ] '
         clear-eol
         printf 'warning: '"$1"'\n'
@@ -106,6 +106,25 @@ while [[ $# -gt "0" ]]; do
     fi
     shift
 done
+
+printf '[....] checking for required Python packages      \r'
+
+SYNCBIN_MISSING_PYTHON_PACKAGE=1
+
+if ! where py-where &> /dev/null; then
+    echo '[ !! ] failed to check for required Python packages: py-where not found'
+elif ! py-where blessings &> /dev/null; then
+    if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "1" ]]; then
+        printf '[ !! ] missing Python packages: '
+        SYNCBIN_MISSING_PYTHON_PACKAGE=0
+    else
+        printf ', '
+    fi
+    printf 'blessings'
+fi
+if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "0" ]]; then
+    printf '\n'
+fi
 
 lock syncbin-omz '=...'
 

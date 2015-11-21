@@ -1,0 +1,12 @@
+#!/bin/zsh
+
+for arg; do
+    #echo "import sys; sys.tracebacklimit = 0; import $arg; print($arg.__file__)" | python3
+    echo $'
+try:
+    import '"$arg"$'
+except Exception as e:
+    print(\'{}: {}\'.format(e.__class__.__name__, e))
+else: print('"$arg"$'.__file__)
+    ' | python3
+done
