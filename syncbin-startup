@@ -113,17 +113,37 @@ SYNCBIN_MISSING_PYTHON_PACKAGE=1
 
 if ! where py-where &> /dev/null; then
     echo '[ !! ] failed to check for required Python packages: py-where not found'
-elif ! py-where blessings &> /dev/null; then
-    if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "1" ]]; then
-        printf '[ !! ] missing Python packages: '
-        SYNCBIN_MISSING_PYTHON_PACKAGE=0
-    else
-        printf ', '
+else
+    if ! py-where basedir &> /dev/null; then
+        if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "1" ]]; then
+            printf '[ !! ] missing Python packages: '
+            SYNCBIN_MISSING_PYTHON_PACKAGE=0
+        else
+            printf ', '
+        fi
+        printf 'basedir'
     fi
-    printf 'blessings'
-fi
-if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "0" ]]; then
-    printf '\n'
+    if ! py-where blessings &> /dev/null; then
+        if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "1" ]]; then
+            printf '[ !! ] missing Python packages: '
+            SYNCBIN_MISSING_PYTHON_PACKAGE=0
+        else
+            printf ', '
+        fi
+        printf 'blessings'
+    fi
+    if ! py-where docopt &> /dev/null; then
+        if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "1" ]]; then
+            printf '[ !! ] missing Python packages: '
+            SYNCBIN_MISSING_PYTHON_PACKAGE=0
+        else
+            printf ', '
+        fi
+        printf 'docopt'
+    fi
+    if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "0" ]]; then
+        printf '\n'
+    fi
 fi
 
 lock syncbin-omz '=...'
