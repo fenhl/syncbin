@@ -1,12 +1,23 @@
 #!/bin/zsh
 
+found_failure=no
+
 for arg; do
     #echo "import sys; sys.tracebacklimit = 0; import $arg; print($arg.__file__)" | python3
     echo $'
+import sys
+
 try:
     import '"$arg"$'
 except Exception as e:
-    print(\'{}: {}\'.format(e.__class__.__name__, e))
+    sys.exit(\'{}: {}\'.format(e.__class__.__name__, e))
 else: print('"$arg"$'.__file__)
     ' | python3
+    if [[ $? -ne 0 ]]; then
+        found_failure=yes
+    fi
 done
+
+if [[ $found_failure == yes ]]; then
+    exit 1
+fi
