@@ -111,45 +111,31 @@ printf '[....] checking for required Python packages      \r'
 
 SYNCBIN_MISSING_PYTHON_PACKAGE=1
 
+function test-missing-python-package {
+    if ! py-where "$1" &> /dev/null; then
+        if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "1" ]]; then
+            if where clear-eol &> /dev/null; then
+                clear-eol
+            fi
+            printf '[ !! ] missing Python packages: '
+            SYNCBIN_MISSING_PYTHON_PACKAGE=0
+        else
+            printf ', '
+        fi
+        printf "$1"
+    fi
+}
+
 if ! where py-where &> /dev/null; then
     echo '[ !! ] failed to check for required Python packages: py-where not found'
+elif ! py-where blessings &> /dev/null; then
+    printf '                                            \r'
+    SYNCBIN_MISSING_PYTHON_PACKAGE=0
+    printf '[ !! ] missing Python packages: blessings'
 else
-    if ! py-where basedir &> /dev/null; then
-        if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "1" ]]; then
-            printf '[ !! ] missing Python packages: '
-            SYNCBIN_MISSING_PYTHON_PACKAGE=0
-        else
-            printf ', '
-        fi
-        printf 'basedir'
-    fi
-    if ! py-where blessings &> /dev/null; then
-        if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "1" ]]; then
-            printf '[ !! ] missing Python packages: '
-            SYNCBIN_MISSING_PYTHON_PACKAGE=0
-        else
-            printf ', '
-        fi
-        printf 'blessings'
-    fi
-    if ! py-where docopt &> /dev/null; then
-        if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "1" ]]; then
-            printf '[ !! ] missing Python packages: '
-            SYNCBIN_MISSING_PYTHON_PACKAGE=0
-        else
-            printf ', '
-        fi
-        printf 'docopt'
-    fi
-    if ! py-where lazyjson &> /dev/null; then
-        if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "1" ]]; then
-            printf '[ !! ] missing Python packages: '
-            SYNCBIN_MISSING_PYTHON_PACKAGE=0
-        else
-            printf ', '
-        fi
-        printf 'lazyjson'
-    fi
+    test-missing-python-package basedir
+    test-missing-python-package docopt
+    test-missing-python-package lazyjson
     if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "0" ]]; then
         printf '\n'
     fi
