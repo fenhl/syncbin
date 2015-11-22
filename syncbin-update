@@ -64,7 +64,7 @@ get-update () {
                 return 0 # syncbin-private not installed, nothing to update
             fi
         fi
-        git fetch readonly master &> /dev/null || git fetch &> /dev/null || {
+        git fetch &> /dev/null || {
             if [[ "$MODE" == "private" ]]; then
                 echo '[ !! ] could not fetch syncbin-private update from remote' >&2
             else
@@ -73,9 +73,9 @@ get-update () {
             return 1
         }
         PATCHED="n"
-        if git ls-remote --exit-code readonly &> /dev/null && [[ $(git rev-parse HEAD) != $(git ls-remote readonly master | awk '{print $1}') ]] || [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
+        [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
             PATCHED="y"
-            git pull --rebase --quiet readonly master > /dev/null || git pull --rebase --quiet > /dev/null
+            git pull --rebase --quiet > /dev/null
             if [[ $? -ne 0 ]]; then
                 if [[ "$MODE" == "private" ]]; then
                     echo '[ !! ] could not pull syncbin-private update from remote' >&2
