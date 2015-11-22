@@ -141,6 +141,15 @@ else
         fi
         printf 'docopt'
     fi
+    if ! py-where lazyjson &> /dev/null; then
+        if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "1" ]]; then
+            printf '[ !! ] missing Python packages: '
+            SYNCBIN_MISSING_PYTHON_PACKAGE=0
+        else
+            printf ', '
+        fi
+        printf 'lazyjson'
+    fi
     if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "0" ]]; then
         printf '\n'
     fi
