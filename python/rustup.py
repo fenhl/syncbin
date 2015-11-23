@@ -16,6 +16,7 @@ Options:
   --all-toolchains  Update all Rust toolchains.
   --ignore-lock     Release and ignore the lock that prevents this script from running multiple times at once.
   --no-project      Only update Rust itself, don't attempt to update any git repo or cargo project.
+  --skip-if-locked  If another instance of the script is already running, do nothing.
   --version         Print version info and exit.
 """
 
@@ -80,6 +81,8 @@ if __name__ == '__main__':
             try:
                 os.mkdir(LOCKDIR)
             except OSError:
+                if arguments['--skip-if-locked']:
+                    sys.exit()
                 time.sleep(1) # lock exists, try again in a sec
             else:
                 # lock acquired
