@@ -23,7 +23,8 @@ import sys
 try:
     from docopt import docopt
 except ImportError:
-    print('[ !! ] docopt not installed, defaulting to `syncbin bootstrap python`', file=sys.stderr)
+    if __name__ == '__main__':
+        print('[ !! ] docopt not installed, defaulting to `syncbin bootstrap python`', file=sys.stderr)
 import os
 import pathlib
 import subprocess
