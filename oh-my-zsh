@@ -14,6 +14,9 @@ else
         elif cd "${HOME}"/git/github.com/robbyrussell/oh-my-zsh/master &> /dev/null && git pull --quiet; then
             : # updated local gitdir successfully
         else
+            if where clear-eol &> /dev/null && where py-where &> /dev/null && py-where blessings &> /dev/null; then
+                clear-eol
+            fi
             echo '[ !! ] oh-my-zsh update failed' >&2
             exit 1
         fi
