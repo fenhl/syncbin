@@ -54,7 +54,7 @@ if __name__ == '__main__':
     except NameError:
         arguments = {
             'bootstrap': True,
-            '<setup>': ['python']
+            '<setup>': 'python'
         }
     if arguments['bootstrap']:
         bootstrap(arguments['<setup>'])
