@@ -95,7 +95,7 @@ fi
 
 if which zsh > /dev/null 2>&1; then
     : # found zsh
-if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
+elif [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
     if yesno 'Zsh not found, install using apt-get?'; then
         if which sudo > /dev/null 2>&1; then
             sudo apt-get install zsh
