@@ -78,6 +78,17 @@ if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
     else
         exit 1
     fi
+    if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'update APT package index now?'; then
+        if [ $(whoami) = "root" ]; then
+            apt-get update
+        else
+            sudo apt-get update
+        fi
+    elif yesno 'APT package index might be outdated, continue anyway?'; then
+        : # continue anyway
+    else
+        exit 1
+    fi
 fi
 
 # install Zsh
