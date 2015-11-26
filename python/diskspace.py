@@ -64,15 +64,16 @@ if __name__ == '__main__':
         sys.exit()
     try:
         output = subprocess.check_output(['df', '-hl', '/'], stderr=subprocess.STDOUT).decode('utf-8')
-        space = parse_space(output.splitlines()[1].split()[3])
+        total = parse_space(output.splitlines()[1].split()[1])
+        available = parse_space(output.splitlines()[1].split()[3])
     except:
         if '--debug' in sys.argv:
             raise
         else:
             print('[disk: error]')
             sys.exit(1)
-    if '--zsh' not in sys.argv or space < ONE_GIG:
+    if '--zsh' not in sys.argv or available < ONE_GIG or available / total < 0.01:
         if '--bytes' in sys.argv:
-            print(str(space))
+            print(str(available))
         else:
-            print('[disk: ' + format_space(space) + ']')
+            print('[disk: ' + format_space(available) + ']')
