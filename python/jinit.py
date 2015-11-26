@@ -18,7 +18,7 @@ if __name__ != '__main__':
     sys.exit('This module is not for importing!')
 
 import docopt
-import os.path
+import pathlib
 import subprocess
 try:
     import syncbin
@@ -28,10 +28,15 @@ except:
 
 arguments = docopt.docopt(__doc__, version='jinit from fenhl/syncbin ' + __version__)
 
-if os.path.exists(arguments['<file>']):
+path = pathlib.Path(arguments['<file>'])
+
+if path.exists():
     sys.exit('[!!!!] file exists')
 
-with open(arguments['<file>'], 'w') as f:
+if not path.parent.exists():
+    path.parent.mkdir(parents=True)
+
+with path.open('w') as f:
     print('[]' if arguments['--array'] else '{}', file=f)
 
 sys.exit(subprocess.call(['jpy', arguments['<file>']]))
