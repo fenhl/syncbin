@@ -248,7 +248,7 @@ elif [[ -d ~/git/fenhl.net/syncbin-private/master ]]; then
         . ~/git/fenhl.net/syncbin-private/master/syncbin-startup
     fi
 else
-    print-warning 'syncbin-private not installed' '====' 'running startup script: syncbin-private'
+    print-warning 'syncbin-private not installed, install with `syncbin bootstrap syncbin-private`' '====' 'running startup script: syncbin-private'
 fi
 print-progress '====' 'running startup script: zshrc'
 if where zshrc &> /dev/null; then

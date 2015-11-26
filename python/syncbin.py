@@ -22,10 +22,13 @@ import sys
 
 from docopt import docopt
 import os
+import pathlib
 import subprocess
 
+GITDIR = pathlib.Path(os.environ.get('GITDIR', '/opt/git'))
+
 try:
-    with open(os.path.join(os.environ.get('GITDIR', '/opt/git'), 'github.com', 'fenhl', 'syncbin', 'master', 'version.txt')) as version_file:
+    with (GITDIR / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'version.txt').open() as version_file:
         __version__ = version_file.read().strip()
 except:
     __version__ = '0.0'
@@ -36,6 +39,9 @@ def bootstrap(setup):
     elif setup == 'python':
         subprocess.check_call(['pip3', 'install', 'blessings'])
         subprocess.check_call(['pip3', 'install', 'docopt'])
+    elif setup == 'syncbin-private':
+        (GITDIR / 'fenhl.net' / 'syncbin-private').mkdir(parents=True)
+        subprocess.check_call(['git', 'clone', 'fenhl@fenhl.net:/opt/git/localhost/syncbin-private/syncbin-private.git', 'master'], cwd=str(GITDIR / 'fenhl.net' / 'sycbin-private'))
     else:
         sys.exit('[!!!!] no such setup: ' + repr(setup)) #TODO
 
@@ -46,7 +52,7 @@ if __name__ == '__main__':
     elif arguments['hasinet']:
         sys.exit(subprocess.call(['syncbin-hasinet']))
     elif arguments['install']:
-        sys.exit(subprocess.call(['sh', os.path.join(os.environ.get('HUB', '/opt/hub'), 'fenhl', 'syncbin', 'config', 'install.sh')]))
+        sys.exit(subprocess.call(['sh', str(GITDIR / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'install.sh')]))
     elif arguments['startup']:
         sys.exit(subprocess.call(['syncbin-startup'] + (['--ignore-lock'] if arguments['--ignore-lock'] else []) + (['--no-internet-test'] if arguments['--no-internet-test'] else [])))
     elif arguments['update']:
