@@ -80,6 +80,20 @@ if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
     fi
 fi
 
+# install Zsh
+
+if which zsh > /dev/null 2>&1; then
+    : # found zsh
+if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
+    if yesno 'Zsh not found, install using apt-get?'; then
+        if which sudo > /dev/null 2>&1; then
+            sudo apt-get install zsh
+        else
+            apt-get install zsh
+        fi
+    fi
+fi
+
 # install and update homebrew
 
 GitInstallInstructions="open GitHub.app and in the Advanced preferences, Install Command Line Tools"
@@ -274,4 +288,8 @@ ln -fs ${HUB}/fenhl/syncbin/master/config/zshrc ~/.zshrc
 ln -fs ${HUB}/fenhl/syncbin/master/config/bash_profile ~/.bash_profile
 ln -fs ${HUB}/fenhl/syncbin/master/config/profile ~/.profile
 
-echo '[ ** ] Looks like syncbin was successfully installed. You can now `chsh -s /bin/zsh` and relog.'
+if which zsh > /dev/null 2>&1; then
+    echo '[ ** ] Looks like syncbin was successfully installed. You can now `chsh -s /bin/zsh` and relog.'
+else
+    echo '[ ** ] Looks like syncbin was successfully installed. You can now install Zsh, then `chsh -s /bin/zsh` and relog.'
+fi
