@@ -114,25 +114,6 @@ if [ "${OSName}" = "OS X" ]; then
     fi
 fi
 
-# install GitHub.app
-
-if [ "${OSName}" = "OS X" ]; then
-    if which brew > /dev/null 2>&1; then
-        if brew cask 2>&1 | grep "Unknown command" > /dev/null; then
-            echo '[ !! ] homebrew-cask not found, skipping GitHub.app install'
-        else
-            if brew cask info github | grep "Not installed" > /dev/null; then
-                echo '[ ** ] installing GitHub.app'
-                brew cask install github || GitInstallInstructions="install GitHub.app, then ${GitInstallInstructions}"
-            else
-                : # GitHub.app is already installed
-            fi
-        fi
-    else
-        echo '[ !! ] Homebrew not found, skipping GitHub.app install'
-    fi
-fi
-
 # install git
 
 if which git > /dev/null 2>&1; then
@@ -146,10 +127,31 @@ elif [ "${OSName}" = "Debian" ]; then
         fi
     fi
 elif [ "${OSName}" = "OS X" ]; then
-    echo '[ ** ] to install git,' ${GitInstallInstructions}
-    if [ ${GitInstallInstructions} = "open GitHub.app and in the Advanced preferences, Install Command Line Tools" ] && which open > /dev/null 2>&1; then
-        if yesno "open GitHub.app now? (Make sure it's not already open)"; then
-            open -nW /Applications/GitHub.app
+    if which brew > /dev/null 2>&1 && brew install git; then
+        : # git installed
+    else
+        # install GitHub.app
+        if [ "${OSName}" = "OS X" ]; then
+            if which brew > /dev/null 2>&1; then
+                if brew cask 2>&1 | grep "Unknown command" > /dev/null; then
+                    echo '[ !! ] homebrew-cask not found, skipping GitHub.app install'
+                else
+                    if brew cask info github | grep "Not installed" > /dev/null; then
+                        echo '[ ** ] installing GitHub.app'
+                        brew cask install github || GitInstallInstructions="install GitHub.app, then ${GitInstallInstructions}"
+                    else
+                        : # GitHub.app is already installed
+                    fi
+                fi
+            else
+                echo '[ !! ] Homebrew not found, skipping GitHub.app install'
+            fi
+        fi
+        echo '[ ** ] to install git,' ${GitInstallInstructions}
+        if [ ${GitInstallInstructions} = "open GitHub.app and in the Advanced preferences, Install Command Line Tools" ] && which open > /dev/null 2>&1; then
+            if yesno "open GitHub.app now? (Make sure it's not already open)"; then
+                open -nW /Applications/GitHub.app
+            fi
         fi
     fi
 fi
