@@ -66,7 +66,7 @@ echo
 
 # modify APT sources.list
 
-if [ "${OSName}" = "Debian" ]; then
+if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
     if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'edit APT sources.list now?'; then
         if [ $(whoami) = "root" ]; then
             ${EDITOR:=nano} /etc/apt/sources.list
@@ -166,7 +166,7 @@ fi
 
 if which gem > /dev/null 2>&1; then
     : # found RubyGems
-elif [ "${OSName}" = "Debian" ]; then
+elif [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
     if yesno 'RubyGems not found, install using apt-get?'; then
         if which sudo > /dev/null 2>&1; then
             sudo apt-get install rubygems
@@ -200,6 +200,7 @@ if mkdir -p /opt/git/github.com 2> /dev/null && [ -d /opt/git/github.com ]; then
 elif which sudo > /dev/null 2>&1; then
     if yesno 'could not create /opt/git/github.com, try using sudo?'; then
         if sudo mkdir -p /opt/git/github.com; then
+            sudo chown "$(whoami)" /opt/git/github.com
             HUB=/opt/git/github.com
         fi
     fi
@@ -223,7 +224,7 @@ fi
 
 # install command-not-found
 
-if [ "${OSName}" = "Debian" ]; then
+if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
     if which "command-not-found" > /dev/null 2>&1; then
         : # command-not-found handler already installed
     else
