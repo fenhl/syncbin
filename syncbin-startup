@@ -130,8 +130,7 @@ if ! where py-where &> /dev/null; then
     echo '[ !! ] failed to check for required Python packages: py-where not found'
 elif ! py-where blessings &> /dev/null; then
     printf '                                            \r'
-    SYNCBIN_MISSING_PYTHON_PACKAGE=0
-    printf '[ !! ] missing Python packages: blessings'
+    printf '[ !! ] missing Python packages: blessings\n'
 else
     test-missing-python-package basedir
     test-missing-python-package docopt
