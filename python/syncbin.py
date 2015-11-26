@@ -20,7 +20,10 @@ Options:
 
 import sys
 
-from docopt import docopt
+try:
+    from docopt import docopt
+except ImportError:
+    print('[ !! ] docopt not installed, defaulting to `syncbin bootstrap python`', file=sys.stderr)
 import os
 import pathlib
 import subprocess
@@ -46,7 +49,13 @@ def bootstrap(setup):
         sys.exit('[!!!!] no such setup: ' + repr(setup)) #TODO
 
 if __name__ == '__main__':
-    arguments = docopt(__doc__, version='fenhl/syncbin ' + __version__)
+    try:
+        arguments = docopt(__doc__, version='fenhl/syncbin ' + __version__)
+    except NameError:
+        arguments = {
+            'bootstrap': True,
+            'setup': ['python']
+        }
     if arguments['bootstrap']:
         bootstrap(arguments['<setup>'])
     elif arguments['hasinet']:
