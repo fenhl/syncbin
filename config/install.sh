@@ -290,6 +290,34 @@ elif yesno 'lns not found, download and install now?'; then
     fi
 fi
 
+# install Python 3 packages
+
+if which python3 > /dev/null 2>&1; then
+    if which pip3 > /dev/null 2>&1; then
+        : # found Python 3 and pip3, install packages
+        if [ $(whoami) = "root" ]; then
+            install_python_packages_using_sudo='no'
+        elif yesno 'use sudo to install Python packages?'; then
+            install_python_packages_using_sudo='yes'
+        else
+            install_python_packages_using_sudo='no'
+        fi
+        if [ "${install_python_packages_using_sudo}" = 'yes' ]; then
+            sudo pip3 install blessings docopt
+        else
+            pip3 install blessings docopt
+        fi
+    elif yesno 'pip3 not found, continue anyway?'; then
+        : # continue anyway
+    else
+        exit 1
+    fi
+elif yesno 'Python 3 not found, continue anyway?'; then
+    : # continue anyway
+else
+    exit 1
+fi
+
 # install syncbin
 
 githubinstall fenhl syncbin || exit 1
