@@ -20,6 +20,8 @@ Options:
 
 import sys
 
+sys.path.append('/opt/py')
+
 try:
     from docopt import docopt
 except ImportError:
@@ -40,12 +42,16 @@ except:
 def bootstrap(setup):
     if setup == 'debian-root':
         subprocess.check_call(['apt-get', 'install', 'ntp'])
+    elif setup == 'gitdir':
+        (GITDIR / 'github.com' / 'fenhl' / 'gitdir').mkdir(parents=True)
+        subprocess.check_call(['git', 'clone', 'https://github.com/fenhl/gitdir.git', 'master'], cwd=str(GITDIR / 'github.com' / 'fenhl' / 'gitdir'))
     elif setup == 'python':
         subprocess.check_call(['pip3', 'install', 'blessings'])
         subprocess.check_call(['pip3', 'install', 'docopt'])
     elif setup == 'syncbin-private':
-        (GITDIR / 'fenhl.net' / 'syncbin-private').mkdir(parents=True)
-        subprocess.check_call(['git', 'clone', 'fenhl@fenhl.net:/opt/git/localhost/syncbin-private/syncbin-private.git', 'master'], cwd=str(GITDIR / 'fenhl.net' / 'sycbin-private'))
+        import gitdir.host
+
+        gitdir.host.by_name('fenhl.net').clone('syncbin-private')
     else:
         sys.exit('[!!!!] no such setup: ' + repr(setup)) #TODO
 
