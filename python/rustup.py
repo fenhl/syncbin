@@ -139,5 +139,8 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             print()
             sys.exit(130)
+        except ProcessLookupError:
+            print()
+            sys.exit()
     else:
         sys.exit(exit_status)
