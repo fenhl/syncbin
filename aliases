@@ -253,9 +253,6 @@ else
         }
         compdef umnt=umount
         alias undawg='udawg'
-        if where gunits &> /dev/null; then
-            alias units='gunits'
-        fi
         alias view='less' # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
         # define aliases from loaded oh-my-zsh plugins
         for plugin in $OMZ_PLUGINS; do
