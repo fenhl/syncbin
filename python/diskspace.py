@@ -8,15 +8,19 @@ Usage:
   diskspace --version
 
 Options:
-  -h, --help  Print this message and exit.
-  --bytes     Print the raw number of bytes instead of a human-readable format.
-  --debug     If an error occurs, print the traceback instead of a generic error message.
-  --version   Print version info and exit.
-  --zsh       For using in the zsh right prompt, produce no output if more than 1 GB available.
+  -V, --verbose                Produce more detailed output. Implies --debug.
+  -h, --help                   Print this message and exit.
+  --bytes                      Print the raw number of bytes instead of a human-readable format.
+  --debug                      If an error occurs, print the traceback instead of a generic error message.
+  --min-percent=<min_percent>  Produce no output if at least <min_percent>% of disk space is available.
+  --min-space=<min_space>      Produce no output if at least <min_space> GB is available.
+  --version                    Print version info and exit.
+  --zsh                        Defaults for using in the zsh right prompt, equivalent to --min-percent=1 --min-space=1.
 """
 
 import sys
 
+import docopt
 import re
 import subprocess
 try:
@@ -56,24 +60,35 @@ def parse_space(space_string):
 ONE_GIG = 2 ** 30
 
 if __name__ == '__main__':
-    if '-h' in sys.argv or '--help' in sys.argv:
-        print(__doc__)
-        sys.exit()
-    if '--version' in sys.argv:
-        print('diskspace from fenhl/syncbin ' + __version__)
-        sys.exit()
+    arguments = docopt.docopt(__doc__, version='diskspace from fenhl/syncbin ' + __version__)
+    if arguments['--min-percent']:
+        min_fraction = int(arguments['--min-percent']) / 100
+    elif arguments['--zsh']:
+        min_fraction = 0.01
+    else:
+        min_fraction = 0 if arguments['--min-space'] else float('inf')
+    if arguments['--min-space']:
+        min_space = int(arguments['--min-space']) * ONE_GIG
+    elif arguments['--zsh']:
+        min_space = ONE_GIG
+    else:
+        min_space = 0 if arguments['--min-percent'] else float('inf')
     try:
         output = subprocess.check_output(['df', '-hl', '/'], stderr=subprocess.STDOUT).decode('utf-8')
         total = parse_space(output.splitlines()[1].split()[1])
         available = parse_space(output.splitlines()[1].split()[3])
     except:
-        if '--debug' in sys.argv:
+        if arguments['--debug'] or arguments['--verbose']:
             raise
         else:
             print('[disk: error]')
             sys.exit(1)
-    if '--zsh' not in sys.argv or available < ONE_GIG or available / total < 0.01:
-        if '--bytes' in sys.argv:
+    if available < min_space or available / total < min_fraction:
+        if arguments['--verbose']:
+            print('Available disk space:', format_space(available))
+            print(str(available), 'bytes')
+            print(str(int(100 * available / total)), 'percent')
+        elif arguments['--bytes']:
             print(str(available))
         else:
             print('[disk: ' + format_space(available) + ']')
