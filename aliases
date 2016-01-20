@@ -45,6 +45,7 @@ else
         ;;
     common)
         alias accio='. accio'
+        alias adu='sudo apt-get update && sudo apt-get dist-upgrade'
         alias cargo-lock-to-png='cargo-lock-to-dot Cargo.lock | dot -Tpng > Cargo.png'
         alias chmox='chmod +x'
         alias fav='t fave'
@@ -77,11 +78,6 @@ else
             sudo a2ensite "$1" > /dev/null
             sudo service apache2 reload
         }
-        if which apt &> /dev/null; then
-            alias adu='sudo apt update && sudo apt full-upgrade'
-        else
-            alias adu='sudo aptitude update && sudo aptitude full-upgrade'
-        fi
         function brew-caveats {
             brew info ${@:-$(brew list)} | awk '/^==> Caveats$/,/^[a-z][a-zA-Z0-9_+-]+: stable |^==> (Dependencies|Options)$/'
         }
