@@ -45,6 +45,11 @@ def bootstrap(setup):
     elif setup == 'gitdir':
         (GITDIR / 'github.com' / 'fenhl' / 'gitdir').mkdir(parents=True)
         subprocess.check_call(['git', 'clone', 'https://github.com/fenhl/gitdir.git', 'master'], cwd=str(GITDIR / 'github.com' / 'fenhl' / 'gitdir'))
+        pathlib.Path('/opt/py/gitdir').symlink_to(GITDIR / 'github.com' / 'fenhl' / 'gitdir' / 'master' / 'gitdir')
+        if hasattr(pathlib.Path, 'home'):
+            (pathlib.Path.home() / 'bin' / 'gitdir').symlink_to(GITDIR / 'fenhl' / 'gitdir' / 'master' / 'gitdir' / '__main__.py')
+        else:
+            print('[ ** ] now add a symlink to {} to the PATH'.format(GITDIR / 'fenhl' / 'gitdir' / 'master' / 'gitdir' / '__main__.py'))
     elif setup == 'python':
         subprocess.check_call(['pip3', 'install', 'blessings'])
         subprocess.check_call(['pip3', 'install', 'docopt'])
