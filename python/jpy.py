@@ -20,6 +20,7 @@ import docopt
 import json
 import lazyjson
 import os
+import requests
 import subprocess
 import syncbin
 
@@ -36,11 +37,16 @@ false = False
 null = None
 
 def load(filename):
-    path = os.path.abspath(os.path.expanduser(filename))
-    with open(path, 'a'):
-        os.utime(path, None) # touch the file
     try:
+        requests.request('GET', filename)
+    except requests.exceptions.MissingSchema:
+        path = os.path.abspath(os.path.expanduser(filename))
+        with open(path, 'a'):
+            os.utime(path, None) # touch the file
         ret = lazyjson.File(path)
+    else:
+        ret = lazyjson.HTTPFile(filename)
+    try:
         ret.value()
     except ValueError:
         print('[ !! ] Could not decode JSON from file ' + str(filename))
@@ -115,7 +121,7 @@ if __name__ == '__main__':
                 sys.stdout.write(text)
         sys.stdout.write("\n")
         builtins._ = value
-    
+
     sys.ps1 = '[jpy>] '
     sys.ps2 = '[jpy…] '
     sys.displayhook = displayhook
