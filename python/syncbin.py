@@ -3,7 +3,7 @@
 """Config and helper tool for Fenhl's syncbin.
 
 Usage:
-  syncbin bootstrap [<setup>]
+  syncbin bootstrap <setup>...
   syncbin hasinet
   syncbin install
   syncbin startup [--ignore-lock] [--no-internet-test]
@@ -22,15 +22,17 @@ import sys
 
 sys.path.append('/opt/py')
 
+import os
+import pathlib
+import subprocess
+
 try:
     from docopt import docopt
 except ImportError:
     if __name__ == '__main__':
         print('[ !! ] docopt not installed, defaulting to `syncbin bootstrap python`', file=sys.stderr)
-import os
-import pathlib
-import subprocess
 
+BOOTSTRAP_SETUPS = {}
 GITDIR = pathlib.Path(os.environ.get('GITDIR', '/opt/git'))
 
 try:
@@ -39,26 +41,45 @@ try:
 except:
     __version__ = '0.0'
 
-def bootstrap(setup):
-    if setup == 'debian-root':
-        subprocess.check_call(['apt-get', 'install', 'ntp'])
-    elif setup == 'gitdir':
-        (GITDIR / 'github.com' / 'fenhl' / 'gitdir').mkdir(parents=True)
-        subprocess.check_call(['git', 'clone', 'https://github.com/fenhl/gitdir.git', 'master'], cwd=str(GITDIR / 'github.com' / 'fenhl' / 'gitdir'))
-        pathlib.Path('/opt/py/gitdir').symlink_to(GITDIR / 'github.com' / 'fenhl' / 'gitdir' / 'master' / 'gitdir')
-        if hasattr(pathlib.Path, 'home'):
-            (pathlib.Path.home() / 'bin' / 'gitdir').symlink_to(GITDIR / 'fenhl' / 'gitdir' / 'master' / 'gitdir' / '__main__.py')
-        else:
-            print('[ ** ] now add a symlink to {} to the PATH'.format(GITDIR / 'fenhl' / 'gitdir' / 'master' / 'gitdir' / '__main__.py'))
-    elif setup == 'python':
-        subprocess.check_call(['pip3', 'install', 'blessings'])
-        subprocess.check_call(['pip3', 'install', 'docopt'])
-    elif setup == 'syncbin-private':
-        import gitdir.host
+def bootstrap_setup(setup_name):
+    def inner_wrapper(f):
+        BOOTSTRAP_SETUPS[setup_name] = f
+        return f
+    return inner_wrapper
 
-        gitdir.host.by_name('fenhl.net').clone('syncbin-private')
+@bootstrap_setup('debian-root')
+def bootstrap_debian_root():
+    subprocess.check_call(['apt-get', 'install', 'ntp'])
+
+@bootstrap_setup('gitdir')
+def bootstrap_gitdir():
+    (GITDIR / 'github.com' / 'fenhl' / 'gitdir').mkdir(parents=True)
+    subprocess.check_call(['git', 'clone', 'https://github.com/fenhl/gitdir.git', 'master'], cwd=str(GITDIR / 'github.com' / 'fenhl' / 'gitdir'))
+    pathlib.Path('/opt/py/gitdir').symlink_to(GITDIR / 'github.com' / 'fenhl' / 'gitdir' / 'master' / 'gitdir')
+    if hasattr(pathlib.Path, 'home'):
+        (pathlib.Path.home() / 'bin' / 'gitdir').symlink_to(GITDIR / 'fenhl' / 'gitdir' / 'master' / 'gitdir' / '__main__.py')
     else:
-        sys.exit('[!!!!] no such setup: ' + repr(setup)) #TODO
+        print('[ ** ] now add a symlink to {} to the PATH'.format(GITDIR / 'fenhl' / 'gitdir' / 'master' / 'gitdir' / '__main__.py'))
+
+@bootstrap_setup('python')
+def bootstrap_python():
+    subprocess.check_call(['pip3', 'install', 'blessings'])
+    subprocess.check_call(['pip3', 'install', 'docopt'])
+
+@bootstrap_setup('syncbin-private')
+def bootstrap_syncbin_private():
+    import gitdir.host
+
+    gitdir.host.by_name('fenhl.net').clone('syncbin-private')
+
+def bootstrap(*setups):
+    for setup_name in setups:
+        if setup_name not in BOOTSTRAP_SETUPS:
+            print('[!!!!] Unknown setup for `syncbin bootstrap`: {!r}'.format(setup_name), file=sys.stderr)
+            print('[ ** ] Available setups: {}'.format(', '.join(sorted(BOOTSTRAP_SETUPS))), file=sys.stderr)
+            sys.exit(1)
+    for setup_name in setups:
+        BOOTSTRAP_SETUPS[setup_name]()
 
 if __name__ == '__main__':
     try:
@@ -69,7 +90,7 @@ if __name__ == '__main__':
             '<setup>': 'python'
         }
     if arguments['bootstrap']:
-        bootstrap(arguments['<setup>'])
+        bootstrap(*arguments['<setup>'])
     elif arguments['hasinet']:
         sys.exit(subprocess.call(['syncbin-hasinet']))
     elif arguments['install']:
