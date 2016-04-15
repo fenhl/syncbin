@@ -66,6 +66,13 @@ def bootstrap_python():
     subprocess.check_call(['pip3', 'install', 'blessings'])
     subprocess.check_call(['pip3', 'install', 'docopt'])
 
+@bootstrap_setup('sudo')
+def bootstrap_sudo():
+    print('[ ** ] For passwordless login, insert the following line into the opened document:')
+    print('fenhl ALL=(ALL) NOPASSWD: ALL')
+    input('[ ?? ] Press return to continue')
+    subprocess.check_call(['sudo', 'nano', '/etc/sudoers.d/fenhl'])
+
 @bootstrap_setup('syncbin-private')
 def bootstrap_syncbin_private():
     import gitdir.host
