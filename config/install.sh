@@ -143,7 +143,7 @@ fi
 
 if which git > /dev/null 2>&1; then
     : # found git
-elif [ "${OSName}" = "Debian" ]; then
+elif [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
     if yesno 'git not found, install using apt-get?'; then
         if which sudo > /dev/null 2>&1; then
             sudo apt-get install git
