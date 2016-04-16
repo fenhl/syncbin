@@ -50,6 +50,8 @@ def bootstrap_setup(setup_name):
 @bootstrap_setup('debian-root')
 def bootstrap_debian_root():
     subprocess.check_call(['apt-get', 'install', 'ntp'])
+    ping = subprocess.check_output(['which', 'ping']).decode('utf-8')[:-1]
+    subprocess.check_call(['sudo', 'chmod', 'u+s', ping])
 
 @bootstrap_setup('gitdir')
 def bootstrap_gitdir():
