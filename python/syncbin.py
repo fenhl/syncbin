@@ -24,6 +24,7 @@ sys.path.append('/opt/py')
 
 import os
 import pathlib
+import stat
 import subprocess
 
 try:
@@ -71,6 +72,15 @@ def bootstrap_gitdir():
         (pathlib.Path.home() / 'bin' / 'gitdir').symlink_to(GITDIR / 'fenhl' / 'gitdir' / 'master' / 'gitdir' / '__main__.py')
     else:
         print('[ ** ] now add a symlink to {} to the PATH'.format(GITDIR / 'fenhl' / 'gitdir' / 'master' / 'gitdir' / '__main__.py'))
+
+@bootstrap_setup('no-battery')
+def bootstrap_no_battery():
+    if not (pathlib.Path.home() / 'bin').exists():
+        (pathlib.Path.home() / 'bin').mkdir()
+    batcharge = pathlib.Path.home() / 'bin' / 'batcharge'
+    with batcharge.open('w') as f:
+        print('#!/bin/sh\n\nexit 0', file=f)
+    batcharge.chmod(batcharge.stat().st_mode | stat.S_IEXEC)
 
 @bootstrap_setup('python')
 def bootstrap_python():
