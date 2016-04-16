@@ -81,7 +81,7 @@ def bootstrap_no_battery():
         bin_path = pathlib.Path(input('[ ?? ] where should `batcharge` be saved? '))
     if not bin_path.exists():
         bin_path.mkdir()
-    batcharge = pathlib.Path.home() / 'bin' / 'batcharge'
+    batcharge = bin_path / 'batcharge'
     with batcharge.open('w') as f:
         print('#!/bin/sh\n\nexit 0', file=f)
     batcharge.chmod(batcharge.stat().st_mode | stat.S_IEXEC)
