@@ -74,7 +74,8 @@ def bootstrap_gitdir():
 def bootstrap_python():
     subprocess.check_call(['pip3', 'install', 'blessings'])
     subprocess.check_call(['pip3', 'install', 'docopt'])
-    subprocess.check_call(['sudo', 'mkdir', '/opt/py'])
+    if not pathlib.Path('/opt/py').exists():
+        subprocess.check_call(['sudo', 'mkdir', '/opt/py'])
 
 @bootstrap_setup('sudo')
 def bootstrap_sudo():
