@@ -68,15 +68,19 @@ def bootstrap_gitdir():
             pathlib.Path('/opt/py/gitdir').symlink_to(gitdir_gitdir / 'master' / 'gitdir')
         except PermissionError:
             subprocess.check_call(['sudo', 'ln', '-s', str(gitdir_ditdir / 'master' / 'gitdir'), '/opt/py/gitdir'])
-    if hasattr(pathlib.Path, 'home'):
+    if hasattr(pathlib.Path, 'home'): # Python 3.5 and above
         (pathlib.Path.home() / 'bin' / 'gitdir').symlink_to(GITDIR / 'fenhl' / 'gitdir' / 'master' / 'gitdir' / '__main__.py')
     else:
         print('[ ** ] now add a symlink to {} to the PATH'.format(GITDIR / 'fenhl' / 'gitdir' / 'master' / 'gitdir' / '__main__.py'))
 
 @bootstrap_setup('no-battery')
 def bootstrap_no_battery():
-    if not (pathlib.Path.home() / 'bin').exists():
-        (pathlib.Path.home() / 'bin').mkdir()
+    if hasattr(pathlib.Path, 'home'): # Python 3.5 and above
+        bin_path = (pathlib.Path.home() / 'bin')
+    else:
+        bin_path = pathlib.Path(input('[ ?? ] where should `batcharge` be saved? '))
+    if not bin_path.exists():
+        bin_path.mkdir()
     batcharge = pathlib.Path.home() / 'bin' / 'batcharge'
     with batcharge.open('w') as f:
         print('#!/bin/sh\n\nexit 0', file=f)
