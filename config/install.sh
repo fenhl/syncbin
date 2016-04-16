@@ -332,3 +332,7 @@ if which zsh > /dev/null 2>&1; then
 else
     echo '[ ** ] Looks like syncbin was successfully installed. You can now install Zsh, then `chsh -s /bin/zsh` and relog.'
 fi
+
+if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
+    echo '[ ** ] If you have root access, you should also run `syncbin bootstrap debian-root`.`'
+fi
