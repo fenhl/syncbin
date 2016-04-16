@@ -53,9 +53,18 @@ def bootstrap_debian_root():
 
 @bootstrap_setup('gitdir')
 def bootstrap_gitdir():
-    (GITDIR / 'github.com' / 'fenhl' / 'gitdir').mkdir(parents=True)
-    subprocess.check_call(['git', 'clone', 'https://github.com/fenhl/gitdir.git', 'master'], cwd=str(GITDIR / 'github.com' / 'fenhl' / 'gitdir'))
-    pathlib.Path('/opt/py/gitdir').symlink_to(GITDIR / 'github.com' / 'fenhl' / 'gitdir' / 'master' / 'gitdir')
+    gitdir_gitdir = GITDIR / 'github.com' / 'fenhl' / 'gitdir'
+    if not gitdir_gitdir.exists():
+        gitdir_gitdir.mkdir(parents=True)
+    if not (gitdir_gitdir / 'master').exists():
+        subprocess.check_call(['git', 'clone', 'https://github.com/fenhl/gitdir.git', 'master'], cwd=str(GITDIR / 'github.com' / 'fenhl' / 'gitdir'))
+    if not pathlib.Path('/opt/py/gitdir').exists():
+        if not pathlib.Path('/opt/py').exists():
+            sys.exit('[!!!!] run `syncbin bootstrap python` first')
+        try:
+            pathlib.Path('/opt/py/gitdir').symlink_to(gitdir_gitdir / 'master' / 'gitdir')
+        except PermissionError:
+            subprocess.check_call(['sudo', 'ln', '-s', str(gitdir_ditdir / 'master' / 'gitdir'), '/opt/py/gitdir'])
     if hasattr(pathlib.Path, 'home'):
         (pathlib.Path.home() / 'bin' / 'gitdir').symlink_to(GITDIR / 'fenhl' / 'gitdir' / 'master' / 'gitdir' / '__main__.py')
     else:
@@ -65,6 +74,7 @@ def bootstrap_gitdir():
 def bootstrap_python():
     subprocess.check_call(['pip3', 'install', 'blessings'])
     subprocess.check_call(['pip3', 'install', 'docopt'])
+    subprocess.check_call(['sudo', 'mkdir', '/opt/py'])
 
 @bootstrap_setup('sudo')
 def bootstrap_sudo():
