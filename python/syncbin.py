@@ -78,6 +78,15 @@ def bootstrap_python():
     subprocess.check_call(['pip3', 'install', 'docopt'])
     if not pathlib.Path('/opt/py').exists():
         subprocess.check_call(['sudo', 'mkdir', '/opt/py'])
+    try:
+        import gitdir.host
+    except ImportError:
+        print('[ ** ] run `syncbin bootstrap gitdir`, then re-run `syncbin bootstrap python` to install essentials from github')
+    else:
+        gitdir.host.by_name('github.com').clone('fenhl/python-xdg-basedir')
+        subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), '/opt/py/basedir.py'])
+        gitdir.host.by_name('github.com').clone('fenhl/lazyjson')
+        subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), '/opt/py/lazyjson.py'])
 
 @bootstrap_setup('sudo')
 def bootstrap_sudo():
