@@ -67,7 +67,7 @@ def bootstrap_gitdir():
         try:
             pathlib.Path('/opt/py/gitdir').symlink_to(gitdir_gitdir / 'master' / 'gitdir')
         except PermissionError:
-            subprocess.check_call(['sudo', 'ln', '-s', str(gitdir_ditdir / 'master' / 'gitdir'), '/opt/py/gitdir'])
+            subprocess.check_call(['sudo', 'ln', '-s', str(gitdir_gitdir / 'master' / 'gitdir'), '/opt/py/gitdir'])
     if hasattr(pathlib.Path, 'home'): # Python 3.5 and above
         (pathlib.Path.home() / 'bin' / 'gitdir').symlink_to(GITDIR / 'fenhl' / 'gitdir' / 'master' / 'gitdir' / '__main__.py')
     else:
