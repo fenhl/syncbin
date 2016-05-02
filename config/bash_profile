@@ -60,10 +60,10 @@ PATH="/usr/local/opt/ruby/bin:${PATH}"
 PATH="/opt/local/sbin:${PATH}"
 PATH="/opt/local/bin:${PATH}"
 PATH="/opt/wurstmineberg/bin:${PATH}"
-PATH="/opt/git/github.com/fenhl/syncbin/master:${PATH}"
-PATH="/opt/hub/fenhl/syncbin:${PATH}"
-PATH="${HOME}/git/github.com/fenhl/syncbin/master:${PATH}"
-PATH="${HOME}/hub/fenhl/syncbin:${PATH}"
+PATH="/opt/git/github.com/fenhl/syncbin/master/bin:${PATH}"
+PATH="${HOME}/git/github.com/fenhl/syncbin/master/bin:${PATH}"
+PATH="/opt/git/fenhl.net/syncbin-private/master/bin:${PATH}"
+PATH="${HOME}/git/fenhl.net/syncbin-private/master/bin:${PATH}"
 PATH="${HOME}/bin:${PATH}"
 # appending to $PATH
 PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/3.5/bin"
@@ -108,7 +108,7 @@ bash syncbin-update
 
 # add aliases from syncbin
 if [[ -d /opt/git/github.com/fenhl/syncbin/master ]]; then
-    . /opt/git/github.com/fenhl/syncbin/master/aliases-bash
+    . /opt/git/github.com/fenhl/syncbin/master/bin/aliases-bash
 elif [[ -d ~/git/github.com/fenhl/syncbin/master ]]; then
-    . ~/git/github.com/fenhl/syncbin/master/aliases-bash
+    . ~/git/github.com/fenhl/syncbin/master/bin/aliases-bash
 fi
