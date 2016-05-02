@@ -44,7 +44,11 @@ VISUAL=nano
 export VISUAL
 
 # Python modules and interactive mode config
-PYTHONPATH="/opt/py:/usr/lib/python3.3:/usr/lib/python3.4"
+if [ -n ${PYTHONPATH} ]; then
+    PYTHONPATH="/opt/py:${HOME}/py:/opt/git/fenhl.net/syncbin-private/master/python:${HOME}/git/fenhl.net/syncbin-private/master/python:/opt/git/github.com/fenhl/syncbin/master/python:${HOME}/git/github.com/fenhl/syncbin/master/python:${PYTHONPATH}"
+else
+    PYTHONPATH="/opt/py:${HOME}/py:/opt/git/fenhl.net/syncbin-private/master/python:${HOME}/git/fenhl.net/syncbin-private/master/python:/opt/git/github.com/fenhl/syncbin/master/python:${HOME}/git/github.com/fenhl/syncbin/master/python"
+fi
 export PYTHONPATH
 
 # TeX and LaTeX config
