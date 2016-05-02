@@ -1,274 +1,33 @@
 USAGE=$'Usage:
-  . aliases bash
-  . aliases common
-  . aliases sh
-  . aliases zsh
-  . aliases zsh-suffix'
+  . aliases'
 
-if [ $# -ne 1 ]; then
+if [ $# -ne 0 ]; then
     echo "$USAGE" >&2
 else
-    case "$1" in
-    bash)
-        function date {
-            if [ "$#" -gt 0 ]; then
-                command date "$@"
-                return $?
-            else
-                command date -u '+[date] w%V.%u: %Y-%m-%d %H:%M:%S'
-                return $?
-            fi
-        }
-        alias doch='sudo $(fc -ln -1)'
-        function g { # from https://github.com/pengwynn/dotfiles/blob/master/git/git.zsh
-            if [ "$#" -gt 0 ]; then
-                git "$@"
-                return $?
-            else
-                git status --short --branch
-                return $?
-            fi
-        }
-        function gco {
-            git checkout "$@" 2>/dev/null || g checkout -b "$@"
-        }
-        function gd {
-            git diff --color "$@" | less -R
-        }
-        alias relog=': $@; bash && logout'
-        alias view='more'
-        alias where='which -a'
-        . aliases common
-        ;;
-    sh)
-        . aliases common
-        ;;
-    common)
-        alias accio='. accio'
-        alias adu='sudo apt-get update && sudo apt-get dist-upgrade'
-        alias cargo-lock-to-png='cargo-lock-to-dot Cargo.lock | dot -Tpng > Cargo.png'
-        alias chmox='chmod +x'
-        alias fav='t fave'
-        alias gp='git push'
-        alias gpp='git push && cd ../master && g pull && cd -'
-        alias http='python3 -m http.server'
-        if [ -d /opt/git/github.com/jq-shell/jqsh/master ]; then
-            alias jqsh='cd /opt/git/github.com/jq-shell/jqsh/master && git pull && rustup --quiet --release && cd - > /dev/null && command jqsh'
-        elif [ -d "$HOME"/git/github.com/jq-shell/jqsh/master ]; then
-            alias jqsh='cd '"$HOME"'/git/github.com/jq-shell/jqsh/master && git pull && rustup --quiet --release && cd - > /dev/null && command jqsh'
-        fi
-        alias l='ls -BFGahl'
-        alias mysql='mysql --silent'
-        alias pause='playlist pause-after-current'
-        alias pdb='python3 -m pdb'
-        alias pip3i='pip3 install'
-        alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'
-        alias py='python3 -q'
-        alias rt='t retweet'
-        alias sssel='ssel --sudo'
-        alias ssync='rsync --rsh=ssh'
-        alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
-        alias tf='tail -fn0'
-        alias whatismyip='curl ifconfig.me'
-        ;;
-    zsh)
-        alias -- -='cd -'
-        function a2edit {
-            sudo nano /etc/apache2/sites-available/"$1"
-            sudo a2ensite "$1" > /dev/null
-            sudo service apache2 reload
-        }
-        function brew-caveats {
-            brew info ${@:-$(brew list)} | awk '/^==> Caveats$/,/^[a-z][a-zA-Z0-9_+-]+: stable |^==> (Dependencies|Options)$/'
-        }
-        alias caveats='brew-caveats'
-        if which discoveryutil &> /dev/null; then
-            alias clear-dns-cache='sudo discoveryutil mdnsflushcache && sudo discoveryutil udnsflushcaches'
-        else
-            alias clear-dns-cache='sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder'
-        fi
-        function date {
-            if [ "$#" -gt 0 ]; then
-                command date "$@"
-                return $?
-            else
-                command date -u '+[date] w%V.%u: %Y-%m-%d %H:%M:%S'
-                return $?
-            fi
-        }
-        function dawg {
-            if [ "$#" -eq 2 ]; then
-                mkdir /tmp/dawg &&
-                mv "$1" /tmp/dawg/dawg &&
-                mkdir "$1" &&
-                mv /tmp/dawg/dawg "$1"/"$2" &&
-                rmdir /tmp/dawg
-            else
-                echo 'Usage: dawg <dir> <subdir>' >&2
-                exit 1
-            fi
-        }
-        alias doch='sudo $(fc -ln -1)'
-        alias flush-dns-cache='clear-dns-cache'
-        if alias g > /dev/null; then
-            unalias g
-        fi
-        function g { # from https://github.com/pengwynn/dotfiles/blob/master/git/git.zsh
-            if [ "$#" -gt 0 ]; then
-                git "$@"
-                return $?
-            else
-                git status --short --branch
-                return $?
-            fi
-        }
-        compdef g=git
-        if alias ga > /dev/null; then
-            unalias ga
-        fi
-        function gco {
-            git checkout "$@" 2>/dev/null || g checkout -b "$@"
-        }
-        function gd {
-            git diff --color "$@" | less -R
-        }
-        alias history='fc -il 1'
-        if alias ll > /dev/null; then
-            unalias ll
-        fi
-        function ll {
-            CLICOLOR_FORCE=1 ls -BFGahl "$@" | less -R
-        }
-        compdef ll=ls
-        function mc {
-            cd /Applications
-            java -d64 -Xmx1024M -jar Minecraft.app/Contents/Resources/Java/Bootstrap.jar
-            return $?
-        }
-        alias mkcd='take'
-        if ! (which pip3 &> /dev/null); then
-            if which pip-3.5 &> /dev/null; then
-                alias pip3='pip-3.5'
-            elif which pip-3.4 &> /dev/null; then
-                alias pip3='pip-3.4'
-            elif which pip-3.3 &> /dev/null; then
-                alias pip3='pip-3.3'
-            elif which pip-3.2 &> /dev/null; then
-                alias pip3='pip-3.2'
-            fi
-        fi
-        function mnt {
-            sudo mkdir "$2" &&
-            sudo mount "$1" "$2"
-        }
-        compdef mnt=mount
-        function pw {
-            if [[ $# -gt 0 ]]; then
-                while [[ $# -gt 0 ]]; do
-                    pwgen -1cnsy "$1" 1
-                    shift
-                done
-            else
-                echo $'Usage:\n  pw <length>' >&2
-            fi
-        }
-        alias relog=': $@; zsh && logout'
-        function reset {
-            if [ "$#" -gt 0 ]; then
-                command reset "$@"
-                return $?
-            else
-                command reset
-                stty -ixon # disable flow control
-            fi
-        }
-        function retab {
-            if where tab &> /dev/null; then
-                tab "$@"
-                logout
-            else
-                where tab
-                return $?
-            fi
-        }
-        function rm { # remove current directory when called without arguments
-            if [ "$#" -gt 0 ]; then
-                command rm "$@"
-                return $?
-            else
-                command rm -r .
-                return $?
-            fi
-        }
-        function rr {
-            if [ "$#" -gt 0 ]; then
-                command rm -rf "$@"
-                return $?
-            else
-                command rm -rf .
-                return $?
-            fi
-        }
-        compdef rr=rm
-        if ! (which svg2pdf &> /dev/null); then
-            alias svg2pdf='cairosvg -f pdf'
-        fi
-        if ! (which svg2png &> /dev/null); then
-            alias svg2png='cairosvg -f png'
-        fi
-        if ! (which svg2ps &> /dev/null); then
-            alias svg2ps='cairosvg -f ps'
-        fi
-        alias syncbin-version='cat ${HUB:-/opt/hub}/fenhl/syncbin/version.txt'
-        if ! (which tac &> /dev/null); then
-            alias tac='tail -r'
-        fi
-        function take {
-            mkdir -p "$1" &&
-            cd "$1"
-        }
-        compdef take=mkdir
-        if ! (which tweet &> /dev/null); then
-            alias tweet='t update'
-        fi
-        function udawg {
-            if [ "$#" -eq 2 ]; then
-                mkdir /tmp/dawg &&
-                mv "$1"/"$2" /tmp/dawg/dawg &&
-                rmdir "$1" &&
-                mv /tmp/dawg/dawg "$1" &&
-                rmdir /tmp/dawg
-            else
-                echo 'Usage: undawg <dir> <subdir>' >&2
-                exit 1
-            fi
-        }
-        function umnt {
-            sudo umount "$1" &&
-            sudo rmdir "$1"
-        }
-        compdef umnt=umount
-        alias undawg='udawg'
-        alias view='less' # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
-        # define aliases from loaded oh-my-zsh plugins
-        for plugin in $OMZ_PLUGINS; do
-            if [ -f ${HOME}/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin/$plugin.plugin.zsh ]; then
-                . ${HOME}/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin/$plugin.plugin.zsh
-            elif [ -f /opt/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin/$plugin.plugin.zsh ]; then
-                . /opt/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin/$plugin.plugin.zsh
-            fi
-        done
-        # define Bourne shell aliases
-        . aliases common
-        ;;
-    zsh-suffix)
-        alias -s json=jpy
-        alias -s log=ssel
-        alias -s plist=pledit
-        alias -s txt=less
-        ;;
-    *)
-        echo "$USAGE" >&2
-        ;;
-    esac
+    alias accio='. accio'
+    alias adu='sudo apt-get update && sudo apt-get dist-upgrade'
+    alias cargo-lock-to-png='cargo-lock-to-dot Cargo.lock | dot -Tpng > Cargo.png'
+    alias chmox='chmod +x'
+    alias fav='t fave'
+    alias gp='git push'
+    alias gpp='git push && cd ../master && g pull && cd -'
+    alias http='python3 -m http.server'
+    if [ -d /opt/git/github.com/jq-shell/jqsh/master ]; then
+        alias jqsh='cd /opt/git/github.com/jq-shell/jqsh/master && git pull && rustup --quiet --release && cd - > /dev/null && command jqsh'
+    elif [ -d "$HOME"/git/github.com/jq-shell/jqsh/master ]; then
+        alias jqsh='cd '"$HOME"'/git/github.com/jq-shell/jqsh/master && git pull && rustup --quiet --release && cd - > /dev/null && command jqsh'
+    fi
+    alias l='ls -BFGahl'
+    alias mysql='mysql --silent'
+    alias pause='playlist pause-after-current'
+    alias pdb='python3 -m pdb'
+    alias pip3i='pip3 install'
+    alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'
+    alias py='python3 -q'
+    alias rt='t retweet'
+    alias sssel='ssel --sudo'
+    alias ssync='rsync --rsh=ssh'
+    alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
+    alias tf='tail -fn0'
+    alias whatismyip='curl ifconfig.me'
 fi

@@ -233,8 +233,8 @@ print-progress '====' 'running startup script: compinit'
 autoload -U compinit
 compinit -D -u
 print-progress '====' 'running startup script: aliases'
-. aliases zsh
-. aliases zsh-suffix
+. aliases-zsh
+. aliases-zsh-suffix
 unlock syncbin-omz
 print-progress '====' 'running startup script: syncbin-private'
 if [[ -d /opt/git/fenhl.net/syncbin-private/master ]]; then

@@ -108,7 +108,7 @@ bash syncbin-update
 
 # add aliases from syncbin
 if [[ -d /opt/git/github.com/fenhl/syncbin/master ]]; then
-    . /opt/git/github.com/fenhl/syncbin/master/aliases bash
+    . /opt/git/github.com/fenhl/syncbin/master/aliases-bash
 elif [[ -d ~/git/github.com/fenhl/syncbin/master ]]; then
-    . ~/git/github.com/fenhl/syncbin/master/aliases bash
+    . ~/git/github.com/fenhl/syncbin/master/aliases-bash
 fi
