@@ -290,6 +290,20 @@ elif yesno 'lns not found, download and install now?'; then
     fi
 fi
 
+# install Python 3
+
+if which python3 > /dev/null 2>&1; then
+    : # already installed
+else
+    if [ "${OSName}" = "OS X" ]; then
+        brew install python3
+    elif yesno 'Python 3 not found, continue anyway?'; then
+        : # continue anyway
+    else
+        exit 1
+    fi
+fi
+
 # install Python 3 packages
 
 if which python3 > /dev/null 2>&1; then
