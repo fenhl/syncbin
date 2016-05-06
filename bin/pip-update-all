@@ -17,4 +17,4 @@ if [[ -z ${PIP} ]]; then
     fi
 fi
 
-$PIP list --outdated --allow-all-external | grep '(' | sed 's/(.*//g' | xargs $PIP install -U
+$PIP list --outdated | grep '(' | sed 's/(.*//g' | xargs $PIP install -U
