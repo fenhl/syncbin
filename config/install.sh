@@ -133,7 +133,7 @@ fi
 if [ "${OSName}" = "OS X" ]; then
     if which brew > /dev/null 2>&1; then
         echo '[ ** ] installing homebrew-cask'
-        brew install caskroom/cask/brew-cask || GitInstallInstructions="install homebrew-cask and GitHub.app, then ${GitInstallInstructions}"
+        brew tap caskroom/cask || GitInstallInstructions="install homebrew-cask (`brew tap caskroom/cask`) and GitHub.app, then ${GitInstallInstructions}"
     else
         echo '[ !! ] Homebrew not found, skipping homebrew-cask install'
     fi
