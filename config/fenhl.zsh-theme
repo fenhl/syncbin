@@ -17,7 +17,7 @@ function syncbin-prompt-user {
 
 function syncbin-prompt-host {
     if hostname -f &> /dev/null; then
-        if [[ $DEFAULT_HOST == $(hostname -f) ]] || $(which localhost &> /dev/null) && [[ $(localhost) == "fenubookair" ]]; then
+        if [[ $(hostname -f) =~ ^$DEFAULT_HOST ]]; then
             echo ' '
         else
             echo '%B%F{white}'$(hostname -f | cut -c 1)'%b%f'

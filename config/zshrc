@@ -12,7 +12,7 @@ fi
 
 # theme settings
 DEFAULT_USER="fenhl"
-DEFAULT_HOST="fenubookair.local"
+DEFAULT_HOST="equinox"
 
 CASE_SENSITIVE="true"
 COMPLETION_WAITING_DOTS="true"
