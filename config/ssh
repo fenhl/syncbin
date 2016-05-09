@@ -1,0 +1,37 @@
+Host achernar
+    HostName achernar.uberspace.de
+    User ref
+
+Host cetus
+    HostName cetus.uberspace.de
+
+Host ergomwai
+    HostName 192.168.1.34
+
+Host hobbitmwai
+    HostName 2003:7a:2d76:fd00:2db:eeae:40a5:cf81
+
+Host mercredi
+    HostName mercredi.fenhl.net
+
+Host weberserver
+    HostName weberserver.fenhl.net
+
+Host wurstm
+    HostName wurstmineberg.de
+
+Host wurstm-hetzner
+    HostName hetzner.wurstmineberg.de
+
+Host wurstm-nessus
+    HostName nessus.wurstmineberg.de
+
+Host wurstm-strato
+    HostName strato.wurstmineberg.de
+
+Host *
+    User fenhl
+    Port 22
+    LogLevel ERROR
+    SendEnv TERM_PROGRAM
+    UseRoaming no
