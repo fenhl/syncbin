@@ -104,10 +104,13 @@ def bootstrap_python():
 
 @bootstrap_setup('sudo')
 def bootstrap_sudo():
+    sudoers_d = pathlib.Path('/etc/sudoers.d')
+    if not sudoers_d.exists():
+        subprocess.check_call(['sudo', 'mkdir', '-p', str(sudoers_d)])
     print('[ ** ] For passwordless login, insert the following line into the opened document:')
     print('fenhl ALL=(ALL) NOPASSWD: ALL')
     input('[ ?? ] Press return to continue')
-    subprocess.check_call(['sudo', 'nano', '/etc/sudoers.d/fenhl'])
+    subprocess.check_call(['sudo', 'nano', str(sudoers_d / 'fenhl')])
 
 @bootstrap_setup('syncbin-private')
 def bootstrap_syncbin_private():
