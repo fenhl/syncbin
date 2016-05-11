@@ -7,6 +7,7 @@ Usage:
   playlist [options] add-from <path>
   playlist [options] add-random <path>
   playlist pause-after-current
+  playlist repeat-current-once
   playlist -h | --help
   playlist --version
 
@@ -74,6 +75,9 @@ if __name__ == '__main__':
         subprocess.check_call(['mpc', 'single', 'off'], stdout=subprocess.DEVNULL)
         print('[ ok ] ', end=terminal.clear_eol, flush=True)
         sys.exit(subprocess.call(['mpc', 'current']))
+    elif arguments['repeat-current-once']:
+        current = subprocess.check_output(['mpc', 'current', '--format=%file%'])[:-1].decode('utf-8')
+        sys.exit(subprocess.call(['mpc', 'insert', current]))
     else:
         mpc_playlist = subprocess.Popen(['mpc', 'playlist', '--format=%position% %file%'], stdout=subprocess.PIPE)
         for byte_line in mpc_playlist.stdout:
