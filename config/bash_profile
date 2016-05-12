@@ -1,3 +1,34 @@
+# envars
+
+# prepending to $PATH
+PATH="/usr/texbin:${PATH}"
+PATH="/usr/local/MacGPG2/bin:${PATH}"
+PATH="/opt/X11/bin:${PATH}"
+PATH="/sbin:${PATH}"
+PATH="/usr/sbin:${PATH}"
+PATH="/usr/local/sbin:${PATH}"
+PATH="/bin:${PATH}"
+PATH="/usr/bin:${PATH}"
+PATH="/usr/local/bin:${PATH}"
+PATH="/Applications/Alice.app/Contents/Resources/bin:${PATH}"
+PATH="${HOME}/.multirust/toolchains/stable/cargo/bin:${PATH}"
+PATH="${HOME}/.cargo/bin:${PATH}"
+PATH="/usr/local/opt/ruby/bin:${PATH}"
+PATH="/opt/local/sbin:${PATH}"
+PATH="/opt/local/bin:${PATH}"
+PATH="/opt/wurstmineberg/bin:${PATH}"
+PATH="/opt/git/github.com/fenhl/syncbin/master/bin:${PATH}"
+PATH="${HOME}/git/github.com/fenhl/syncbin/master/bin:${PATH}"
+PATH="/opt/git/fenhl.net/syncbin-private/master/bin:${PATH}"
+PATH="${HOME}/git/fenhl.net/syncbin-private/master/bin:${PATH}"
+PATH="${HOME}/bin:${PATH}"
+# appending to $PATH
+PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/3.5/bin"
+PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/3.4/bin"
+PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/3.3/bin"
+PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/2.7/bin"
+export PATH
+
 # Fenhl short prompt, bash edition
 
 function syncbin-prompt-user {
@@ -42,35 +73,6 @@ function syncbin-prompt-shell {
 
 PS1="\$(if [[ \$? == 0 ]]; then echo \"[\[\033[1;37m\]\$(syncbin-prompt-user)\$(syncbin-prompt-host)\$(syncbin-prompt-path)\$(syncbin-prompt-shell)\[\033[m\]]\"; else echo \"\[\033[1;31m\][\[\033[1;37m\]\$(syncbin-prompt-user)\$(syncbin-prompt-host)\$(syncbin-prompt-path)\$(syncbin-prompt-shell)\[\033[1;31m\]]\"; fi)\[\e[0m\] "
 PS2="bash> "
-
-# envars
-
-# prepending to $PATH
-PATH="/usr/texbin:${PATH}"
-PATH="/usr/local/MacGPG2/bin:${PATH}"
-PATH="/opt/X11/bin:${PATH}"
-PATH="/sbin:${PATH}"
-PATH="/usr/sbin:${PATH}"
-PATH="/usr/local/sbin:${PATH}"
-PATH="/bin:${PATH}"
-PATH="/usr/bin:${PATH}"
-PATH="/usr/local/bin:${PATH}"
-PATH="/Applications/Alice.app/Contents/Resources/bin:${PATH}"
-PATH="/usr/local/opt/ruby/bin:${PATH}"
-PATH="/opt/local/sbin:${PATH}"
-PATH="/opt/local/bin:${PATH}"
-PATH="/opt/wurstmineberg/bin:${PATH}"
-PATH="/opt/git/github.com/fenhl/syncbin/master/bin:${PATH}"
-PATH="${HOME}/git/github.com/fenhl/syncbin/master/bin:${PATH}"
-PATH="/opt/git/fenhl.net/syncbin-private/master/bin:${PATH}"
-PATH="${HOME}/git/fenhl.net/syncbin-private/master/bin:${PATH}"
-PATH="${HOME}/bin:${PATH}"
-# appending to $PATH
-PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/3.5/bin"
-PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/3.4/bin"
-PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/3.3/bin"
-PATH="${PATH}:/Library/Frameworks/Python.framework/Versions/2.7/bin"
-export PATH
 
 # locale settings
 export LANGUAGE=en_US.UTF-8
