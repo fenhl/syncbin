@@ -188,7 +188,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     print-progress '===.' 'running startup script: rustup'
     # rustup has its own lock
     if where rustup &> /dev/null; then
-        if ! rustup override | grep 'no overrides' &> /dev/null; then
+        if ! rustup override list | grep 'no overrides' &> /dev/null; then
             print-warning 'Rust toolchain overridden for '"$(pwd)" '===.' 'running startup script: rustup'
         elif [[ "$(multirust show | grep '(default)' | awk '{res=$1; split(res, resArr, "-"); print resArr[1]}')" != "stable" ]]; then
             print-warning 'Rust not defaulting to stable' '===.' 'running startup script: rustup'
