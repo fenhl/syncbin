@@ -54,13 +54,26 @@ function syncbin-prompt-shell {
 }
 
 function syncbin-prompt-multirust-override {
-    if ! where multirust &> /dev/null; then
-        return 0 # multirust not installed
+    if ! where rustup &> /dev/null; then
+        if where multirust &> /dev/null; then
+            echo "[rust: rustup not installed]"
+        else
+            return 0 # Rust not installed
+        fi
     fi
-    if multirust show-override | grep 'no override' &> /dev/null; then
-        return 0 # no override
+    if rustup override list | grep 'no overrides' &> /dev/null; then
+        return 0 # no overrides
     fi
-    multirust_override=$(multirust show-override | grep 'override toolchain' | awk '{print $4}')
+    multirust_override=$(
+        rustup override list |
+        grep 'override toolchain' |
+        rustup override list |
+        awk '{
+            res=$2
+            split(res, resArr, "-")
+            print resArr[1]
+        }'
+    )
     echo "[rust: ${multirust_override}]"
 }
 

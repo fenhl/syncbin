@@ -3,9 +3,9 @@
 """Update the Rust install and (if in a project directory) build the project.
 
 Usage:
-  rustup [options]
-  rustup -h | --help
-  rustup --version
+  rs [options]
+  rs -h | --help
+  rs --version
 
 Options:
   -R, --release     Build with the `--release' flag and skip tests.
@@ -25,6 +25,7 @@ import sys
 import atexit
 from docopt import docopt
 import os
+import re
 import subprocess
 import time
 
@@ -34,23 +35,25 @@ try:
 except:
     __version__ = '0.0'
 
-LOCKDIR = '/tmp/syncbin-rustup.lock'
+LOCKDIR = '/tmp/syncbin-rs.lock'
 QUIET = False
 
 def current_toolchain(cwd=None):
-    show_override = subprocess.Popen(['multirust', 'show-override'], stdout=subprocess.PIPE, cwd=cwd)
+    show_override = subprocess.Popen(['rustup', 'override', 'list'], stdout=subprocess.PIPE, cwd=cwd)
     out, _ = show_override.communicate(timeout=5)
     for line in out.decode('utf-8').split('\n'):
-        if line.startswith('multirust: override toolchain: '):
-            return line[len('multirust: override toolchain: '):]
-        if line.startswith('multirust: default toolchain: '):
-            return line[len('multirust: default toolchain: '):]
-    return 'stable'
+        if line == 'no overrides':
+            return 'stable'
+        match = re.search('\t(.*?)-', line)
+        if match:
+            return match.group(1)
+    else:
+        raise ValueError('Current toolchain could not be determined')
 
 def multirust_update(toolchain=None):
     if toolchain is None:
         toolchain = current_toolchain()
-    update_popen = subprocess.Popen(['multirust', 'update', toolchain], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    update_popen = subprocess.Popen(['rustup', 'update', toolchain], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         if update_popen.wait(timeout=300) != 0:
             print('[!!!!]', 'updating Rust {}: failed'.format(toolchain), file=sys.stderr)
@@ -69,7 +72,7 @@ def set_status(progress, message, newline=False):
         print('[' + '=' * progress + '.' * (4 - progress) + ']', message, end='\n' if newline else '\r')
 
 if __name__ == '__main__':
-    arguments = docopt(__doc__, version='rustup from fenhl/syncbin ' + __version__)
+    arguments = docopt(__doc__, version='rs from fenhl/syncbin ' + __version__)
     if arguments['--quiet']:
         QUIET = True
     if arguments['--ignore-lock']:
