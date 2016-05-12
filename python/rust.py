@@ -3,9 +3,9 @@
 """Update the Rust install and (if in a project directory) build the project.
 
 Usage:
-  rs [options]
-  rs -h | --help
-  rs --version
+  rust [options]
+  rust -h | --help
+  rust --version
 
 Options:
   -R, --release     Build with the `--release' flag and skip tests.
@@ -72,7 +72,7 @@ def set_status(progress, message, newline=False):
         print('[' + '=' * progress + '.' * (4 - progress) + ']', message, end='\n' if newline else '\r')
 
 if __name__ == '__main__':
-    arguments = docopt(__doc__, version='rs from fenhl/syncbin ' + __version__)
+    arguments = docopt(__doc__, version='rust from fenhl/syncbin ' + __version__)
     if arguments['--quiet']:
         QUIET = True
     if arguments['--ignore-lock']:
