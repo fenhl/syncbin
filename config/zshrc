@@ -28,6 +28,7 @@ unsetopt share_history # don't share history between different sessions
 
 # ^D deactivates venv if one is active
 deactivate_venv_or_eof () {
+    BUFFER=''
     if [[ -z "$VIRTUAL_ENV" ]]; then
         exit
     else
