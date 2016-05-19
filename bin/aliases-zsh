@@ -16,6 +16,9 @@ function a2edit {
     sudo a2ensite "$1" > /dev/null
     sudo service apache2 reload
 }
+function activate {
+    . "$1"/bin/activate
+}
 function brew-caveats {
     brew info ${@:-$(brew list)} | awk '/^==> Caveats$/,/^[a-z][a-zA-Z0-9_+-]+: stable |^==> (Dependencies|Options)$/'
 }

@@ -46,10 +46,22 @@ function syncbin-prompt-path {
 }
 
 function syncbin-prompt-shell {
-    if [[ $(type accio) == "accio is an alias for . accio" ]]; then
-        echo '%%'
+    if [[ -z "$VIRTUAL_ENV" ]]; then
+        if [[ $(type accio) == "accio is an alias for . accio" ]]; then
+            echo '%%'
+        else
+            echo '%B%F{white}%%%b%f'
+        fi
     else
-        echo '%B%F{white}%%%b%f'
+        echo '%B%F{white}P%b%f'
+    fi
+}
+
+function syncbin-prompt-python-venv {
+    if [[ -z "$VIRTUAL_ENV" ]]; then
+        return 0 # no venv active
+    else
+        echo "[venv: $VIRTUAL_ENV]"
     fi
 }
 
@@ -153,5 +165,5 @@ function syncbin-prompt-disk-space {
 setopt prompt_subst # make sure the functions in the prompts are actually called
 
 PROMPT='[$(syncbin-prompt-user)$(syncbin-prompt-host)$(syncbin-prompt-path)$(syncbin-prompt-shell)] '
-RPROMPT='%F{red}$(syncbin-prompt-multirust-override)$(syncbin-prompt-git-status)$(syncbin-prompt-battery-charge)$(syncbin-prompt-disk-space)%(?..[exit: %?])%f'
+RPROMPT='%F{red}$(syncbin-prompt-python-venv)$(syncbin-prompt-multirust-override)$(syncbin-prompt-git-status)$(syncbin-prompt-battery-charge)$(syncbin-prompt-disk-space)%(?..[exit: %?])%f'
 PROMPT2='       zsh %_> '

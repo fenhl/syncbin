@@ -58,13 +58,14 @@ elif [[ -d ~/git ]]; then
     export GITDIR=${HOME}/git
 fi
 
-# Python modules and interactive mode config
+# Python config
 if [[ -n ${PYTHONPATH} ]]; then
     export PYTHONPATH="/opt/py:${HOME}/py:/opt/git/fenhl.net/syncbin-private/master/python:${HOME}/git/fenhl.net/syncbin-private/master/python:/opt/git/github.com/fenhl/syncbin/master/python:${HOME}/git/github.com/fenhl/syncbin/master/python:${PYTHONPATH}"
 else
     export PYTHONPATH="/opt/py:${HOME}/py:/opt/git/fenhl.net/syncbin-private/master/python:${HOME}/git/fenhl.net/syncbin-private/master/python:/opt/git/github.com/fenhl/syncbin/master/python:${HOME}/git/github.com/fenhl/syncbin/master/python"
 fi
 export PYTHONSTARTUP="${GITDIR}/github.com/fenhl/syncbin/master/config/pythonstartup.py"
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 # TeX and LaTeX config
 export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"

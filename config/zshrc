@@ -21,9 +21,22 @@ DISABLE_CORRECTION="true"
 
 setopt auto_cd # using a directory as a command cds there instead
 unsetopt hist_verify # don't “verify” history expansions (meaning I have to hit return twice), run them directly
+setopt ignore_eof # don't hardcode EOF to exit the shell session so `deactivate_venv_or_eof` below can use it
 setopt interactive_comments # allow comments in interactive shells
 setopt list_packed # try to make menu completion more compact
 unsetopt share_history # don't share history between different sessions
+
+# ^D deactivates venv if one is active
+deactivate_venv_or_eof () {
+    if [[ -z "$VIRTUAL_ENV" ]]; then
+        exit
+    else
+        deactivate
+        zle accept-line-and-down-history
+    fi
+}
+zle -N deactivate_venv_or_eof
+bindkey "^D" deactivate_venv_or_eof
 
 # ^O edits last viewed file if the line buffer is empty
 #TODO fix me
