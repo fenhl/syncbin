@@ -103,6 +103,7 @@ function mnt {
     sudo mount "$1" "$2"
 }
 compdef mnt=mount
+alias notify='terminal-notifier -message'
 function pw {
     if [[ $# -gt 0 ]]; then
         while [[ $# -gt 0 ]]; do
