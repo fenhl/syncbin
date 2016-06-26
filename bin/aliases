@@ -19,8 +19,10 @@ else
         alias jqsh='cd '"$HOME"'/git/github.com/jq-shell/jqsh/master && git pull && rustup --quiet --release && cd - > /dev/null && command jqsh'
     fi
     if ls --group > /dev/null 2>&1; then
-        alias l='ls --group -BFGahl'
+        # GNU ls
+        alias l='ls --color=always --group -Fabhl'
     else
+        # BSD ls
         alias l='ls -BFGahl'
     fi
     alias mysql='mysql --silent'

@@ -79,8 +79,10 @@ if alias ll > /dev/null; then
 fi
 function ll {
     if ls --group > /dev/null 2>&1; then
-        CLICOLOR_FORCE=1 ls --group -BFGahl "$@" | less -R
+        # GNU ls
+        CLICOLOR_FORCE=1 ls --color=always --group -Fabhl "$@" | less -R
     else
+        # BSD ls
         CLICOLOR_FORCE=1 ls -BFGahl "$@" | less -R
     fi
 }
