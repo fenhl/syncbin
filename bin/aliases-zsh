@@ -78,7 +78,11 @@ if alias ll > /dev/null; then
     unalias ll
 fi
 function ll {
-    CLICOLOR_FORCE=1 ls -BFGahl "$@" | less -R
+    if ls --group > /dev/null 2>&1; then
+        CLICOLOR_FORCE=1 ls --group -BFGahl "$@" | less -R
+    else
+        CLICOLOR_FORCE=1 ls -BFGahl "$@" | less -R
+    fi
 }
 compdef ll=ls
 function mc {

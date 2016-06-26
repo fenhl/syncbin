@@ -18,7 +18,11 @@ else
     elif [ -d "$HOME"/git/github.com/jq-shell/jqsh/master ]; then
         alias jqsh='cd '"$HOME"'/git/github.com/jq-shell/jqsh/master && git pull && rustup --quiet --release && cd - > /dev/null && command jqsh'
     fi
-    alias l='ls -BFGahl'
+    if ls --group > /dev/null 2>&1; then
+        alias l='ls --group -BFGahl'
+    else
+        alias l='ls -BFGahl'
+    fi
     alias mysql='mysql --silent'
     alias pause='playlist pause-after-current'
     alias pdb='python3 -m pdb'
