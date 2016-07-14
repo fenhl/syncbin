@@ -84,8 +84,7 @@ def bootstrap_no_battery():
 
 @bootstrap_setup('python')
 def bootstrap_python():
-    subprocess.check_call(['pip3', 'install', 'blessings'])
-    subprocess.check_call(['pip3', 'install', 'docopt'])
+    subprocess.check_call(['pip3', 'install', 'blessings', 'docopt', 'requests'])
     if not pathlib.Path('/opt/py').exists():
         subprocess.check_call(['sudo', 'mkdir', '/opt/py'])
     try:
@@ -97,6 +96,16 @@ def bootstrap_python():
         subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), '/opt/py/basedir.py'])
         gitdir.host.by_name('github.com').clone('fenhl/lazyjson')
         subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), '/opt/py/lazyjson.py'])
+
+@bootstrap_setup('rust')
+def bootstrap_rust():
+    #try:
+    #    import requests
+    #except ImportError:
+    #    sys.exit('[ !! ] missing requests, run `syncbin bootstrap python` first')
+    #response = requests.get('https://sh.rustup.rs/', stream=True)
+    #response.raise_for_status()
+    sys.exit(subprocess.call('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path', shell=True))
 
 @bootstrap_setup('sudo')
 def bootstrap_sudo():
