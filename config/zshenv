@@ -42,7 +42,6 @@ export NULLCMD=':'
 export READNULLCMD=less
 
 # config for automatic mail-checks
-typeset -T MAILPATH mailpath
 mailpath=(
     "/var/mail/fenhl"
     "/home/fenhl/Maildir"
