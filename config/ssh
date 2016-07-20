@@ -8,6 +8,9 @@ Host cetus
 Host ergomwai
     HostName 192.168.1.34
 
+Host fevereiro
+    HostName 192.168.43.1
+
 Host hobbitmwai
     HostName 2003:7a:2d76:fd00:2db:eeae:40a5:cf81
 
