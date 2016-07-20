@@ -107,6 +107,14 @@ def bootstrap_rust():
     #response.raise_for_status()
     sys.exit(subprocess.call('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path', shell=True))
 
+@bootstrap_setup('ssh')
+def bootstrap_ssh():
+    if hasattr(pathlib.Path, 'home'): # Python 3.5 and above
+        config_path = (pathlib.Path.home() / '.ssh' / 'config')
+    else:
+        config_path = pathlib.Path(input('[ ?? ] where should the SSH config be saved? '))
+    config_path.symlink_to(GITDIR / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh')
+
 @bootstrap_setup('sudo')
 def bootstrap_sudo():
     sudoers_d = pathlib.Path('/etc/sudoers.d')
