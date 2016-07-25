@@ -275,7 +275,10 @@ def bootstrap_syncbin_private():
     """Installs the private `syncbin` extensions."""
     import gitdir.host
 
-    gitdir.host.by_name('fenhl.net').clone('syncbin-private')
+    try:
+        gitdir.host.by_name('fenhl.net').clone('syncbin-private')
+    except PermissionError:
+        sys.exit('[ !! ] Permission denied. Fix /opt/git permissions, then try again.')
 
 bootstrap_syncbin_private.requires('gitdir')
 
