@@ -48,6 +48,8 @@ if [ "${OSName}" = "Linux" ]; then
         OSName=$(lsb_release -si)
     elif [ -r /etc/redhat-release ]; then
         OSName=$(cat /etc/redhat-release | cut -d' ' -f1)
+    elif [ -r /system/build.prop ]; then
+        OSName="Android"
     else
         printf ": could not get Linux distro\r[FAIL]"
         echo
@@ -103,6 +105,14 @@ elif [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
             apt-get install zsh
         fi
     fi
+fi
+
+if which zsh > /dev/null 2>&1; then
+    : # found zsh
+elif yesno 'Zsh not found, continue anyway?'; then
+    : # continue anyway
+else
+    exit 1
 fi
 
 # install and update homebrew
