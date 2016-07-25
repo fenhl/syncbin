@@ -84,7 +84,11 @@ def bootstrap_debian_root():
 @bootstrap_debian_root.test_installed
 def bootstrap_debian_root():
     try:
-        subprocess.check_call(['sudo', 'systemctl', '-q', 'is-active', 'ntp'])
+        subprocess.check_call(['sudo', '-n', 'true'])
+    except:
+        return None
+    try:
+        subprocess.check_call(['sudo', '-n', 'systemctl', '-q', 'is-active', 'ntp'])
     except subprocess.CalledProcessError:
         return False
     else:
@@ -114,6 +118,8 @@ def bootstrap_finder():
         return subprocess.check_output(['defaults', 'read', 'com.apple.finder', '_FXShowPosixPathInTitle']) == b'1\n'
     except FileNotFoundError:
         return None
+    except subprocess.CalledProcessError:
+        return False
 
 @bootstrap_setup('gitdir')
 def bootstrap_gitdir():
