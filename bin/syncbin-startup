@@ -165,6 +165,12 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     #    }
     #    unlock softwareupdate
     #fi
+    print-progress '===.' 'runnign startup script: sip'
+    if where csrutil &> /dev/null; then
+        if csrutil status | grep enabled > /dev/null; then
+            print-warning 'System Integrity Protection is enabled' '===.' 'running startup script: sip'
+        fi
+    fi
     lock ruby '===.'
     print-progress '===.' 'running startup script: brew'
     if where brew &> /dev/null; then
