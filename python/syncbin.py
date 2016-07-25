@@ -88,7 +88,7 @@ def bootstrap_debian_root():
     except:
         return None
     try:
-        subprocess.check_call(['sudo', '-n', 'systemctl', '-q', 'is-active', 'ntp'])
+        subprocess.check_call(['sudo', '-n', 'systemctl', '-q', 'is-active', 'ntp'], stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError:
         return False
     else:
@@ -115,7 +115,7 @@ def bootstrap_finder():
 @bootstrap_finder.test_installed
 def bootstrap_finder():
     try:
-        return subprocess.check_output(['defaults', 'read', 'com.apple.finder', '_FXShowPosixPathInTitle']) == b'1\n'
+        return subprocess.check_output(['defaults', 'read', 'com.apple.finder', '_FXShowPosixPathInTitle'], stderr=subprocess.STDOUT) == b'1\n'
     except FileNotFoundError:
         return None
     except subprocess.CalledProcessError:
