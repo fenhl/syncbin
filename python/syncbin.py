@@ -3,7 +3,7 @@
 """Config and helper tool for Fenhl's syncbin.
 
 Usage:
-  syncbin bootstrap <setup>...
+  syncbin bootstrap [<setup>...]
   syncbin hasinet
   syncbin install
   syncbin startup [--ignore-lock] [--no-internet-test]
@@ -44,18 +44,31 @@ except:
 
 def bootstrap_setup(setup_name):
     def inner_wrapper(f):
+        def test_installed(is_installed):
+            f.is_installed = is_installed
+            return f
+        def requires(*reqs):
+            f.requirements += reqs
+            return f
+
         BOOTSTRAP_SETUPS[setup_name] = f
+        f.is_installed = lambda: None
+        f.test_installed = test_installed
+        f.requirements = []
+        f.requires = requires
         return f
     return inner_wrapper
 
 @bootstrap_setup('debian-root')
 def bootstrap_debian_root():
+    """Essential setup for Debian systems with root access"""
     subprocess.check_call(['sudo', 'apt-get', 'install', 'ntp', 'ruby-dev'])
     ping = subprocess.check_output(['which', 'ping']).decode('utf-8')[:-1]
     subprocess.check_call(['sudo', 'chmod', 'u+s', ping])
 
 @bootstrap_setup('gitdir')
 def bootstrap_gitdir():
+    """Installs `gitdir`. Requires the `python` setup."""
     gitdir_gitdir = GITDIR / 'github.com' / 'fenhl' / 'gitdir'
     if not gitdir_gitdir.exists():
         gitdir_gitdir.mkdir(parents=True)
@@ -69,8 +82,23 @@ def bootstrap_gitdir():
         except PermissionError:
             subprocess.check_call(['sudo', 'ln', '-s', str(gitdir_gitdir / 'master' / 'gitdir'), '/opt/py/gitdir'])
 
+@bootstrap_setup('macbook')
+def bootstrap_macbook():
+    """Installs `batcharge` for MacBooks."""
+    if hasattr(pathlib.Path, 'home'): # Python 3.5 and above
+        bin_path = (pathlib.Path.home() / 'bin')
+    else:
+        bin_path = pathlib.Path(input('[ ?? ] where should the `batcharge` symlink be created? '))
+    if not bin_path.exists():
+        bin_path.mkdir()
+    batcharge = bin_path / 'batcharge'
+    batcharge.symlink_to(GITDIR / 'fenhl.net' / 'syncbin-private' / 'master' / 'bin' / 'batcharge-macbook')
+
+bootstrap_macbook.requires('syncbin-private')
+
 @bootstrap_setup('no-battery')
 def bootstrap_no_battery():
+    """Installs `batcharge` for devices without batteries."""
     if hasattr(pathlib.Path, 'home'): # Python 3.5 and above
         bin_path = (pathlib.Path.home() / 'bin')
     else:
@@ -84,6 +112,7 @@ def bootstrap_no_battery():
 
 @bootstrap_setup('python')
 def bootstrap_python():
+    """Installs Python modules and creates `/opt/py`. Must be run twice, once before the gitdir setup, once after."""
     subprocess.check_call(['pip3', 'install', 'blessings', 'docopt', 'requests'])
     if not pathlib.Path('/opt/py').exists():
         subprocess.check_call(['sudo', 'mkdir', '/opt/py'])
@@ -99,6 +128,7 @@ def bootstrap_python():
 
 @bootstrap_setup('rust')
 def bootstrap_rust():
+    """Installs Rust via `rustup`."""
     #try:
     #    import requests
     #except ImportError:
@@ -109,6 +139,7 @@ def bootstrap_rust():
 
 @bootstrap_setup('ssh')
 def bootstrap_ssh():
+    """Symlinks the `syncbin` SSH config file."""
     if hasattr(pathlib.Path, 'home'): # Python 3.5 and above
         config_path = (pathlib.Path.home() / '.ssh' / 'config')
     else:
@@ -117,6 +148,7 @@ def bootstrap_ssh():
 
 @bootstrap_setup('sudo')
 def bootstrap_sudo():
+    """Configures passwordless `sudo`."""
     sudoers_d = pathlib.Path('/etc/sudoers.d')
     if not sudoers_d.exists():
         subprocess.check_call(['sudo', 'mkdir', '-p', str(sudoers_d)])
@@ -127,18 +159,35 @@ def bootstrap_sudo():
 
 @bootstrap_setup('syncbin-private')
 def bootstrap_syncbin_private():
+    """Installs the private `syncbin` extensions."""
     import gitdir.host
 
     gitdir.host.by_name('fenhl.net').clone('syncbin-private')
+
+bootstrap_syncbin_private.requires('gitdir')
 
 def bootstrap(*setups):
     for setup_name in setups:
         if setup_name not in BOOTSTRAP_SETUPS:
             print('[!!!!] Unknown setup for `syncbin bootstrap`: {!r}'.format(setup_name), file=sys.stderr)
-            print('[ ** ] Available setups: {}'.format(', '.join(sorted(BOOTSTRAP_SETUPS))), file=sys.stderr)
+            bootstrap_help(file=sys.stderr)
             sys.exit(1)
     for setup_name in setups:
+        #TODO check requirements
         BOOTSTRAP_SETUPS[setup_name]()
+
+def bootstrap_help(file=sys.stdout):
+    print('[ ** ] Available setups:', file=file)
+    setups = sorted(BOOTSTRAP_SETUPS.items())
+    max_len = max(len(name) for name, setup in setups)
+    for name, setup in setups:
+        status_sigil = {
+            True: '✓',
+            False: '✗',
+            None: '?'
+        }[setup.is_installed()]
+        print('{} {}{}  {}'.format(status_sigil, name, ' ' * (max_len - len(name)), '(undocumented)' if setup.__doc__ is None else setup.__doc__), file=file)
+        #TODO more details
 
 if __name__ == '__main__':
     try:
@@ -149,7 +198,10 @@ if __name__ == '__main__':
             '<setup>': 'python'
         }
     if arguments['bootstrap']:
-        bootstrap(*arguments['<setup>'])
+        if len(arguments['<setup>']) == 0:
+            bootstrap_help()
+        else:
+            bootstrap(*arguments['<setup>'])
     elif arguments['hasinet']:
         sys.exit(subprocess.call(['syncbin-hasinet']))
     elif arguments['install']:
