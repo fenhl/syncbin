@@ -24,6 +24,7 @@ sys.path.append('/opt/py')
 
 import os
 import pathlib
+import platform
 import stat
 import subprocess
 
@@ -41,6 +42,21 @@ try:
         __version__ = version_file.read().strip()
 except:
     __version__ = '0.0'
+
+def which(cmd):
+    try:
+        return subprocess.check_output(['which', cmd]).decode('utf-8')[:-1]
+    except subprocess.CalledProcessError:
+        return None
+
+def yesno(question):
+    answer = input('[ ?? ] {} [y/n] '.format(question))
+    while True:
+        if answer.lower() in ('y', 'yes'):
+            return True
+        elif answer.lower() in ('n', 'no'):
+            return False
+        answer = input('[ ?? ] unrecognized answer, type “yes” or “no”: ')
 
 def bootstrap_setup(setup_name):
     def inner_wrapper(f):
@@ -63,8 +79,7 @@ def bootstrap_setup(setup_name):
 def bootstrap_debian_root():
     """Essential setup for Debian systems with root access"""
     subprocess.check_call(['sudo', 'apt-get', 'install', 'ntp', 'ruby-dev'])
-    ping = subprocess.check_output(['which', 'ping']).decode('utf-8')[:-1]
-    subprocess.check_call(['sudo', 'chmod', 'u+s', ping])
+    subprocess.check_call(['sudo', 'chmod', 'u+s', which('ping')])
 
 @bootstrap_setup('finder')
 def bootstrap_finder():
@@ -173,12 +188,7 @@ def bootstrap_rust():
 
 @bootstrap_rust.test_installed
 def bootstrap_rust():
-    try:
-        subprocess.check_call(['which', 'rustup'], stdout=subprocess.DEVNULL)
-    except subprocess.CalledProcessError:
-        return False
-    else:
-        return True
+    return which('rustup') is not None
 
 @bootstrap_setup('ssh')
 def bootstrap_ssh():
@@ -221,6 +231,34 @@ bootstrap_syncbin_private.requires('gitdir')
 @bootstrap_syncbin_private.test_installed
 def bootstrap_syncbin_private():
     return (GITDIR / 'fenhl.net' / 'syncbin-private' / 'master').is_dir()
+
+@bootstrap_setup('zsh')
+def bootstrap_zsh():
+    """Installs useful extensions for Zsh."""
+    import gitdir.host
+
+    gitdir.host.by_name('github.com').clone('zsh-users/zsh-syntax-highlighting')
+    if yesno('install oh-my-zsh?'):
+        gitdir.host.by_name('github.com').clone('robbyrussell/oh-my-zsh')
+    if platform.system() == 'Darwin' and which('zsh') == '/bin/zsh':
+        # OS X but Homebrew Zsh not installed
+        if yesno('install newer Zsh version using Homebrew?'):
+            subprocess.check_call(['brew', 'install', 'zsh'])
+            needs_append = True
+            with open('/etc/shells') as shells:
+                for line in shells:
+                    if line.strip() == '/usr/local/bin/zsh':
+                        needs_append = False
+                        break
+            if needs_append:
+                subprocess.check_output(['sudo', 'tee', '-a', '/etc/shells'], input=b'/usr/local/bin/zsh\n')
+            print('[ ** ] Added to /etc/shells.')
+
+bootstrap_zsh.requires('gitdir')
+
+@bootstrap_zsh.test_installed
+def bootstrap_syncbin_private():
+    return (GITDIR / 'github.com' / 'zsh-users' / 'zsh-syntax-highlighting' / 'master').is_dir()
 
 def bootstrap(*setups):
     for setup_name in setups:
@@ -272,9 +310,7 @@ if __name__ == '__main__':
             mode = 'private'
         elif arguments['hooks']:
             mode = 'hooks'
-        try:
-            subprocess.check_call(['which', 'zsh'], stdout=subprocess.DEVNULL)
-        except subprocess.CalledProcessError:
+        if which('zsh') is None:
             # Zsh missing, use bash
             if arguments['<old>'] is None:
                 sys.exit(subprocess.call(['bash', 'syncbin-update'] + ([] if mode is None else [mode])))
