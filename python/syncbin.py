@@ -66,6 +66,31 @@ def bootstrap_debian_root():
     ping = subprocess.check_output(['which', 'ping']).decode('utf-8')[:-1]
     subprocess.check_call(['sudo', 'chmod', 'u+s', ping])
 
+@bootstrap_setup('finder')
+def bootstrap_finder():
+    """Configure useful defaults for Finder on OS X"""
+    print('[....] configuring Finder', end='\r', flush=True)
+    subprocess.check_call(['defaults', 'write', '-g', 'NSScrollViewRubberbanding', '-int', '0'])
+    subprocess.check_call(['defaults', 'write', 'com.apple.finder', 'AppleShowAllFiles', '-bool', 'true'])
+    subprocess.check_call(['defaults', 'write', 'com.apple.finder', '_FXShowPosixPathInTitle', '-bool', 'true'])
+    print('[ ok ]')
+    print('[....] restarting Finder', end='\r', flush=True)
+    subprocess.check_call(['killall', 'Finder'])
+    print('[ ok ]')
+    print('[....] configuring Dock', end='\r', flush=True)
+    subprocess.check_call(['defaults', 'write', 'com.apple.Dock', 'showhidden', '-bool', 'true'])
+    print('[ ok ]')
+    print('[....] restarting Dock', end='\r', flush=True)
+    subprocess.check_call(['killall', 'Dock'])
+    print('[ ok ]')
+
+@bootstrap_finder.test_installed
+def bootstrap_finder():
+    try:
+        return subprocess.check_output(['defaults', 'read', 'com.apple.finder', '_FXShowPosixPathInTitle']) == b'1\n'
+    except FileNotFoundError:
+        return None
+
 @bootstrap_setup('gitdir')
 def bootstrap_gitdir():
     """Installs `gitdir`. Requires the `python` setup."""
