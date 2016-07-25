@@ -308,7 +308,7 @@ def bootstrap_zsh():
                         break
             if needs_append:
                 subprocess.check_output(['sudo', 'tee', '-a', '/etc/shells'], input=b'/usr/local/bin/zsh\n')
-            print('[ ** ] Added to /etc/shells.')
+            print('[ ** ] Added to /etc/shells. You can now `chsh -s /usr/local/bin/zsh` and relog.')
 
 bootstrap_zsh.requires('gitdir')
 
