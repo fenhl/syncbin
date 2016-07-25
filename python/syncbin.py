@@ -82,6 +82,15 @@ def bootstrap_gitdir():
         except PermissionError:
             subprocess.check_call(['sudo', 'ln', '-s', str(gitdir_gitdir / 'master' / 'gitdir'), '/opt/py/gitdir'])
 
+@bootstrap_gitdir.test_installed
+def bootstrap_gitdir():
+    try:
+        import gitdir
+    except ImportError:
+        return False
+    else:
+        return True
+
 @bootstrap_setup('macbook')
 def bootstrap_macbook():
     """Installs `batcharge` for MacBooks."""
@@ -137,6 +146,15 @@ def bootstrap_rust():
     #response.raise_for_status()
     sys.exit(subprocess.call('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path', shell=True))
 
+@bootstrap_rust.test_installed
+def bootstrap_rust():
+    try:
+        subprocess.check_call(['which', 'rustup'], stdout=subprocess.DEVNULL)
+    except subprocess.CalledProcessError:
+        return False
+    else:
+        return True
+
 @bootstrap_setup('ssh')
 def bootstrap_ssh():
     """Symlinks the `syncbin` SSH config file."""
@@ -145,6 +163,15 @@ def bootstrap_ssh():
     else:
         config_path = pathlib.Path(input('[ ?? ] where should the SSH config be saved? '))
     config_path.symlink_to(GITDIR / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh')
+
+@bootstrap_ssh.test_installed
+def bootstrap_ssh():
+    if not hasattr(pathlib.Path, 'home'): # Python 3.4 and below
+        return None
+    config_path = (pathlib.Path.home() / '.ssh' / 'config')
+    if not config_path.is_symlink():
+        return False
+    return config_path.resolve() == GITDIR / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh'
 
 @bootstrap_setup('sudo')
 def bootstrap_sudo():
@@ -165,6 +192,10 @@ def bootstrap_syncbin_private():
     gitdir.host.by_name('fenhl.net').clone('syncbin-private')
 
 bootstrap_syncbin_private.requires('gitdir')
+
+@bootstrap_syncbin_private.test_installed
+def bootstrap_syncbin_private():
+    return (GITDIR / 'fenhl.net' / 'syncbin-private' / 'master').is_dir()
 
 def bootstrap(*setups):
     for setup_name in setups:
@@ -217,8 +248,7 @@ if __name__ == '__main__':
         elif arguments['hooks']:
             mode = 'hooks'
         try:
-            with open('/dev/null', 'a') as dev_null:
-                subprocess.check_call(['which', 'zsh'], stdout=dev_null)
+            subprocess.check_call(['which', 'zsh'], stdout=subprocess.DEVNULL)
         except subprocess.CalledProcessError:
             # Zsh missing, use bash
             if arguments['<old>'] is None:
