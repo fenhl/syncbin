@@ -81,6 +81,15 @@ def bootstrap_debian_root():
     subprocess.check_call(['sudo', 'apt-get', 'install', 'ntp', 'ruby-dev'])
     subprocess.check_call(['sudo', 'chmod', 'u+s', which('ping')])
 
+@bootstrap_debian_root.test_installed
+def bootstrap_debian_root():
+    try:
+        subprocess.check_call(['sudo', 'systemctl', '-q', 'is-active', 'ntp'])
+    except subprocess.CalledProcessError:
+        return False
+    else:
+        return True
+
 @bootstrap_setup('finder')
 def bootstrap_finder():
     """Configure useful defaults for Finder on OS X"""
@@ -145,6 +154,15 @@ def bootstrap_macbook():
 
 bootstrap_macbook.requires('syncbin-private')
 
+@bootstrap_macbook.test_installed
+def bootstrap_macbook():
+    if not hasattr(pathlib.Path, 'home'): # Python 3.4 and below
+        return None
+    config_path = (pathlib.Path.home() / 'bin' / 'batcharge')
+    if not config_path.is_symlink():
+        return False
+    return config_path.resolve() == GITDIR / 'fenhl.net' / 'syncbin-private' / 'master' / 'bin' / 'batcharge-macbook'
+
 @bootstrap_setup('no-battery')
 def bootstrap_no_battery():
     """Installs `batcharge` for devices without batteries."""
@@ -158,6 +176,15 @@ def bootstrap_no_battery():
     with batcharge.open('w') as f:
         print('#!/bin/sh\n\nexit 0', file=f)
     batcharge.chmod(batcharge.stat().st_mode | stat.S_IEXEC)
+
+@bootstrap_no_battery.test_installed
+def bootstrap_no_battery():
+    if not hasattr(pathlib.Path, 'home'): # Python 3.4 and below
+        return None
+    if not (pathlib.Path.home() / 'bin' / 'batcharge').exists():
+        return False
+    with (pathlib.Path.home() / 'bin' / 'batcharge').open() as batcharge_f:
+        return batcharge_f.read == '#!/bin/sh\n\nexit 0\n'
 
 @bootstrap_setup('python')
 def bootstrap_python():
@@ -174,6 +201,15 @@ def bootstrap_python():
         subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), '/opt/py/basedir.py'])
         gitdir.host.by_name('github.com').clone('fenhl/lazyjson')
         subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), '/opt/py/lazyjson.py'])
+
+@bootstrap_python.test_installed
+def bootstrap_python():
+    try:
+        import basedir, blessings, docopt, gitdir, lazyjson, requests
+    except ImportError:
+        return False
+    else:
+        return True
 
 @bootstrap_setup('rust')
 def bootstrap_rust():
@@ -218,6 +254,15 @@ def bootstrap_sudo():
     print('fenhl ALL=(ALL) NOPASSWD: ALL')
     input('[ ?? ] Press return to continue')
     subprocess.check_call(['sudo', 'nano', str(sudoers_d / 'fenhl')])
+
+@bootstrap_sudo.test_installed
+def bootstrap_sudo():
+    try:
+        subprocess.check_call(['sudo', '-n', 'true'])
+    except subprocess.CalledProcessError:
+        return False
+    else:
+        return True
 
 @bootstrap_setup('syncbin-private')
 def bootstrap_syncbin_private():
