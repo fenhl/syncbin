@@ -4,6 +4,8 @@
 
 Usage:
   rust [options]
+  rust current
+  rust default
   rust -h | --help
   rust --version
 
@@ -43,12 +45,23 @@ def current_toolchain(cwd=None):
     out, _ = show_override.communicate(timeout=5)
     for line in out.decode('utf-8').split('\n'):
         if line == 'no overrides':
-            return 'stable'
+            return default_toolchain()
         match = re.search('\t(.*?)-', line)
         if match:
             return match.group(1)
     else:
         raise ValueError('Current toolchain could not be determined')
+
+def default_toolchain():
+    show_default = subprocess.Popen(['rustup', 'show'], stdout=subprocess.PIPE)
+    out, _ = show_default.communicate(timeout=5)
+    for line in out.decode('utf-8').split('\n'):
+        if line.startswith('stable-'):
+            return 'stable'
+        elif line.startswith('beta-'):
+            return 'beta'
+    else:
+        raise NotImplementedError('Failed to parse default toolchain')
 
 def multirust_update(toolchain=None):
     if toolchain is None:
@@ -73,6 +86,12 @@ def set_status(progress, message, newline=False):
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='rust from fenhl/syncbin ' + __version__)
+    if arguments['current']:
+        print(current_toolchain())
+        sys.exit()
+    if arguments['default']:
+        print(default_toolchain())
+        sys.exit()
     if arguments['--quiet']:
         QUIET = True
     if arguments['--ignore-lock']:
