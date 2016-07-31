@@ -179,6 +179,9 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
             brew update &> /dev/null
             brew upgrade > /dev/null
         fi
+        if brew command command-not-found-init > /dev/null; then
+            eval "$(brew command-not-found-init)"
+        fi
     fi
     print-progress '===.' 'running startup script: gem'
     if where gem-wrapper &> /dev/null; then
