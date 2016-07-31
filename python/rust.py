@@ -56,6 +56,8 @@ def default_toolchain():
     show_default = subprocess.Popen(['rustup', 'show'], stdout=subprocess.PIPE)
     out, _ = show_default.communicate(timeout=5)
     for line in out.decode('utf-8').split('\n'):
+        if line == 'no active toolchain':
+            return None
         if line.startswith('stable-'):
             return 'stable'
         elif line.startswith('beta-'):
