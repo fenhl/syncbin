@@ -22,43 +22,39 @@ Options:
 import sys
 
 import docopt
-import re
-import subprocess
+import shutil
+
 try:
     import syncbin
     __version__ = syncbin.__version__
 except:
     __version__ = '0.0'
 
-def format_space(num_bytes):
-    if num_bytes >= 2 ** 50:
-        return str(num_bytes // (2 ** 50)) + 'PB'
-    if num_bytes >= 2 ** 40:
-        return str(num_bytes // (2 ** 40)) + 'TB'
-    if num_bytes >= 2 ** 30:
-        return str(num_bytes // (2 ** 30)) + 'GB'
-    if num_bytes >= 2 ** 20:
-        return str(num_bytes // (2 ** 20)) + 'MB'
-    if num_bytes >= 2 ** 10:
-        return str(num_bytes // (2 ** 20)) + 'KB'
-    return str(int(num_bytes))
+class Bytes(int):
+    def __format__(self, format_spec):
+        if format_spec == 'B':
+            return str(int(self))
+        if format_spec == '':
+            return str(self)
+        raise ValueError('Invalid format spec {!r}'.format(format_spec))
 
-def parse_space(space_string):
-    space_string = str(space_string)
-    match = re.match('([0-9.]+)([PTGMKB])', space_string)
-    if match:
-        amount, unit = match.group(1, 2)
-        return int({
-            'P': 2 ** 50,
-            'T': 2 ** 40,
-            'G': 2 ** 30,
-            'M': 2 ** 20,
-            'K': 2 ** 10,
-            'B': 1
-        }[unit] * float(amount))
-    return int(space_string)
+    def __repr__(self):
+        return 'Bytes({!r})'.format(int(self))
 
-ONE_GIG = 2 ** 30
+    def __str__(self):
+        if self >= 2 ** 50:
+            return str(int(self) // (2 ** 50)) + 'PB'
+        if self >= 2 ** 40:
+            return str(int(self) // (2 ** 40)) + 'TB'
+        if self >= 2 ** 30:
+            return str(int(self) // (2 ** 30)) + 'GB'
+        if self >= 2 ** 20:
+            return str(int(self) // (2 ** 20)) + 'MB'
+        if self >= 2 ** 10:
+            return str(int(self) // (2 ** 20)) + 'KB'
+        return str(int(self)) + 'B'
+
+ONE_GIG = Bytes(2 ** 30)
 
 if __name__ == '__main__':
     arguments = docopt.docopt(__doc__, version='diskspace from fenhl/syncbin ' + __version__)
@@ -73,11 +69,11 @@ if __name__ == '__main__':
     elif arguments['--zsh']:
         min_space = ONE_GIG
     else:
-        min_space = 0 if arguments['--min-percent'] else float('inf')
+        min_space = Bytes(0) if arguments['--min-percent'] else float('inf')
     try:
-        output = subprocess.check_output(['df', '-hl', '/'], stderr=subprocess.STDOUT).decode('utf-8')
-        total = parse_space(output.splitlines()[1].split()[1])
-        available = parse_space(output.splitlines()[1].split()[3])
+        usage = shutil.disk_usage('/')
+        total = Bytes(usage.total)
+        available = Bytes(usage.free)
     except:
         if arguments['--debug'] or arguments['--verbose']:
             raise
@@ -88,10 +84,10 @@ if __name__ == '__main__':
         if arguments['--quiet']:
             sys.exit(1)
         elif arguments['--verbose']:
-            print('Available disk space:', format_space(available))
-            print(str(available), 'bytes')
-            print(str(int(100 * available / total)), 'percent')
+            print('Available disk space: {}'.format(available))
+            print('{:B} bytes'.format(available))
+            print('{} percent'.format(int(100 * available / total)))
         elif arguments['--bytes']:
-            print(str(available))
+            print('{:B}'.format(available))
         else:
-            print('[disk: ' + format_space(available) + ']')
+            print('[disk: {}]'.format(available))
