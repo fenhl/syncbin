@@ -23,6 +23,12 @@ function brew-caveats {
     brew info ${@:-$(brew list)} | awk '/^==> Caveats$/,/^[a-z][a-zA-Z0-9_+-]+: stable |^==> (Dependencies|Options)$/'
 }
 alias caveats='brew-caveats'
+function chmox {
+    if ! [[ -f "$1" ]]; then
+        touch "$1"
+    fi
+    chmod +x "$1"
+}
 if which discoveryutil &> /dev/null; then
     alias clear-dns-cache='sudo discoveryutil mdnsflushcache && sudo discoveryutil udnsflushcaches'
 else
