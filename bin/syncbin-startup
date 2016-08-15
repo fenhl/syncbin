@@ -179,9 +179,13 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
             brew update &> /dev/null
             brew upgrade > /dev/null
         fi
-        if brew command command-not-found-init > /dev/null; then
+        if brew command command-not-found-init &> /dev/null; then
             eval "$(brew command-not-found-init)"
+        else
+            print-warning 'brew is missing command-not-found support, install with `brew tap homebrew/command-not-found`'
         fi
+    elif [[ "$(uname -s)" == "Darwin" ]]; then
+        print-warning 'brew not installed, see http://brew.sh/ for instructions'
     fi
     print-progress '===.' 'running startup script: gem'
     if where gem-wrapper &> /dev/null; then
