@@ -78,7 +78,7 @@ def bootstrap_setup(setup_name):
 @bootstrap_setup('debian-root')
 def bootstrap_debian_root():
     """Essential setup for Debian systems with root access"""
-    subprocess.check_call(['sudo', 'apt-get', 'install', 'ntp', 'ruby-dev'])
+    subprocess.check_call(['sudo', 'apt-get', 'install', 'needrestart', 'ntp', 'ruby-dev'])
     subprocess.check_call(['sudo', 'chmod', 'u+s', which('ping')])
 
 @bootstrap_debian_root.test_installed
