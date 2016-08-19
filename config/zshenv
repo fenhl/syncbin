@@ -25,6 +25,18 @@ path=(
     "/usr/texbin"
     $path
 )
+# appending to $PATH
+if [[ -x /usr/libexec/java_home ]]; then
+    path=($path "$(/usr/libexec/java_home)/bin")
+fi
+if [[ -d /usr/local/opt/android-sdk ]]; then
+    path=(
+        $path
+        "/usr/local/opt/android-sdk/platform-tools"
+        "/usr/local/opt/android-sdk/tools"
+        /usr/local/opt/android-sdk/build-tools/*
+    )
+fi
 # remove duplicates
 typeset -U path
 export PATH
@@ -58,6 +70,15 @@ elif [[ -d ~/git ]]; then
     export GITDIR=${HOME}/git
 fi
 
+# Atom config
+export ATOM_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}/atom"
+
+# Java config
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home"
+if [[ -d /usr/local/opt/android-sdk ]]; then
+    export ANDROID_HOME=/usr/local/opt/android-sdk
+fi
+
 # Python config
 typeset -T PYTHONPATH pythonpath
 pythonpath=(
@@ -73,12 +94,6 @@ typeset -U pythonpath
 export PYTHONPATH
 export PYTHONSTARTUP="${GITDIR}/github.com/fenhl/syncbin/master/config/pythonstartup.py"
 export VIRTUAL_ENV_DISABLE_PROMPT=1
-
-# Atom config
-export ATOM_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}/atom"
-
-# Java config
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home"
 
 # Ruby config
 export GEM_HOME="${HOME}/.local/share/gem"
