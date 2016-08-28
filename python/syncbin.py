@@ -71,7 +71,7 @@ def version():
 
 def which(cmd):
     try:
-        return subprocess.check_output(['which', cmd]).decode('utf-8')[:-1]
+        return subprocess.check_output(['which', cmd], stderr=subprocess.DEVNULL).decode('utf-8')[:-1]
     except subprocess.CalledProcessError:
         return None
 
