@@ -18,16 +18,19 @@ Options:
   --version           Print version info and exit.
 """
 
+import pathlib
+import os
+import subprocess
 import sys
 
-sys.path.append('/opt/py')
+SUDO = subprocess.call(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
+PYDIR = pathlib.Path('/opt/py' if SUDO else '{}/py'.format(os.environ['HOME']))
+
+sys.path.append(str(PYDIR))
 
 import json
-import os
-import pathlib
 import platform
 import stat
-import subprocess
 
 try:
     from docopt import docopt
@@ -36,7 +39,6 @@ except ImportError:
         print('[ !! ] docopt not installed, defaulting to `syncbin bootstrap python`', file=sys.stderr)
 
 BOOTSTRAP_SETUPS = {}
-SUDO = subprocess.call(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
 GITDIR = pathlib.Path(os.environ.get('GITDIR', '/opt/git' if SUDO else '{}/git'.format(os.environ['HOME'])))
 
 try:
@@ -142,13 +144,13 @@ def bootstrap_gitdir():
         gitdir_gitdir.mkdir(parents=True)
     if not (gitdir_gitdir / 'master').exists():
         subprocess.check_call(['git', 'clone', 'https://github.com/fenhl/gitdir.git', 'master'], cwd=str(GITDIR / 'github.com' / 'fenhl' / 'gitdir'))
-    if not pathlib.Path('/opt/py/gitdir').exists():
-        if not pathlib.Path('/opt/py').exists():
+    if not (PYDIR / 'gitdir').exists():
+        if not PYDIR.exists():
             sys.exit('[!!!!] run `syncbin bootstrap python` first')
         try:
-            pathlib.Path('/opt/py/gitdir').symlink_to(gitdir_gitdir / 'master' / 'gitdir')
+            (PYDIR / 'gitdir').symlink_to(gitdir_gitdir / 'master' / 'gitdir')
         except PermissionError:
-            subprocess.check_call(['sudo', 'ln', '-s', str(gitdir_gitdir / 'master' / 'gitdir'), '/opt/py/gitdir'])
+            subprocess.check_call(['sudo', 'ln', '-s', str(gitdir_gitdir / 'master' / 'gitdir'), str(PYDIR / 'gitdir')])
 
 @bootstrap_gitdir.test_installed
 def bootstrap_gitdir():
@@ -210,17 +212,12 @@ def bootstrap_python():
     """Installs Python modules and creates `/opt/py`. Must be run twice, once before the gitdir setup, once after."""
     if SUDO:
         subprocess.check_call(['pip3', 'install', 'blessings', 'docopt', 'requests'])
-        py_dir = pathlib.Path('/opt/py')
-        if not py_dir.exists():
-            subprocess.check_call(['sudo', 'mkdir', '/opt/py'])
+        if not PYDIR.exists():
+            subprocess.check_call(['sudo', 'mkdir', str(PYDIR)])
     else:
         subprocess.check_call(['pip3', 'install', '--user', 'blessings', 'docopt', 'requests'])
-        if hasattr(pathlib.Path, 'home'): # Python 3.5 and above
-            py_dir = pathlib.Path.home() / 'py'
-        else:
-            py_dir = pathlib.Path(input('[ ?? ] where should Python scripts be saved? '))
-        if not py_dir.exists():
-            py_dir.mkdir()
+        if not PYDIR.exists():
+            PYDIR.mkdir()
     try:
         import gitdir.host
     except ImportError:
@@ -229,11 +226,11 @@ def bootstrap_python():
         gitdir.host.by_name('github.com').clone('fenhl/python-xdg-basedir')
         gitdir.host.by_name('github.com').clone('fenhl/lazyjson')
         if SUDO:
-            subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), '/opt/py/basedir.py'])
-            subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), '/opt/py/lazyjson.py'])
+            subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), str(PYDIR / 'basedir.py')])
+            subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), str(PYDIR / 'lazyjson.py')])
         else:
-            (py_dir / 'basedir.py').symlink_to(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py')
-            (py_dir / 'py' / 'lazyjson.py').symlink_to(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py')
+            (PYDIR / 'basedir.py').symlink_to(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py')
+            (PYDIR / 'py' / 'lazyjson.py').symlink_to(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py')
 
 @bootstrap_python.test_installed
 def bootstrap_python():
