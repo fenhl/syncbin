@@ -343,11 +343,22 @@ def bootstrap_help(file=sys.stdout):
     setups = sorted(BOOTSTRAP_SETUPS.items())
     max_len = max(len(name) for name, setup in setups)
     for name, setup in setups:
-        status_sigil = {
-            True: '✓',
-            False: '✗',
-            None: '?'
-        }[setup.is_installed()]
+        try:
+            import blessings
+
+            term = blessings.Terminal()
+        except:
+            status_sigil = {
+                True: '✓',
+                False: '✗',
+                None: '?'
+            }[setup.is_installed()]
+        else:
+            status_sigil = {
+                True: term.bright_green('✓'),
+                False: term.bright_red('✗'),
+                None: term.bright_yellow('?')
+            }[setup.is_installed()]
         print('{} {}{}  {}'.format(status_sigil, name, ' ' * (max_len - len(name)), '(undocumented)' if setup.__doc__ is None else setup.__doc__), file=file)
         #TODO more details
 
