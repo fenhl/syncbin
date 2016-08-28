@@ -162,8 +162,32 @@ function syncbin-prompt-disk-space {
     fi
 }
 
+function syncbin-prompt-needrestart {
+    if which needrestart &> /dev/null && sudo -n true &> /dev/null; then
+        # https://github.com/liske/needrestart/issues/22#issuecomment-209585427
+        case $(sudo needrestart -b | grep 'NEEDRESTART-KSTA' | awk '{print $2}') in
+            0)
+                echo '[needrestart: unknown]'
+                ;;
+            1)
+                : # kernel is up-to-date
+                ;;
+            2)
+                echo '[needrestart: kernel upgrade]'
+                ;;
+            3)
+                echo '[needrestart: new kernel version]'
+                ;;
+            *)
+                ;;
+        esac
+    elif [[ $(uname -s) == 'Linux' ]] && sudo -n true &> /dev/null; then
+        echo '[needrestart: not installed]'
+    fi
+}
+
 setopt prompt_subst # make sure the functions in the prompts are actually called
 
 PROMPT='[$(syncbin-prompt-user)$(syncbin-prompt-host)$(syncbin-prompt-path)$(syncbin-prompt-shell)] '
-RPROMPT='%F{red}$(syncbin-prompt-python-venv)$(syncbin-prompt-multirust-override)$(syncbin-prompt-git-status)$(syncbin-prompt-battery-charge)$(syncbin-prompt-disk-space)%(?..[exit: %?])%f'
+RPROMPT='%F{red}$(syncbin-prompt-python-venv)$(syncbin-prompt-multirust-override)$(syncbin-prompt-git-status)$(syncbin-prompt-battery-charge)$(syncbin-prompt-disk-space)$(syncbin-prompt-needrestart)%(?..[exit: %?])%f'
 PROMPT2='       zsh %_> '
