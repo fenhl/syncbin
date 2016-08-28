@@ -75,6 +75,17 @@ def bootstrap_setup(setup_name):
         return f
     return inner_wrapper
 
+@bootstrap_setup('brew')
+def bootstrap_brew():
+    """Installs various utilities for OS X using Homebrew"""
+    subprocess.check_call(['brew', 'install', 'jq', 'terminal-notifier'])
+
+@bootstrap_brew.test_installed
+def bootstrap_brew():
+    if which('brew') is None:
+        return False
+    return len(json.loads(subprocess.check_output(['brew', 'info', '--json=v1', 'terminal-notifier']).decode('utf-8'))[0]['installed']) > 0
+
 @bootstrap_setup('debian-root')
 def bootstrap_debian_root():
     """Essential setup for Debian systems with root access"""
