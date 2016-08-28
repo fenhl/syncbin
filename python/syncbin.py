@@ -264,6 +264,7 @@ def bootstrap_ssh():
     else:
         config_path = pathlib.Path(input('[ ?? ] where should the SSH config be saved? '))
     config_path.symlink_to(GITDIR / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh')
+    config_path.chmod(0o600) # http://serverfault.com/a/253314
     if platform.system() == 'Darwin' and which('ssh-copy-id') is None:
         subprocess.check_call(['brew', 'install', 'ssh-copy-id'])
 
