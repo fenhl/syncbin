@@ -18,12 +18,16 @@ Options:
   --version           Print version info and exit.
 """
 
+import getpass
 import pathlib
 import os
 import subprocess
 import sys
 
-SUDO = subprocess.call(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
+if getpass.getuser() == 'root':
+    SUDO = True
+else:
+    SUDO = subprocess.call(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
 PYDIR = pathlib.Path('/opt/py' if SUDO else '{}/py'.format(os.environ['HOME']))
 
 sys.path.append(str(PYDIR))
@@ -93,21 +97,33 @@ def bootstrap_brew():
 @bootstrap_setup('debian-root')
 def bootstrap_debian_root():
     """Essential setup for Debian systems with root access"""
-    subprocess.check_call(['sudo', 'apt-get', 'install', 'needrestart', 'ntp', 'ruby-dev'])
-    subprocess.check_call(['sudo', 'chmod', 'u+s', which('ping')])
+    if getpass.getuser() == 'root':
+        subprocess.check_call(['apt-get', 'install', 'needrestart', 'ntp', 'ruby-dev'])
+        subprocess.check_call(['chmod', 'u+s', which('ping')])
+    else:
+        subprocess.check_call(['sudo', 'apt-get', 'install', 'needrestart', 'ntp', 'ruby-dev'])
+        subprocess.check_call(['sudo', 'chmod', 'u+s', which('ping')])
 
 @bootstrap_debian_root.test_installed
 def bootstrap_debian_root():
-    try:
-        subprocess.check_call(['sudo', '-n', 'true'])
-    except:
-        return None
-    try:
-        subprocess.check_call(['sudo', '-n', 'systemctl', '-q', 'is-active', 'ntp'], stderr=subprocess.DEVNULL)
-    except subprocess.CalledProcessError:
-        return False
+    if getpass.getuser() != 'root':
+        try:
+            subprocess.check_call(['systemctl', '-q', 'is-active', 'ntp'], stderr=subprocess.DEVNULL)
+        except subprocess.CalledProcessError:
+            return False
+        else:
+            return True
     else:
-        return True
+        try:
+            subprocess.check_call(['sudo', '-n', 'true'])
+        except:
+            return None
+        try:
+            subprocess.check_call(['sudo', '-n', 'systemctl', '-q', 'is-active', 'ntp'], stderr=subprocess.DEVNULL)
+        except subprocess.CalledProcessError:
+            return False
+        else:
+            return True
 
 @bootstrap_setup('finder')
 def bootstrap_finder():
@@ -212,12 +228,13 @@ def bootstrap_python():
     """Installs Python modules and creates `/opt/py`. Must be run twice, once before the gitdir setup, once after."""
     if SUDO:
         subprocess.check_call(['pip3', 'install', 'blessings', 'docopt', 'requests'])
-        if not PYDIR.exists():
-            subprocess.check_call(['sudo', 'mkdir', str(PYDIR)])
     else:
         subprocess.check_call(['pip3', 'install', '--user', 'blessings', 'docopt', 'requests'])
-        if not PYDIR.exists():
+    if not PYDIR.exists():
+        try:
             PYDIR.mkdir()
+        except PermissionError:
+            subprocess.check_call(['sudo', 'mkdir', str(PYDIR)])
     try:
         import gitdir.host
     except ImportError:
@@ -225,7 +242,7 @@ def bootstrap_python():
     else:
         gitdir.host.by_name('github.com').clone('fenhl/python-xdg-basedir')
         gitdir.host.by_name('github.com').clone('fenhl/lazyjson')
-        if SUDO:
+        if SUDO and getpass.getuser() != 'root':
             subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), str(PYDIR / 'basedir.py')])
             subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), str(PYDIR / 'lazyjson.py')])
         else:
