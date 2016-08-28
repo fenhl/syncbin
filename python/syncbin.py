@@ -37,12 +37,22 @@ except ImportError:
 
 BOOTSTRAP_SETUPS = {}
 
-def gitdir():
+def gitdir(existing_only=True):
     with contextlib.suppress(ImportError):
         import gitdir
 
         return gitdir.GITDIR
-    return pathlib.Path(os.environ.get('GITDIR', '/opt/git' if root() else '{}/git'.format(os.environ['HOME'])))
+    if existing_only:
+        if 'GITDIR' in os.environ and pathlib.Path(os.environ['GITDIR']).exists():
+            return pathlib.Path(os.environ['GITDIR'])
+        elif pathlib.Path('/opt/git').exists():
+            return pathlib.Path('/opt/git')
+        elif pathlib.Path('{}/git'.format(os.environ['HOME'])).exists():
+            return pathlib.Path('{}/git'.format(os.environ['HOME']))
+        else:
+            raise FileNotFoundError('No existing gitdir found')
+    else:
+        return pathlib.Path(os.environ.get('GITDIR', '/opt/git' if root() else '{}/git'.format(os.environ['HOME'])))
 
 def pydir():
     return pathlib.Path('/opt/py' if root() else '{}/py'.format(os.environ['HOME']))
@@ -73,6 +83,8 @@ def yesno(question):
         elif answer.lower() in ('n', 'no'):
             return False
         answer = input('[ ?? ] unrecognized answer, type “yes” or “no”: ')
+
+__version__ = version()
 
 def bootstrap_setup(setup_name):
     def inner_wrapper(f):
@@ -163,7 +175,7 @@ def bootstrap_finder():
 @bootstrap_setup('gitdir')
 def bootstrap_gitdir():
     """Installs `gitdir`. Requires the `python` setup."""
-    gitdir_gitdir = gitdir() / 'github.com' / 'fenhl' / 'gitdir'
+    gitdir_gitdir = gitdir(existing_only=False) / 'github.com' / 'fenhl' / 'gitdir'
     if not gitdir_gitdir.exists():
         gitdir_gitdir.mkdir(parents=True)
     if not (gitdir_gitdir / 'master').exists():

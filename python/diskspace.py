@@ -26,7 +26,7 @@ import shutil
 
 try:
     import syncbin
-    __version__ = syncbin.version()
+    __version__ = syncbin.__version__
 except:
     __version__ = '0.0'
 

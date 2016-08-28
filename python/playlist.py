@@ -31,7 +31,7 @@ import re
 import subprocess
 import syncbin
 
-__version__ = syncbin.version()
+__version__ = syncbin.__version__
 
 mpd_root = pathlib.Path(os.environ.get('MPD_ROOT', '/Users/fenhl/Music'))
 

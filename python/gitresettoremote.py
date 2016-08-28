@@ -20,7 +20,7 @@ from docopt import docopt
 import subprocess
 import syncbin
 
-__version__ = syncbin.version()
+__version__ = syncbin.__version__
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='git reset-to-remote from fenhl/syncbin ' + __version__)

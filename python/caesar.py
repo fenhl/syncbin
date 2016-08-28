@@ -19,7 +19,7 @@ from docopt import docopt
 import string
 import syncbin
 
-__version__ = syncbin.version()
+__version__ = syncbin.__version__
 
 def caesar(s, offset=13):
     """

@@ -21,7 +21,7 @@ import syncbin
 import termios
 import tty
 
-__version__ = syncbin.version()
+__version__ = syncbin.__version__
 
 def getch_loop():
     fd = sys.stdin.fileno()

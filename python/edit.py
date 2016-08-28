@@ -21,7 +21,7 @@ import os
 import subprocess
 import syncbin
 
-__version__ = syncbin.version()
+__version__ = syncbin.__version__
 
 def path(command_or_file):
     import pathlib
