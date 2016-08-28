@@ -21,7 +21,7 @@ from datetime import time as dtime
 import syncbin
 import time
 
-__version__ = syncbin.__version__
+__version__ = syncbin.version()
 
 def sleep_until(end_date):
     """Block until a specified datetime."""

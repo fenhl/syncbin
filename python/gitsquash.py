@@ -19,7 +19,7 @@ from docopt import docopt
 import subprocess
 import syncbin
 
-__version__ = syncbin.__version__
+__version__ = syncbin.version()
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='git squash from fenhl/syncbin ' + __version__)

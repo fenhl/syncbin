@@ -24,7 +24,7 @@ import requests
 import subprocess
 import syncbin
 
-__version__ = syncbin.__version__
+__version__ = syncbin.version()
 
 files = []
 f = files

@@ -22,7 +22,7 @@ import pathlib
 import subprocess
 try:
     import syncbin
-    __version__ = syncbin.__version__
+    __version__ = syncbin.version()
 except:
     __version__ = '0.0'
 

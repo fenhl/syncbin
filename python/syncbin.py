@@ -18,20 +18,13 @@ Options:
   --version           Print version info and exit.
 """
 
+import sys
+
+import contextlib
 import getpass
 import pathlib
 import os
 import subprocess
-import sys
-
-if getpass.getuser() == 'root':
-    SUDO = True
-else:
-    SUDO = subprocess.call(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
-PYDIR = pathlib.Path('/opt/py' if SUDO else '{}/py'.format(os.environ['HOME']))
-
-sys.path.append(str(PYDIR))
-
 import json
 import platform
 import stat
@@ -43,13 +36,28 @@ except ImportError:
         print('[ !! ] docopt not installed, defaulting to `syncbin bootstrap python`', file=sys.stderr)
 
 BOOTSTRAP_SETUPS = {}
-GITDIR = pathlib.Path(os.environ.get('GITDIR', '/opt/git' if SUDO else '{}/git'.format(os.environ['HOME'])))
 
-try:
-    with (GITDIR / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'version.txt').open() as version_file:
-        __version__ = version_file.read().strip()
-except:
-    __version__ = '0.0'
+def gitdir():
+    with contextlib.suppress(ImportError):
+        import gitdir
+
+        return gitdir.GITDIR
+    return pathlib.Path(os.environ.get('GITDIR', '/opt/git' if root() else '{}/git'.format(os.environ['HOME'])))
+
+def pydir():
+    return pathlib.Path('/opt/py' if root() else '{}/py'.format(os.environ['HOME']))
+
+def root():
+    if getpass.getuser() == 'root':
+        return True
+    return subprocess.call(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
+
+def version():
+    try:
+        with (gitdir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'version.txt').open() as version_file:
+            return version_file.read().strip()
+    except:
+        return '0.0'
 
 def which(cmd):
     try:
@@ -155,22 +163,23 @@ def bootstrap_finder():
 @bootstrap_setup('gitdir')
 def bootstrap_gitdir():
     """Installs `gitdir`. Requires the `python` setup."""
-    gitdir_gitdir = GITDIR / 'github.com' / 'fenhl' / 'gitdir'
+    gitdir_gitdir = gitdir() / 'github.com' / 'fenhl' / 'gitdir'
     if not gitdir_gitdir.exists():
         gitdir_gitdir.mkdir(parents=True)
     if not (gitdir_gitdir / 'master').exists():
-        subprocess.check_call(['git', 'clone', 'https://github.com/fenhl/gitdir.git', 'master'], cwd=str(GITDIR / 'github.com' / 'fenhl' / 'gitdir'))
-    if not (PYDIR / 'gitdir').exists():
-        if not PYDIR.exists():
+        subprocess.check_call(['git', 'clone', 'https://github.com/fenhl/gitdir.git', 'master'], cwd=str(gitdir() / 'github.com' / 'fenhl' / 'gitdir'))
+    if not (pydir() / 'gitdir').exists():
+        if not pydir().exists():
             sys.exit('[!!!!] run `syncbin bootstrap python` first')
         try:
-            (PYDIR / 'gitdir').symlink_to(gitdir_gitdir / 'master' / 'gitdir')
+            (pydir() / 'gitdir').symlink_to(gitdir_gitdir / 'master' / 'gitdir')
         except PermissionError:
-            subprocess.check_call(['sudo', 'ln', '-s', str(gitdir_gitdir / 'master' / 'gitdir'), str(PYDIR / 'gitdir')])
+            subprocess.check_call(['sudo', 'ln', '-s', str(gitdir_gitdir / 'master' / 'gitdir'), str(pydir() / 'gitdir')])
 
 @bootstrap_gitdir.test_installed
 def bootstrap_gitdir():
     try:
+        sys.path.append(str(pydir()))
         import gitdir
     except ImportError:
         return False
@@ -187,7 +196,7 @@ def bootstrap_macbook():
     if not bin_path.exists():
         bin_path.mkdir()
     batcharge = bin_path / 'batcharge'
-    batcharge.symlink_to(GITDIR / 'fenhl.net' / 'syncbin-private' / 'master' / 'bin' / 'batcharge-macbook')
+    batcharge.symlink_to(gitdir() / 'fenhl.net' / 'syncbin-private' / 'master' / 'bin' / 'batcharge-macbook')
 
 bootstrap_macbook.requires('syncbin-private')
 
@@ -198,7 +207,7 @@ def bootstrap_macbook():
     config_path = (pathlib.Path.home() / 'bin' / 'batcharge')
     if not config_path.is_symlink():
         return False
-    return config_path.resolve() == GITDIR / 'fenhl.net' / 'syncbin-private' / 'master' / 'python' / 'batcharge_macbook.py'
+    return config_path.resolve() == gitdir() / 'fenhl.net' / 'syncbin-private' / 'master' / 'python' / 'batcharge_macbook.py'
 
 @bootstrap_setup('no-battery')
 def bootstrap_no_battery():
@@ -226,32 +235,34 @@ def bootstrap_no_battery():
 @bootstrap_setup('python')
 def bootstrap_python():
     """Installs Python modules and creates `/opt/py`. Must be run twice, once before the gitdir setup, once after."""
-    if SUDO:
+    if root():
         subprocess.check_call(['pip3', 'install', 'blessings', 'docopt', 'requests'])
     else:
         subprocess.check_call(['pip3', 'install', '--user', 'blessings', 'docopt', 'requests'])
-    if not PYDIR.exists():
+    if not pydir().exists():
         try:
-            PYDIR.mkdir()
+            pydir().mkdir()
         except PermissionError:
-            subprocess.check_call(['sudo', 'mkdir', str(PYDIR)])
+            subprocess.check_call(['sudo', 'mkdir', str(pydir())])
     try:
+        sys.path.append(str(pydir()))
         import gitdir.host
     except ImportError:
         print('[ ** ] run `syncbin bootstrap gitdir`, then re-run `syncbin bootstrap python` to install essentials from github')
     else:
         gitdir.host.by_name('github.com').clone('fenhl/python-xdg-basedir')
         gitdir.host.by_name('github.com').clone('fenhl/lazyjson')
-        if SUDO and getpass.getuser() != 'root':
-            subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), str(PYDIR / 'basedir.py')])
-            subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), str(PYDIR / 'lazyjson.py')])
+        if root() and getpass.getuser() != 'root':
+            subprocess.check_output(['sudo', 'ln', '-s', str(gitdir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), str(pydir() / 'basedir.py')])
+            subprocess.check_output(['sudo', 'ln', '-s', str(gitdir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), str(pydir() / 'lazyjson.py')])
         else:
-            (PYDIR / 'basedir.py').symlink_to(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py')
-            (PYDIR / 'py' / 'lazyjson.py').symlink_to(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py')
+            (pydir() / 'basedir.py').symlink_to(gitdir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py')
+            (pydir() / 'py' / 'lazyjson.py').symlink_to(gitdir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py')
 
 @bootstrap_python.test_installed
 def bootstrap_python():
     try:
+        sys.path.append(str(pydir()))
         import basedir, blessings, docopt, gitdir, lazyjson, requests
     except ImportError:
         return False
@@ -280,7 +291,7 @@ def bootstrap_ssh():
         config_path = (pathlib.Path.home() / '.ssh' / 'config')
     else:
         config_path = pathlib.Path(input('[ ?? ] where should the SSH config be saved? '))
-    config_path.symlink_to(GITDIR / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh')
+    config_path.symlink_to(gitdir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh')
     config_path.chmod(0o600) # http://serverfault.com/a/253314
     if platform.system() == 'Darwin' and which('ssh-copy-id') is None:
         subprocess.check_call(['brew', 'install', 'ssh-copy-id'])
@@ -292,7 +303,7 @@ def bootstrap_ssh():
     config_path = (pathlib.Path.home() / '.ssh' / 'config')
     if not config_path.is_symlink():
         return False
-    return config_path.resolve() == GITDIR / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh'
+    return config_path.resolve() == gitdir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh'
 
 @bootstrap_setup('sudo')
 def bootstrap_sudo():
@@ -317,6 +328,7 @@ def bootstrap_sudo():
 @bootstrap_setup('syncbin-private')
 def bootstrap_syncbin_private():
     """Installs the private `syncbin` extensions."""
+    sys.path.append(str(pydir()))
     import gitdir.host
 
     try:
@@ -328,11 +340,12 @@ bootstrap_syncbin_private.requires('gitdir')
 
 @bootstrap_syncbin_private.test_installed
 def bootstrap_syncbin_private():
-    return (GITDIR / 'fenhl.net' / 'syncbin-private' / 'master').is_dir()
+    return (gitdir() / 'fenhl.net' / 'syncbin-private' / 'master').is_dir()
 
 @bootstrap_setup('zsh')
 def bootstrap_zsh():
     """Installs useful extensions for Zsh."""
+    sys.path.append(str(pydir()))
     import gitdir.host
 
     gitdir.host.by_name('github.com').clone('zsh-users/zsh-syntax-highlighting')
@@ -356,7 +369,7 @@ bootstrap_zsh.requires('gitdir')
 
 @bootstrap_zsh.test_installed
 def bootstrap_syncbin_private():
-    return (GITDIR / 'github.com' / 'zsh-users' / 'zsh-syntax-highlighting' / 'master').is_dir()
+    return (gitdir() / 'github.com' / 'zsh-users' / 'zsh-syntax-highlighting' / 'master').is_dir()
 
 def bootstrap(*setups):
     for setup_name in setups:
@@ -394,11 +407,11 @@ def bootstrap_help(file=sys.stdout):
 
 if __name__ == '__main__':
     try:
-        arguments = docopt(__doc__, version='fenhl/syncbin ' + __version__)
+        arguments = docopt(__doc__, version='fenhl/syncbin {}'.format(version()))
     except NameError:
         arguments = {
             'bootstrap': True,
-            '<setup>': 'python'
+            '<setup>': ['python']
         }
     if arguments['bootstrap']:
         if len(arguments['<setup>']) == 0:
@@ -408,7 +421,7 @@ if __name__ == '__main__':
     elif arguments['hasinet']:
         sys.exit(subprocess.call(['syncbin-hasinet']))
     elif arguments['install']:
-        sys.exit(subprocess.call(['sh', str(GITDIR / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'install.sh')]))
+        sys.exit(subprocess.call(['sh', str(gitdir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'install.sh')]))
     elif arguments['startup']:
         sys.exit(subprocess.call(['syncbin-startup'] + (['--ignore-lock'] if arguments['--ignore-lock'] else []) + (['--no-internet-test'] if arguments['--no-internet-test'] else [])))
     elif arguments['update']:
