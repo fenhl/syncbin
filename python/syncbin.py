@@ -179,7 +179,7 @@ def bootstrap_macbook():
     config_path = (pathlib.Path.home() / 'bin' / 'batcharge')
     if not config_path.is_symlink():
         return False
-    return config_path.resolve() == GITDIR / 'fenhl.net' / 'syncbin-private' / 'master' / 'bin' / 'batcharge-macbook'
+    return config_path.resolve() == GITDIR / 'fenhl.net' / 'syncbin-private' / 'master' / 'python' / 'batcharge_macbook.py'
 
 @bootstrap_setup('no-battery')
 def bootstrap_no_battery():
