@@ -331,7 +331,7 @@ def bootstrap_sudo():
 @bootstrap_sudo.test_installed
 def bootstrap_sudo():
     try:
-        subprocess.check_call(['sudo', '-n', 'true'])
+        subprocess.check_call(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError:
         return False
     else:
