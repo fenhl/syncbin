@@ -135,7 +135,7 @@ def bootstrap_debian_root():
             return True
     else:
         try:
-            subprocess.check_call(['sudo', '-n', 'true'])
+            subprocess.check_call(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except:
             return None
         try:
