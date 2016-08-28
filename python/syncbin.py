@@ -219,7 +219,8 @@ def bootstrap_python():
             py_dir = pathlib.Path.home() / 'py'
         else:
             py_dir = pathlib.Path(input('[ ?? ] where should Python scripts be saved? '))
-        py_dir.mkdir(exist_ok=True)
+        if not py_dir.exists():
+            py_dir.mkdir()
     try:
         import gitdir.host
     except ImportError:
