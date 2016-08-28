@@ -126,10 +126,10 @@ def bootstrap_debian_root():
 
 @bootstrap_debian_root.test_installed
 def bootstrap_debian_root():
-    if getpass.getuser() != 'root':
+    if getpass.getuser() == 'root':
         try:
             subprocess.check_call(['systemctl', '-q', 'is-active', 'ntp'], stderr=subprocess.DEVNULL)
-        except subprocess.CalledProcessError:
+        except (FileNotFoundError, subprocess.CalledProcessError):
             return False
         else:
             return True
