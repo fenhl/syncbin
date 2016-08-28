@@ -9,10 +9,14 @@ import basedir
 import datetime
 import os.path
 import subprocess
+import syncbin
 
 with open('/dev/null', 'a') as dev_null:
     if subprocess.call(['which', 'gem'], stdout=dev_null, stderr=subprocess.STDOUT) != 0:
         sys.exit(2)
+
+if not syncbin.root():
+    sys.exit(2)
 
 if not os.path.exists(next(iter(basedir.data_dirs('syncbin/startup.json')))):
     with open(next(iter(basedir.data_dirs('syncbin/startup.json'))), 'w') as f:
