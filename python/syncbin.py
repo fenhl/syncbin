@@ -36,7 +36,8 @@ except ImportError:
         print('[ !! ] docopt not installed, defaulting to `syncbin bootstrap python`', file=sys.stderr)
 
 BOOTSTRAP_SETUPS = {}
-GITDIR = pathlib.Path(os.environ.get('GITDIR', '/opt/git'))
+SUDO = subprocess.call(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
+GITDIR = pathlib.Path(os.environ.get('GITDIR', '/opt/git' if SUDO else '{}/git'.format(os.environ['HOME'])))
 
 try:
     with (GITDIR / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'version.txt').open() as version_file:
@@ -207,18 +208,31 @@ def bootstrap_no_battery():
 @bootstrap_setup('python')
 def bootstrap_python():
     """Installs Python modules and creates `/opt/py`. Must be run twice, once before the gitdir setup, once after."""
-    subprocess.check_call(['pip3', 'install', 'blessings', 'docopt', 'requests'])
-    if not pathlib.Path('/opt/py').exists():
-        subprocess.check_call(['sudo', 'mkdir', '/opt/py'])
+    if SUDO:
+        subprocess.check_call(['pip3', 'install', 'blessings', 'docopt', 'requests'])
+        py_dir = pathlib.Path('/opt/py')
+        if not py_dir.exists():
+            subprocess.check_call(['sudo', 'mkdir', '/opt/py'])
+    else:
+        subprocess.check_call(['pip3', 'install', '--user', 'blessings', 'docopt', 'requests'])
+        if hasattr(pathlib.Path, 'home'): # Python 3.5 and above
+            py_dir = pathlib.Path.home() / 'py'
+        else:
+            py_dir = pathlib.Path(input('[ ?? ] where should Python scripts be saved? '))
+        py_dir.mkdir(exist_ok=True)
     try:
         import gitdir.host
     except ImportError:
         print('[ ** ] run `syncbin bootstrap gitdir`, then re-run `syncbin bootstrap python` to install essentials from github')
     else:
         gitdir.host.by_name('github.com').clone('fenhl/python-xdg-basedir')
-        subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), '/opt/py/basedir.py'])
         gitdir.host.by_name('github.com').clone('fenhl/lazyjson')
-        subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), '/opt/py/lazyjson.py'])
+        if SUDO:
+            subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), '/opt/py/basedir.py'])
+            subprocess.check_output(['sudo', 'ln', '-s', str(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), '/opt/py/lazyjson.py'])
+        else:
+            (py_dir / 'basedir.py').symlink_to(GITDIR / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py')
+            (py_dir / 'py' / 'lazyjson.py').symlink_to(GITDIR / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py')
 
 @bootstrap_python.test_installed
 def bootstrap_python():
