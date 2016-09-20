@@ -20,7 +20,7 @@ else
     fi
     if ls --group > /dev/null 2>&1; then
         # GNU ls
-        alias l='ls --color=always --group -Fabhl'
+        alias l="ls --color=always --group --time-style='+%Y-%m-%d %H:%M:%S' -Fabhl"
     else
         # BSD ls
         alias l='ls -BFGahl'
