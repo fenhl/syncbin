@@ -37,4 +37,3 @@ Host *
     Port 22
     LogLevel ERROR
     SendEnv TERM_PROGRAM
-    UseRoaming no
