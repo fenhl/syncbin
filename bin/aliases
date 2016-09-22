@@ -5,7 +5,7 @@ if [ $# -ne 0 ]; then
     echo "$USAGE" >&2
 else
     alias accio='. accio'
-    alias adu='sudo apt-get update && sudo apt-get dist-upgrade'
+    alias adu='sudo apt-get update && sudo apt-get dist-upgrade && sudo apt-get autoremove'
     alias android-studio='open -a "Android Studio"'
     alias cargo-lock-to-png='cargo-lock-to-dot Cargo.lock | dot -Tpng > Cargo.png'
     alias dacapo='playlist repeat-current-once'
