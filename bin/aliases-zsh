@@ -99,14 +99,14 @@ function mc {
     return $?
 }
 alias mkcd='take'
-if ! (which pip3 &> /dev/null); then
-    if which pip-3.5 &> /dev/null; then
+if ! (where pip3 &> /dev/null); then
+    if where pip-3.5 &> /dev/null; then
         alias pip3='pip-3.5'
-    elif which pip-3.4 &> /dev/null; then
+    elif where pip-3.4 &> /dev/null; then
         alias pip3='pip-3.4'
-    elif which pip-3.3 &> /dev/null; then
+    elif where pip-3.3 &> /dev/null; then
         alias pip3='pip-3.3'
-    elif which pip-3.2 &> /dev/null; then
+    elif where pip-3.2 &> /dev/null; then
         alias pip3='pip-3.2'
     fi
 fi
@@ -126,6 +126,7 @@ function pw {
         echo $'Usage:\n  pw <length>' >&2
     fi
 }
+alias rand='shuf -n 1 -i'
 alias relog=': $@; zsh && logout'
 function reset {
     if [ "$#" -gt 0 ]; then
@@ -164,17 +165,20 @@ function rr {
     fi
 }
 compdef rr=rm
-if ! (which svg2pdf &> /dev/null); then
+if ! (where shuf &> /dev/null) && where gshuf &> /dev/null; then
+    alias shuf='gshuf'
+fi
+if ! (where svg2pdf &> /dev/null); then
     alias svg2pdf='cairosvg -f pdf'
 fi
-if ! (which svg2png &> /dev/null); then
+if ! (where svg2png &> /dev/null); then
     alias svg2png='cairosvg -f png'
 fi
-if ! (which svg2ps &> /dev/null); then
+if ! (where svg2ps &> /dev/null); then
     alias svg2ps='cairosvg -f ps'
 fi
 alias syncbin-version='cat ${HUB:-/opt/hub}/fenhl/syncbin/version.txt'
-if ! (which tac &> /dev/null); then
+if ! (where tac &> /dev/null); then
     alias tac='tail -r'
 fi
 function take {
@@ -182,7 +186,7 @@ function take {
     cd "$1"
 }
 compdef take=mkdir
-if ! (which tweet &> /dev/null); then
+if ! (where tweet &> /dev/null); then
     alias tweet='t update'
 fi
 function udawg {
