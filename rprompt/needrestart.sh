@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 if which needrestart &> /dev/null && sudo -n true &> /dev/null; then
     # https://github.com/liske/needrestart/issues/22#issuecomment-209585427
     case $(sudo needrestart -b | grep 'NEEDRESTART-KSTA' | awk '{print $2}') in

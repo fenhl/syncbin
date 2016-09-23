@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 has_git_status="no"
 git_prompt=""
 current_commit_hash=$(git rev-parse HEAD 2> /dev/null)

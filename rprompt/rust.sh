@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 if ! where rustup &> /dev/null; then
     if where rustup &> /dev/null; then
         echo "[rust: rustup not installed]"
