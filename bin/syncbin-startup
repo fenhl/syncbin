@@ -167,8 +167,11 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     #    unlock softwareupdate
     #fi
     lock softwareupdate '===.'
+    print-progress '===.' 'running startup script: xcode-select'
     if where xcode-select &> /dev/null; then
-        xcode-select --install &> /dev/null
+        if xcode-select --install &> /dev/null; then
+            print-warning 'installing command-line tools, open Xcode.app to complete' '===.' 'running startup script: xcode-select'
+        fi
     fi
     unlock softwareupdate
     lock ruby '===.'
