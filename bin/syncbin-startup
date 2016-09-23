@@ -166,6 +166,11 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     #    }
     #    unlock softwareupdate
     #fi
+    lock softwareupdate '===.'
+    if where xcode-select &> /dev/null; then
+        xcode-select --install &> /dev/null
+    fi
+    unlock softwareupdate
     lock ruby '===.'
     print-progress '===.' 'running startup script: brew'
     if where brew &> /dev/null; then
