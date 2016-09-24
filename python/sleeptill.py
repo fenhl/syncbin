@@ -5,12 +5,14 @@
 Usage:
   sleeptill [options] <date> <time>
   sleeptill [options] <time>
+  sleeptill [options] --relative <interval>...
   sleeptill -h | --help
   sleeptill --version
 
 Options:
   -h, --help     Print this message and exit.
   -v, --verbose  Show an info line while sleeping (requires fancyio).
+  --relative     Sleep for the sum of the specified intervals. Default unit is seconds, but s/m/h/d can be used to specify seconds/minutes/hours/days.
   --version      Print version info and exit.
 """
 
@@ -42,7 +44,20 @@ def verbose_sleep_until(end_date, io=None):
 
 if __name__ == '__main__':
     arguments = docopt.docopt(__doc__, version='sleeptill from fenhl/syncbin ' + __version__)
-    if arguments['<date>']:
+    if arguments['--relative']:
+        end_date = datetime.datetime.utcnow()
+        for interval_str in arguments['<interval>']:
+            if interval_str.endswith('s'):
+                end_date += datetime.timedelta(seconds=float(interval_str[:-1]))
+            elif interval_str.endswith('m'):
+                end_date += datetime.timedelta(minutes=float(interval_str[:-1]))
+            elif interval_str.endswith('h'):
+                end_date += datetime.timedelta(hours=float(interval_str[:-1]))
+            elif interval_str.endswith('d'):
+                end_date += datetime.timedelta(days=float(interval_str[:-1]))
+            else:
+                end_date += datetime.timedelta(seconds=float(interval_str))
+    elif arguments['<date>']:
         end_date = datetime.datetime.strptime(arguments['<date>'] + ' ' + arguments['<time>'], '%Y-%m-%d %H:%M:%S')
     else:
         hours, minutes, seconds = (int(time_unit) for time_unit in arguments['<time>'].split(':'))

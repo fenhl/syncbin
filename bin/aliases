@@ -32,6 +32,7 @@ else
     alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'
     alias py='python3 -q'
     alias rt='t retweet'
+    alias sleep='sleeptill --relative'
     alias sssel='ssel --sudo'
     alias ssync='rsync --rsh=ssh'
     alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
