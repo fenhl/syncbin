@@ -61,13 +61,13 @@ if __name__ == '__main__':
     if arguments['--min-percent']:
         min_fraction = int(arguments['--min-percent']) / 100
     elif arguments['--zsh']:
-        min_fraction = 0.01
+        min_fraction = 0.05
     else:
         min_fraction = 0 if arguments['--min-space'] else float('inf')
     if arguments['--min-space']:
         min_space = int(arguments['--min-space']) * ONE_GIG
     elif arguments['--zsh']:
-        min_space = ONE_GIG
+        min_space = Bytes(5 * ONE_GIG)
     else:
         min_space = Bytes(0) if arguments['--min-percent'] else float('inf')
     try:
