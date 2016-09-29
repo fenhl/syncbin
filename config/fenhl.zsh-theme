@@ -46,14 +46,14 @@ function syncbin-prompt-path {
 }
 
 function syncbin-prompt-shell {
-    if [[ -z "$VIRTUAL_ENV" ]]; then
-        if [[ $(type accio) == "accio is an alias for . accio" ]]; then
-            echo '%%'
-        else
-            echo '%B%F{white}%%%b%f'
-        fi
-    else
+    if [[ ! -z "$VIRTUAL_ENV" ]]; then
         echo '%B%F{white}P%b%f'
+    elif screen -ls | grep '\(Attached\)' > /dev/null; then
+        echo '%B%F{white}S%b%f'
+    elif [[ $(type accio) == "accio is an alias for . accio" ]]; then
+        echo '%%'
+    else
+        echo '%B%F{white}%%%b%f'
     fi
 }
 
