@@ -46,7 +46,7 @@ function syncbin-prompt-path {
 }
 
 function syncbin-prompt-shell {
-    if [[ ! -z "$VIRTUAL_ENV" ]]; then
+    if [[ -n "$VIRTUAL_ENV" ]]; then
         echo '%B%F{white}P%b%f'
     elif screen -ls | grep '\(Attached\)' > /dev/null; then
         echo '%B%F{white}S%b%f'
