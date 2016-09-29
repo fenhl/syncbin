@@ -1,5 +1,5 @@
 #!/bin/zsh
 
 if [[ -n "$STY" ]]; then
-    echo "[screen: ${STY%.*}]"
+    echo "[screen: ${STY#*.}]"
 fi
