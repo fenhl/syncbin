@@ -77,6 +77,7 @@ def multirust_update(toolchain=None):
         update_popen.terminate()
         print('[!!!!]', 'updating Rust {}: timed out'.format(toolchain), file=sys.stderr)
         sys.exit(update_popen.returncode)
+    subprocess.check_call(['rustup', 'self', 'update'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def set_status(progress, message, newline=False):
     if QUIET:
