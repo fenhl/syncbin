@@ -60,9 +60,9 @@ def default_toolchain():
             return None
         if '(default)' not in line:
             continue
-        if line.startswith('stable-'):
+        if line.startswith('stable-') or line.startswith('\x1b(B\x1b[mstable-'):
             return 'stable'
-        elif line.startswith('beta-'):
+        elif line.startswith('beta-') or line.startswith('\x1b(B\x1b[mbeta-'):
             return 'beta'
     else:
         raise NotImplementedError('Failed to parse default toolchain')
