@@ -58,6 +58,8 @@ def default_toolchain():
     for line in out.decode('utf-8').split('\n'):
         if line == 'no active toolchain':
             return None
+        if '(default)' not in line:
+            continue
         if line.startswith('stable-'):
             return 'stable'
         elif line.startswith('beta-'):
