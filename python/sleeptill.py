@@ -28,6 +28,16 @@ import tzlocal
 
 __version__ = syncbin.__version__
 
+WEEKDAYS = [
+    'mon',
+    'tue',
+    'wed',
+    'thu',
+    'fri',
+    'sat',
+    'sun'
+]
+
 def date_range(start, end):
     date = start
     while date < end:
@@ -45,14 +55,17 @@ def is_aware(datetime_or_time):
     else:
         raise TypeError('Can only test datetime or time objects for awareness')
 
+def modulus_predicate(modulus):
+    return lambda v: v % modulus == 0
+
 def parse_iso_date(date_str):
     parts = date_str.split('-')
     if len(parts) != 3:
         raise ValueError('Failed to parse date from {!r} (format should be YYYY-MM-DD)'.format(date_str))
     return datetime.date(*map(int, parts))
 
-def predicate_set(predicates, values):
-    result = set(resolve_predicates(predicates, values))
+def predicate_list(predicates, values):
+    result = list(resolve_predicates(predicates, values))
     if len(result) == 0:
         sys.exit('[!!!!] no matching datetime found')
     return result
@@ -87,6 +100,9 @@ def verbose_sleep_until(end_date, io=None):
     else:
         _verbose_sleep_inner(inner_io=io)
 
+def weekday_predicate(weekday):
+    return lambda date: date.weekday() == weekday
+
 if __name__ == '__main__':
     arguments = docopt.docopt(__doc__, version='sleeptill from fenhl/syncbin ' + __version__)
     if arguments['--timezone']:
@@ -113,9 +129,12 @@ if __name__ == '__main__':
         year_predicates = []
         month_predicates = []
         day_predicates = []
+        date_predicates = []
         hour_predicates = []
         minute_predicates = []
         second_predicates = []
+        time_predicates = []
+        datetime_predicates = []
         for predicate_str in arguments['<timespec>']:
             with contextlib.suppress(ValueError):
                 end_date = parse_iso_date(predicate_str)
@@ -127,40 +146,62 @@ if __name__ == '__main__':
                 continue
             if ':' in predicate_str:
                 if len(predicate_str.split(':')) == 3:
-                    hours, minutes, seconds = (int(time_unit) for time_unit in predicate_str.split(':'))
-                    hour_predicates.append(equals_predicate(hours))
-                    minute_predicates.append(equals_predicate(minutes))
-                    second_predicates.append(equals_predicate(seconds))
+                    hours, minutes, seconds = ((None if time_unit == '' else int(time_unit)) for time_unit in predicate_str.split(':'))
+                    if hours is not None:
+                        hour_predicates.append(equals_predicate(hours))
+                    if minutes is not None:
+                        minute_predicates.append(equals_predicate(minutes))
+                    if seconds is not None:
+                        second_predicates.append(equals_predicate(seconds))
                 else:
-                    hours, minutes = (int(time_unit) for time_unit in predicate_str.split(':'))
-                    hour_predicates.append(equals_predicate(hours))
-                    minute_predicates.append(equals_predicate(minutes))
+                    hours, minutes = ((None if time_unit == '' else int(time_unit)) for time_unit in predicate_str.split(':'))
+                    if hours is not None:
+                        hour_predicates.append(equals_predicate(hours))
+                    if minutes is not None:
+                        minute_predicates.append(equals_predicate(minutes))
+                continue
+            if predicate_str.lower() in WEEKDAYS:
+                date_predicates.append(weekday_predicate(WEEKDAYS.index(predicate_str.lower())))
+                continue
+            if predicate_str.endswith('s'):
+                second_predicates.append(modulus_predicate(int(predicate_str[:-1])))
+                continue
+            if predicate_str.endswith('m'):
+                minute_predicates.append(modulus_predicate(int(predicate_str[:-1])))
+                continue
+            if predicate_str.endswith('h'):
+                hour_predicates.append(modulus_predicate(int(predicate_str[:-1])))
+                continue
+            if predicate_str.endswith('d'):
+                day_predicates.append(modulus_predicate(int(predicate_str[:-1])))
                 continue
             sys.exit('[!!!!] unknown timespec')
-        years = predicate_set(year_predicates, range(now.year, now.year + 100))
-        months = predicate_set(month_predicates, range(1, 13))
-        days = predicate_set(day_predicates, range(1, 32))
-        date_predicates = {
-            lambda date: date.year in years,
-            lambda date: date.month in months,
-            lambda date: date.day in days
-        }
-        dates = predicate_set(date_predicates, date_range(now.date(), now.date().replace(year=now.year + 100)))
-        hours = predicate_set(hour_predicates, range(24))
-        minutes = predicate_set(minute_predicates, range(60))
-        seconds = predicate_set(second_predicates, range(60))
-        time_predicates = {
-            lambda time: time.hour in hours,
-            lambda time: time.minute in minutes,
-            lambda time: time.second in seconds
-        }
-        times = predicate_set(time_predicates, time_range(tz))
-        datetime_predicates = {
+        years = predicate_list(year_predicates, range(now.year, now.year + 100))
+        months = predicate_list(month_predicates, range(1, 13))
+        days = predicate_list(day_predicates, range(1, 32))
+        if len(year_predicates) > 0 or len(month_predicates) > 0 or len(day_predicates) > 0:
+            date_predicates += [
+                lambda date: date.year in years,
+                lambda date: date.month in months,
+                lambda date: date.day in days
+            ]
+        dates = predicate_list(date_predicates, date_range(now.date(), now.date().replace(year=now.year + 10)))
+        hours = predicate_list(hour_predicates, range(24))
+        minutes = predicate_list(minute_predicates, range(60))
+        seconds = predicate_list(second_predicates, range(60))
+        if len(hour_predicates) > 0 or len(minute_predicates) > 0 or len(second_predicates) > 0:
+            time_predicates += [
+                lambda time: time.hour in hours,
+                lambda time: time.minute in minutes,
+                lambda time: time.second in seconds
+            ]
+        times = predicate_list(time_predicates, time_range(tz))
+        datetime_predicates += [
+            lambda date_time: date_time > now,
             lambda date_time: date_time.date() in dates,
-            lambda date_time: date_time.timetz() in times,
-            lambda date_time: date_time > now
-        }
-        end_date = min(resolve_predicates(datetime_predicates, (datetime.datetime.combine(date, time) for date in dates for time in times)))
+            lambda date_time: date_time.timetz() in times
+        ]
+        end_date = next(resolve_predicates(datetime_predicates, (datetime.datetime.combine(date, time) for date in dates for time in times)))
         assert is_aware(end_date)
     if arguments['--verbose']:
         verbose_sleep_until(end_date)
