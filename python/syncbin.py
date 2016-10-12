@@ -250,10 +250,17 @@ def bootstrap_no_battery():
 @bootstrap_setup('python')
 def bootstrap_python():
     """Installs Python modules and creates `/opt/py`. Must be run twice, once before the gitdir setup, once after."""
+    pip_packages = [
+        'blessings',
+        'docopt',
+        'pytz',
+        'requests',
+        'tzlocal'
+    ]
     if root():
-        subprocess.check_call(['pip3', 'install', 'blessings', 'docopt', 'requests'])
+        subprocess.check_call(['pip3', 'install'] + pip_packages)
     else:
-        subprocess.check_call(['pip3', 'install', '--user', 'blessings', 'docopt', 'requests'])
+        subprocess.check_call(['pip3', 'install', '--user'] + pip_packages)
     if not pydir().exists():
         try:
             pydir().mkdir()
