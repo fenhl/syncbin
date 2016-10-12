@@ -110,6 +110,7 @@ def bootstrap_brew():
         subprocess.check_call(['brew', 'install', 'jq', 'ruby', 'terminal-notifier'])
     except subprocess.CalledProcessError:
         subprocess.check_call(['brew', 'link', '--overwrite', 'ruby'])
+    subprocess.check_call(['brew', 'cask', 'install', 'qlmarkdown'])
 
 @bootstrap_brew.test_installed
 def bootstrap_brew():
