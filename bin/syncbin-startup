@@ -181,7 +181,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
             BREWUPDATEOUTPUT=$(brew update)
             if [[ "$BREWUPDATEOUTPUT" != "Already up-to-date." ]]; then
                 echo "$BREWUPDATEOUTPUT" >! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log
-                brew upgrade --all &>>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log 2>&2
+                brew upgrade &>>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log 2>&2
                 brew cleanup &>>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log 2>&2
             fi
         else
