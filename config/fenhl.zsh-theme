@@ -28,7 +28,9 @@ function syncbin-prompt-host {
 }
 
 function syncbin-prompt-path {
-    if [[ $PWD == $HOME ]]; then
+    if ! [[ -d "$(pwd -P)" ]]; then
+        echo '%B%F{red}!%b%f'
+    elif [[ $PWD == $HOME ]]; then
         echo ' '
     elif [[ $PWD == '/' ]]; then
         echo '%B%F{white}/%b%f'
