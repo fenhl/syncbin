@@ -79,6 +79,7 @@ function gco {
 function gd {
     git diff --color "$@" | less -R
 }
+alias gds='gd --staged'
 alias history='fc -il 1'
 if alias ll > /dev/null; then
     unalias ll
