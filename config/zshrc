@@ -39,6 +39,17 @@ deactivate_venv_or_eof () {
 zle -N deactivate_venv_or_eof
 bindkey "^D" deactivate_venv_or_eof
 
+# ^M (return) clears screen on empty line
+clear_or_accept_line () {
+    if [[ -z "$BUFFER" ]]; then
+        zle clear-screen
+    else
+        zle accept-line
+    fi
+}
+zle -N clear_or_accept_line
+bindkey "^M" clear_or_accept_line
+
 # ^O edits last viewed file if the line buffer is empty
 #TODO fix me
 edit_last_or_accept_line_and_down_history () {
