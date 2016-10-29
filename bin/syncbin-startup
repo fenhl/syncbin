@@ -198,7 +198,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         print-warning 'brew not installed, see http://brew.sh/ for instructions'
     fi
     print-progress '===.' 'running startup script: gem'
-    if where gem-wrapper &> /dev/null; then
+    [[ "$(uname -s)" != "Darwin" ]] && where gem-wrapper &> /dev/null; then
         gem-wrapper
     fi
     unlock ruby
