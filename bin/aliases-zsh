@@ -19,6 +19,15 @@ function a2edit {
 function activate {
     . "$1"/bin/activate
 }
+function adu {
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        sudo softwareupdate -ir
+    else
+        sudo apt-get update &&
+        sudo apt-get dist-upgrade &&
+        sudo apt-get autoremove
+    fi
+}
 function brew-caveats {
     brew info ${@:-$(brew list)} | awk '/^==> Caveats$/,/^[a-z][a-zA-Z0-9_+-]+: stable |^==> (Dependencies|Options)$/'
 }
