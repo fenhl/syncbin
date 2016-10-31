@@ -254,6 +254,7 @@ def bootstrap_python():
     pip_packages = [
         'blessings',
         'docopt',
+        'python-mpd2',
         'pytz',
         'requests',
         'tzlocal'
