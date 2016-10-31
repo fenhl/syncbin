@@ -3,10 +3,10 @@
 """Playlist-manipulating mpc wrapper script.
 
 Usage:
-  playlist
+  playlist [options]
   playlist [options] add-from <path>
   playlist [options] add-random <path>
-  playlist pause-after-current
+  playlist [options] pause-after-current
   playlist repeat-current-once
   playlist -h | --help
   playlist --version
@@ -105,17 +105,9 @@ if __name__ == '__main__':
         current = subprocess.check_output(['mpc', 'current', '--format=%file%'])[:-1].decode('utf-8')
         sys.exit(subprocess.call(['mpc', 'insert', current]))
     else:
-        mpc_playlist = subprocess.Popen(['mpc', 'playlist'] + (['--format=%position% %file%'] if arguments['--filenames'] else []), stdout=subprocess.PIPE)
-        for byte_line in mpc_playlist.stdout:
-            line = byte_line.decode('utf-8')
-            match = re.match('([0-9]+) (.*)\n', line)
-            if match:
-                index = int(match.group(1))
-                if index > 9999:
-                    print('[ ** ]', 'playlist truncated')
-                    mpc_playlist.communicate()
-                    sys.exit(mpc_playlist.returncode)
-                print('[{: >4}] {}'.format(index, match.group(2)))
-            else:
-                print('[ !! ]', line)
-        sys.exit(mpc_playlist.wait())
+        c = client()
+        for song in c.playlistid():
+            if int(song['pos']) > 9999:
+                print('[ ** ]', 'playlist truncated')
+                break
+            print('[{: >4}] {}'.format(int(song['pos']), format_song(song, arguments)))
