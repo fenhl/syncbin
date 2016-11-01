@@ -90,15 +90,20 @@ if __name__ == '__main__':
         song = c.currentsong()
         print('[....] {}'.format(format_song(song, arguments)), end='\r[....]', flush=True)
         c.single(1)
-        while True:
-            progress = int(5 * float(c.status()['elapsed']) / float(song['time']))
-            print('\r[{}{}]'.format('=' * progress, '.' * (4 - progress)), end='', flush=True)
-            try:
-                c.idle('player')
-            except socket.timeout:
-                c = client(idle_timeout=1)
-            if c.currentsong()['id'] != song['id']:
-                break
+        try:
+            while True:
+                progress = int(5 * float(c.status()['elapsed']) / float(song['time']))
+                print('\r[{}{}]'.format('=' * progress, '.' * (4 - progress)), end='', flush=True)
+                try:
+                    c.idle('player')
+                except socket.timeout:
+                    c = client(idle_timeout=1)
+                if c.currentsong()['id'] != song['id']:
+                    break
+        except KeyboardInterrupt:
+            print('\r[ ^C ] {}'.format(format_song(song, arguments)), flush=True)
+            client().single(0)
+            sys.exit(1)
         c.single(0)
         print('\r[ ok ]', flush=True)
     elif arguments['repeat-current-once']:
