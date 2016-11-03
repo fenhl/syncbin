@@ -121,11 +121,18 @@ def bootstrap_brew():
 @bootstrap_setup('debian-root')
 def bootstrap_debian_root():
     """Essential setup for Debian systems with root access"""
+    apt_packages = [
+        'needrestart',
+        'ntp',
+        'ruby-dev',
+        'screen',
+        'ssmtp' #TODO configure
+    ]
     if getpass.getuser() == 'root':
-        subprocess.check_call(['apt-get', 'install', 'needrestart', 'ntp', 'ruby-dev'])
+        subprocess.check_call(['apt-get', 'install'] + apt_packages)
         subprocess.check_call(['chmod', 'u+s', which('ping')])
     else:
-        subprocess.check_call(['sudo', 'apt-get', 'install', 'needrestart', 'ntp', 'ruby-dev'])
+        subprocess.check_call(['sudo', 'apt-get', 'install'] + apt_packages)
         subprocess.check_call(['sudo', 'chmod', 'u+s', which('ping')])
 
 @bootstrap_debian_root.test_installed
