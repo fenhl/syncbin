@@ -277,14 +277,17 @@ def bootstrap_python():
         gitdir.host.by_name('github.com').clone('fenhl/python-xdg-basedir')
         gitdir.host.by_name('github.com').clone('fenhl/fancyio')
         gitdir.host.by_name('github.com').clone('fenhl/lazyjson')
+        gitdir.host.by_name('github.com').clone('fenhl/python-timespec')
         if root() and getpass.getuser() != 'root':
             subprocess.check_output(['sudo', 'ln', '-s', str(gitdir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), str(pydir() / 'basedir.py')])
             subprocess.check_output(['sudo', 'ln', '-s', str(gitdir() / 'github.com' / 'fenhl' / 'fancyio' / 'master' / 'fancyio.py'), str(pydir() / 'fancyio.py')])
             subprocess.check_output(['sudo', 'ln', '-s', str(gitdir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), str(pydir() / 'lazyjson.py')])
+            subprocess.check_output(['sudo', 'ln', '-s', str(gitdir() / 'github.com' / 'fenhl' / 'python-timespec' / 'master' / 'timespec'), str(pydir() / 'timespec')])
         else:
             (pydir() / 'basedir.py').symlink_to(gitdir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py')
             (pydir() / 'fancyio.py').symlink_to(gitdir() / 'github.com' / 'fenhl' / 'fancyio' / 'master' / 'fancyio.py')
             (pydir() / 'lazyjson.py').symlink_to(gitdir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py')
+            (pydir() / 'timespec').symlink_to(gitdir() / 'github.com' / 'fenhl' / 'python-timespec' / 'master' / 'timespec')
 
 @bootstrap_python.test_installed
 def bootstrap_python():
