@@ -312,7 +312,7 @@ def bootstrap_rust():
     #try:
     #    import requests
     #except ImportError:
-    #    sys.exit('[ !! ] missing requests, run `syncbin bootstrap python` first')
+    #    sys.exit('[!!!!] missing requests, run `syncbin bootstrap python` first')
     #response = requests.get('https://sh.rustup.rs/', stream=True)
     #response.raise_for_status()
     sys.exit(subprocess.call('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path', shell=True))
@@ -371,13 +371,29 @@ def bootstrap_syncbin_private():
     try:
         gitdir.host.by_name('fenhl.net').clone('syncbin-private')
     except PermissionError:
-        sys.exit('[ !! ] Permission denied. Fix /opt/git permissions, then try again.')
+        sys.exit('[!!!!] Permission denied. Fix /opt/git permissions, then try again.')
 
 bootstrap_syncbin_private.requires('gitdir')
 
 @bootstrap_syncbin_private.test_installed
 def bootstrap_syncbin_private():
     return (gitdir() / 'fenhl.net' / 'syncbin-private' / 'master').is_dir()
+
+@bootstrap_setup('t')
+def bootstrap_t():
+    """Installs the Twitter CLI `t`."""
+    import gitdir.host
+
+    try:
+        gitdir.host.by_name('github.com').clone('sferik/t')
+    except PermissionError:
+        sys.exit('[!!!!] Permission denied. Fix /opt/git permissions, then try again.')
+    subprocess.check_call(['sudo', 'gem', 'install', 't'])
+    subprocess.check_call(['t', 'authorize'])
+
+@bootstrap_t.test_installed
+def bootstrap_t():
+    return which('t') is not None
 
 @bootstrap_setup('zsh')
 def bootstrap_zsh():
