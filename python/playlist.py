@@ -24,6 +24,7 @@ import sys
 sys.path.append('/opt/py')
 
 import blessings
+import contextlib
 import docopt
 import mpd
 import os
@@ -50,10 +51,10 @@ def client(host=None, port=6600, *, password=None, idle_timeout=None):
     return c
 
 def format_song(song, arguments={}):
-    if arguments.get('--filenames'):
-        return song['file']
-    else:
-        return '{} — {}'.format(song['artist'], song['title'])
+    if not arguments.get('--filenames'):
+        with contextlib.suppress(KeyError):
+            return '{} — {}'.format(song['artist'], song['title'])
+    return song['file']
 
 if __name__ == '__main__':
     arguments = docopt.docopt(__doc__, version='playlist from fenhl/syncbin ' + __version__)
