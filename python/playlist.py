@@ -6,7 +6,7 @@ Usage:
   playlist [options]
   playlist [options] add-from <path>
   playlist [options] add-random <path>
-  playlist [options] pause-after-current
+  playlist [options] pause-after-current [<num-tracks>]
   playlist repeat-current-once
   playlist -h | --help
   playlist --version
@@ -87,26 +87,29 @@ if __name__ == '__main__':
             if exit_status != 0:
                 sys.exit(exit_status)
     elif arguments['pause-after-current']:
+        num_tracks = int(arguments['<num-tracks>']) if arguments['<num-tracks>'] else 1
         c = client(idle_timeout=1)
-        song = c.currentsong()
-        print('[....] {}'.format(format_song(song, arguments)), end='\r[....]', flush=True)
-        c.single(1)
-        try:
-            while True:
-                progress = int(5 * float(c.status()['elapsed']) / float(song['time']))
-                print('\r[{}{}]'.format('=' * progress, '.' * (4 - progress)), end='', flush=True)
-                try:
-                    c.idle('player')
-                except socket.timeout:
-                    c = client(idle_timeout=1)
-                if c.currentsong()['id'] != song['id']:
-                    break
-        except KeyboardInterrupt:
-            print('\r[ ^C ] {}'.format(format_song(song, arguments)), flush=True)
-            client().single(0)
-            sys.exit(1)
+        for i in range(num_tracks):
+            song = c.currentsong()
+            print('[....] {}'.format(format_song(song, arguments)), end='\r[....]', flush=True)
+            if i == num_tracks - 1:
+                c.single(1)
+            try:
+                while True:
+                    progress = int(5 * float(c.status()['elapsed']) / float(song['time']))
+                    print('\r[{}{}]'.format('=' * progress, '.' * (4 - progress)), end='', flush=True)
+                    try:
+                        c.idle('player')
+                    except socket.timeout:
+                        c = client(idle_timeout=1)
+                    if c.currentsong()['id'] != song['id']:
+                        break
+            except KeyboardInterrupt:
+                print('\r[ ^C ] {}'.format(format_song(song, arguments)), flush=True)
+                client().single(0)
+                sys.exit(1)
+            print('\r[ ok ]', flush=True)
         c.single(0)
-        print('\r[ ok ]', flush=True)
     elif arguments['repeat-current-once']:
         current = subprocess.check_output(['mpc', 'current', '--format=%file%'])[:-1].decode('utf-8')
         sys.exit(subprocess.call(['mpc', 'insert', current]))
