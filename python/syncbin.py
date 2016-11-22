@@ -392,7 +392,10 @@ def bootstrap_t():
         gitdir.host.by_name('github.com').clone('sferik/t')
     except PermissionError:
         sys.exit('[!!!!] Permission denied. Fix /opt/git permissions, then try again.')
-    subprocess.check_call(['sudo', 'gem', 'install', 't'])
+    if root() and getpass.getuser() != 'root':
+        subprocess.check_call(['sudo', 'gem', 'install', 't'])
+    else:
+        subprocess.check_call(['gem', 'install', 't'])
     subprocess.check_call(['t', 'authorize'])
 
 @bootstrap_t.test_installed
