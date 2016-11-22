@@ -135,6 +135,10 @@ else
     test-missing-python-package fancyio
     test-missing-python-package docopt
     test-missing-python-package lazyjson
+    test-missing-python-package mpd
+    test-missing-python-package pytz
+    test-missing-python-package requests
+    test-missing-python-package tzlocal
     if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "0" ]]; then
         printf '\n'
     fi
