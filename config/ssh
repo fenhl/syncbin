@@ -1,7 +1,3 @@
-Host achernar
-    HostName achernar.uberspace.de
-    User ref
-
 Host cetus
     HostName cetus.uberspace.de
 
