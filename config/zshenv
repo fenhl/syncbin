@@ -61,7 +61,7 @@ mailpath=(
 )
 typeset -U mailpath
 export MAILPATH
-export MAILCHECK=60
+export MAILCHECK=0
 
 # git repos
 if [[ -d /opt/git ]]; then
