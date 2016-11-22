@@ -396,7 +396,7 @@ def bootstrap_t():
         subprocess.check_call(['sudo', 'gem', 'install', 't'])
     else:
         subprocess.check_call(['gem', 'install', 't'])
-    subprocess.check_call(['t', 'authorize'])
+    subprocess.check_call(['t', 'authorize', '--display-uri'])
 
 @bootstrap_t.test_installed
 def bootstrap_t():
