@@ -107,7 +107,7 @@ while [[ $# -gt "0" ]]; do
     shift
 done
 
-printf '[....] checking for required Python packages      \r'
+printf '[=...] checking for required Python packages      \r'
 
 SYNCBIN_MISSING_PYTHON_PACKAGE=1
 
@@ -144,10 +144,16 @@ else
     fi
 fi
 
-lock syncbin-omz '=...'
+lock ssh '==..'
+print-progress '==..' 'running startup script: ssh'
+if ! diff ~/.ssh/config "$GITDIR/github.com/fenhl/syncbin/master/config/ssh" > /dev/null; then
+    cp "$GITDIR/github.com/fenhl/syncbin/master/config/ssh" ~/.ssh/config || print-warning 'outdated SSH config' '==..' 'running startup script: ssh'
+    chmod 644 ~/.ssh/config || print-warning 'wrong permissions on SSH config' '==..' 'running startup script: ssh'
+fi
+unlock ssh
 
+lock syncbin-omz '==..'
 print-progress '==..' 'running startup script: syncbin hasinet'
-
 if [[ "$IGNOREINET" == "1" ]] && where syncbin-hasinet &> /dev/null; then
     syncbin-hasinet
     SYNCBINHASINET=$?
@@ -155,9 +161,10 @@ else
     SYNCBINHASINET=0
 fi
 unlock syncbin-omz
+
 if [[ $SYNCBINHASINET -eq 0 ]]; then
     if where apt-get-wrapper &> /dev/null; then
-        lock debian '==..'
+        lock debian '===.'
         print-progress '===.' 'running startup script: apt'
         apt-get-wrapper
         unlock debian
@@ -239,7 +246,8 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
 else
     print-warning 'no internet connection, skipping some startup scripts' '==..' 'running startup script: syncbin hasinet'
 fi
-lock syncbin-omz '===.'
+
+lock syncbin-omz '===='
 print-progress '====' 'running startup script: oh-my-zsh'
 for plugin ($OMZ_PLUGINS); do
     if is-omz-plugin ${HOME}/git/github.com/robbyrussell/oh-my-zsh/master $plugin; then
@@ -263,6 +271,7 @@ print-progress '====' 'running startup script: aliases'
 . aliases-zsh
 . aliases-zsh-suffix
 unlock syncbin-omz
+
 print-progress '====' 'running startup script: syncbin-private'
 if [[ -d /opt/git/fenhl.net/syncbin-private/master ]]; then
     if [[ -x /opt/git/fenhl.net/syncbin-private/master/syncbin-startup ]]; then
@@ -275,6 +284,7 @@ elif [[ -d ~/git/fenhl.net/syncbin-private/master ]]; then
 else
     print-warning 'syncbin-private not installed, install with `syncbin bootstrap syncbin-private`' '====' 'running startup script: syncbin-private'
 fi
+
 print-progress '====' 'running startup script: zshrc'
 if where zshrc &> /dev/null; then
     . zshrc
