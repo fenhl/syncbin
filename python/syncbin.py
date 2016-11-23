@@ -286,10 +286,14 @@ def bootstrap_python():
         gitdir.host.by_name('github.com').clone('fenhl/lazyjson')
         gitdir.host.by_name('github.com').clone('fenhl/python-timespec')
         if root() and getpass.getuser() != 'root':
-            subprocess.check_output(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), str(py_dir() / 'basedir.py')])
-            subprocess.check_output(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'fancyio' / 'master' / 'fancyio.py'), str(py_dir() / 'fancyio.py')])
-            subprocess.check_output(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), str(py_dir() / 'lazyjson.py')])
-            subprocess.check_output(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-timespec' / 'master' / 'timespec'), str(py_dir() / 'timespec')])
+            if not (py_dir() / 'basedir.py').exists():
+                subprocess.check_output(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), str(py_dir() / 'basedir.py')])
+            if not (py_dir() / 'fancyio.py').exists():
+                subprocess.check_output(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'fancyio' / 'master' / 'fancyio.py'), str(py_dir() / 'fancyio.py')])
+            if not (py_dir() / 'lazyjson.py').exists():
+                subprocess.check_output(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), str(py_dir() / 'lazyjson.py')])
+            if not (py_dir() / 'timespec').exists():
+                subprocess.check_output(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-timespec' / 'master' / 'timespec'), str(py_dir() / 'timespec')])
         else:
             if not (py_dir() / 'basedir.py').exists():
                 (py_dir() / 'basedir.py').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py')
