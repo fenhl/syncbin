@@ -20,14 +20,22 @@ import sys
 
 sys.path.append('/opt/py')
 
-import contextlib
-import datetime
-import docopt
-import pytz
-import syncbin
-import time
-import timespec
-import tzlocal
+try:
+    import contextlib
+    import datetime
+    import docopt
+    import pytz
+    import syncbin
+    import time
+    import timespec
+    import tzlocal
+except ImportError:
+    if '--relative' in sys.argv:
+        import subprocess
+
+        sys.exit(subprocess.call(['sleep'] + [arg for arg in sys.argv[1:] if arg != '--relative']))
+    else:
+        raise
 
 __version__ = syncbin.__version__
 
