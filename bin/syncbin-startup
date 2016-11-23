@@ -232,7 +232,11 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     if [[ -d ~/hub ]]; then
         print-warning '~/hub exists' '===.' 'running startup script: gitdir'
     fi
-    #TODO add a script that updates the gitdirs
+    if where gitdir &> /dev/null; then
+        gitdir update &> /dev/null
+    else
+        print-warning 'gitdir not installed' '===.' 'running startup script: gitdir'
+    fi
     lock syncbin-omz '===.'
     print-progress '===.' 'running startup script: syncbin update'
     if [[ -d /opt/git/fenhl.net/syncbin-private/master ]] || [[ -d ~/git/fenhl.net/syncbin-private/master ]]; then
