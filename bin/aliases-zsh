@@ -151,6 +151,11 @@ function retab {
         return $?
     fi
 }
+function retry {
+    until eval ${(q)@}; do
+        command sleep 1 || return 1
+    done
+}
 function rm { # remove current directory when called without arguments
     if [ "$#" -gt 0 ]; then
         command rm "$@"

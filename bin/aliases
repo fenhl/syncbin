@@ -12,6 +12,7 @@ else
     alias gp='git push'
     alias gpp='git push && cd ../master && g pull && cd -'
     alias http='python3 -m http.server'
+    alias inet='syncbin hasinet'
     if [ -d /opt/git/github.com/jq-shell/jqsh/master ]; then
         alias jqsh='cd /opt/git/github.com/jq-shell/jqsh/master && git pull && rustup --quiet --release && cd - > /dev/null && command jqsh'
     elif [ -d "$HOME"/git/github.com/jq-shell/jqsh/master ]; then
@@ -33,6 +34,7 @@ else
     alias py='python3 -q'
     alias rt='t retweet'
     alias sleep='sleeptill --relative'
+    alias srsly='retry'
     alias sssel='ssel --sudo'
     alias ssync='rsync --rsh=ssh'
     alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
