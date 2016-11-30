@@ -10,11 +10,15 @@ git checkout --quiet master &&
 git merge --quiet release-"$1" &&
 printf '[=...] pushing master     \r' &&
 git push --quiet &&
-printf '[==..] merging into dev\r' &&
+printf '[=...] merging into dev\r' &&
 git checkout --quiet dev &&
 git merge --quiet release-"$1" &&
-printf '[===.] pushing dev     \r' &&
+printf '[==..] pushing dev     \r' &&
 git push --quiet &&
-printf '[====] deleting release branch\r' &&
+printf '[===.] deleting release branch\r' &&
 git branch --quiet -d release-"$1" &&
-printf '[ ok ] released               \n'
+printf '[====] pulling                \r' &&
+cd ../master &&
+git pull --quiet &&
+cd - &&
+printf '[ ok ] released\n'
