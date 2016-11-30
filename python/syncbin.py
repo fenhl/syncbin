@@ -107,7 +107,7 @@ def bootstrap_setup(setup_name):
 def bootstrap_brew():
     """Installs various utilities for OS X using Homebrew"""
     try:
-        subprocess.check_call(['brew', 'install', 'jq', 'ruby', 'terminal-notifier'])
+        subprocess.check_call(['brew', 'install', 'git', 'jq', 'ruby', 'terminal-notifier'])
     except subprocess.CalledProcessError:
         subprocess.check_call(['brew', 'link', '--overwrite', 'ruby'])
     subprocess.check_call(['brew', 'cask', 'install', 'qlmarkdown'])
