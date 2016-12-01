@@ -2,7 +2,7 @@
 
 if which needrestart &> /dev/null && sudo -n true &> /dev/null; then
     # https://github.com/liske/needrestart/issues/22#issuecomment-209585427
-    case $(sudo needrestart -b | grep 'NEEDRESTART-KSTA' | awk '{print $2}') in
+    case $(sudo needrestart -b 2> /dev/null | grep 'NEEDRESTART-KSTA' | awk '{print $2}') in
         0)
             echo '[needrestart: unknown]'
             ;;
