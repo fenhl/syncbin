@@ -16,7 +16,7 @@ Options:
   --min-percent=<min_percent>  Produce no output if at least <min_percent>% of disk space is available.
   --min-space=<min_space>      Produce no output if at least <min_space> GB is available.
   --version                    Print version info and exit.
-  --zsh                        Defaults for using in the zsh right prompt, equivalent to --min-percent=1 --min-space=1.
+  --zsh                        Defaults for using in the zsh right prompt, equivalent to --min-percent=5 --min-space=5.
 """
 
 import sys
