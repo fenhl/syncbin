@@ -39,5 +39,6 @@ else
     alias ssync='rsync --rsh=ssh'
     alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
     alias tf='tail -fn0'
+    alias unixdate='command date -u "+[date] %s"'
     alias whatismyip='curl ifconfig.me'
 fi
