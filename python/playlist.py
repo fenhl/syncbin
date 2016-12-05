@@ -102,7 +102,7 @@ if __name__ == '__main__':
                         c.idle('player')
                     except socket.timeout:
                         c = client(idle_timeout=1)
-                    if c.currentsong()['id'] != song['id']:
+                    if c.currentsong().get('id') != song['id']:
                         break
             except KeyboardInterrupt:
                 print('\r[ ^C ] {}'.format(format_song(song, arguments)), flush=True)
