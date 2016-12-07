@@ -4,6 +4,7 @@
 
 Usage:
   playlist [options]
+  playlist [options] add <path>
   playlist [options] add-from <path>
   playlist [options] add-random <path>
   playlist [options] pause-after-current [<num-tracks>]
@@ -58,15 +59,26 @@ def format_song(song, arguments={}):
 
 if __name__ == '__main__':
     arguments = docopt.docopt(__doc__, version='playlist from fenhl/syncbin ' + __version__)
-    if arguments['add-from']:
+    if arguments['add']:
+        # add the given path to the playlist in alphabetical order
         path = pathlib.Path(arguments['<path>'])
-        if (mpd_root / path).is_dir():
-            found = True
-            dir_iterator = (mpd_root / path).iterdir()
+        if (MPD_ROOT / path).is_dir():
+            track_iterator = (MPD_ROOT / path).iterdir()
         else:
-            found = False
-            dir_iterator = (mpd_root / path).parent.iterdir()
+            track_iterator = iter([MPD_ROOT / path])
         amount = float('inf') if arguments['--all'] or arguments['--number'] == 'all' else (float('inf') if arguments['--number'] is None else int(arguments['--number']))
+        i = 0
+        for f in sorted(track_iterator):
+            if i >= amount:
+                break
+            subprocess.call(['mpc', 'add', str(f.relative_to(MPD_ROOT))])
+            i += =
+    if arguments['add-from']:
+        # add files from the given path's parent, starting with the given path, to the playlist in alphabetical order
+        path = pathlib.Path(arguments['<path>'])
+        track_iterator = (MPD_ROOT / path).parent.iterdir()
+        amount = float('inf') if arguments['--all'] or arguments['--number'] == 'all' else (float('inf') if arguments['--number'] is None else int(arguments['--number']))
+        found = False
         i = 0
         for f in sorted(dir_iterator):
             if f.name.startswith(path.name):
@@ -74,7 +86,7 @@ if __name__ == '__main__':
             if found:
                 if i >= amount:
                     break
-                subprocess.call(['mpc', 'add', str(f.relative_to(mpd_root))])
+                subprocess.call(['mpc', 'add', str(f.relative_to(MPD_ROOT))])
                 i += 1
     elif arguments['add-random']:
         tracks = subprocess.check_output(['mpc', 'ls', arguments['<path>']]).decode('utf-8').strip().split('\n')
