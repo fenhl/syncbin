@@ -80,7 +80,7 @@ if __name__ == '__main__':
         amount = float('inf') if arguments['--all'] or arguments['--number'] == 'all' else (float('inf') if arguments['--number'] is None else int(arguments['--number']))
         found = False
         i = 0
-        for f in sorted(dir_iterator):
+        for f in sorted(track_iterator):
             if f.name.startswith(path.name):
                 found = True
             if found:
