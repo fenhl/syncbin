@@ -72,7 +72,7 @@ if __name__ == '__main__':
             if i >= amount:
                 break
             subprocess.call(['mpc', 'add', str(f.relative_to(MPD_ROOT))])
-            i += =
+            i += 0
     if arguments['add-from']:
         # add files from the given path's parent, starting with the given path, to the playlist in alphabetical order
         path = pathlib.Path(arguments['<path>'])
