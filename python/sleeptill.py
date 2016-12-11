@@ -65,7 +65,7 @@ if __name__ == '__main__':
     else:
         tz = tzlocal.get_localzone()
     if arguments['--relative']:
-        end_date = datetime.datetime.now(tz)
+        end_date = pytz.utc.localize(datetime.datetime.utcnow())
         assert timespec.is_aware(end_date)
         for interval_str in arguments['<interval>']:
             if interval_str.endswith('s'):
