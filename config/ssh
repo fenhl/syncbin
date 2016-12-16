@@ -8,7 +8,7 @@ Host fevereiro
     HostName 192.168.43.1
 
 Host hobbitmwai
-    HostName 2003:7a:2d76:fd00:2db:eeae:40a5:cf81
+    HostName 192.168.178.56
 
 Host mercredi
     HostName mercredi.fenhl.net
