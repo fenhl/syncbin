@@ -2,9 +2,9 @@
 
 if [[ $# -ge 1 ]] && [[ "$1" == '--sudo' ]]; then
     if where tac &> /dev/null; then
-        sudo tac "$@" | less
+        sudo tac "${@:2}" | less
     else
-        sudo tail -r "$@" | less
+        sudo tail -r "${@:2}" | less
     fi
 else
     if where tac &> /dev/null; then
