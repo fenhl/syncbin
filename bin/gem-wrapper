@@ -28,7 +28,7 @@ if 'lastGemUpdate' in data_file and datetime.datetime.strptime(data_file['lastGe
     sys.exit() # gem update check has run in the last 2 hours, no need to run again yet
 
 try:
-    out = subprocess.check_output(['gem', 'outdated'], stderr=subprocess.STDOUT, timeout=30)
+    out = subprocess.check_output(['sudo', 'gem', 'outdated'], stderr=subprocess.STDOUT, timeout=30)
 except TypeError:
     sys.exit('\r' + ' ' * len('[....] running startup scripts: gem') + '\r[ !! ] gem update check failed: outdated Python') # timeout kwarg added in Python 3.3
 except subprocess.CalledProcessError:
