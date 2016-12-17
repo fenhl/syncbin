@@ -108,7 +108,7 @@ if __name__ == '__main__':
                 c.single(1)
             try:
                 while True:
-                    progress = int(5 * float(c.status()['elapsed']) / float(song['time']))
+                    progress = min(4, int(5 * float(c.status()['elapsed']) / float(song['time'])))
                     print('\r[{}{}]'.format('=' * progress, '.' * (4 - progress)), end='', flush=True)
                     try:
                         c.idle('player')
