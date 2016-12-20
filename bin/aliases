@@ -32,6 +32,7 @@ else
     alias pip3i='pip3 install'
     alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'
     alias py='python3 -q'
+    alias rot13='caesar --offset=13'
     alias rt='t retweet'
     alias sleep='sleeptill --relative'
     alias srsly='retry'
