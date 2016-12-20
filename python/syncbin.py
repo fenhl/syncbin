@@ -124,6 +124,7 @@ def bootstrap_debian_root():
     apt_packages = [
         'needrestart',
         'ntp',
+        'ruby',
         'ruby-dev',
         'screen',
         'ssmtp' #TODO configure
