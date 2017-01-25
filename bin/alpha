@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+
+"""Make a monochrome image transparent by translating brightness into transparency.
+
+Usage:
+  alpha [options] <input> <output>
+  alpha -h | --help
+
+Options:
+  -h, --help     Print this message and exit.
+  -l, --light    Convert a white-on-black image instead of a black-on-white image.
+  -v, --verbose  Show a progress line for the conversion.
+  --version      Print version info and exit.
+"""
+
+import PIL.Image
+import docopt
+import pathlib
+import syncbin
+
+__version__ = syncbin.__version__
+
+def convert(input_image, light=False, *, verbose=False):
+    assert input_image.mode == 'RGB' #TODO add support for other modes
+    output_image = PIL.Image.new('RGBA', input_image.size)
+    for y in range(input_image.size[1]):
+        if verbose:
+            progress = min(4, int(5 * y / input_image.size[1]))
+            print('[' + '=' * progress + '.' * (4 - progress) + ']', 'converting image: row', y + 1, 'of', input_image.size[1], end='\r', flush=True)
+        for x in range(input_image.size[0]):
+            if light:
+                alpha = sum(input_image.getpixel((x, y))) // 3
+                output_image.putpixel((x, y), (255, 255, 255, alpha)) #TODO preserve color
+            else:
+                alpha = 255 - sum(input_image.getpixel((x, y))) // 3
+                output_image.putpixel((x, y), (0, 0, 0, alpha)) #TODO preserve color
+    if verbose:
+        print('[ ok ]')
+    return output_image
+
+if __name__ == '__main__':
+    arguments = docopt.docopt(__doc__, version='alpha from fenhl/syncbin ' + __version__)
+    with PIL.Image.open(arguments['<input>']) as input_image:
+        output_image = convert(input_image, light=arguments['--light'], verbose=arguments['--verbose'])
+    output_image.save(arguments['<output>'])
