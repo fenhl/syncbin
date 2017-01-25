@@ -8,9 +8,9 @@ Usage:
   diskspace --version
 
 Options:
-  -V, --verbose                Produce more detailed output. Implies --debug.
   -h, --help                   Print this message and exit.
   -q, --quiet                  Produce no output unless an error occurs during the calculation. Exit status will be 1 if less than --min-percent or --min-space available.
+  -v, --verbose                Produce more detailed output. Implies --debug.
   --bytes                      Print the raw number of bytes instead of a human-readable format.
   --debug                      If an error occurs, print the traceback instead of a generic error message.
   --min-percent=<min_percent>  Produce no output if at least <min_percent>% of disk space is available.
