@@ -57,7 +57,7 @@ if [ "${OSName}" = "Linux" ]; then
         printf "[....] getting OS"
     fi
 elif [ "${OSName}" = "Darwin" ]; then
-    OSName="OS X"
+    OSName="OS X" #TODO change to macOS
 else
     echo ": unknown OS: ${OSName}\r[FAIL]"
     exit 1

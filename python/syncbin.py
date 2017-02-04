@@ -54,6 +54,24 @@ def git_dir(existing_only=True):
     else:
         return pathlib.Path(os.environ.get('GITDIR', '/opt/git' if root() else '{}/git'.format(os.environ['HOME'])))
 
+def os():
+    result = subprocess.check_output(['uname', '-s']).decode('utf-8')[:-1]
+    if result == 'Linux':
+        if which('lsb_release') is not None:
+            result = subprocess.check_output(['lsb_release', '-si']).decode('utf-8')[:-1]
+        elif pathlib.Path('/etc/redhat-release').exists():
+            with open('/etc/redhat-release') as redhat_release_f:
+                result = redhat_release_f.read().split(' ')[0]
+        elif pathlib.Path('/system/build.prop').exists():
+            result = 'Android'
+        else:
+            raise RuntimeError('Could not get Linux distro')
+    elif result == 'Darwin':
+        result = 'macOS'
+    else:
+        raise RuntimeError('Unknown OS: {}'.format(result))
+    return result
+
 def py_dir():
     return pathlib.Path('/opt/py' if root() else '{}/py'.format(os.environ['HOME']))
 

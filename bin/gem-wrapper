@@ -6,6 +6,7 @@ if __name__ != '__main__':
 import sys
 
 import basedir
+import contextlib
 import datetime
 import os.path
 import subprocess
@@ -17,6 +18,10 @@ with open('/dev/null', 'a') as dev_null:
 
 if not syncbin.root():
     sys.exit(2)
+
+with contextlib.suppress(RuntimeError):
+    if syncbin.os() == 'Raspbian':
+        sys.exit(2) # broken on Raspbian, skip for now
 
 if not os.path.exists(next(iter(basedir.data_dirs('syncbin/startup.json')))):
     with open(next(iter(basedir.data_dirs('syncbin/startup.json'))), 'w') as f:
