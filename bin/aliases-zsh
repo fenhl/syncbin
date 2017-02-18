@@ -132,6 +132,13 @@ function pw {
     fi
 }
 alias rand='shuf -n 1 -i'
+function read-pem {
+    if [[ $# -eq 1 ]]; then
+        sudo openssl x509 -in "$1" -text -noout
+    else
+        echo $'Usage:\n  read-pem <cert>' >&2
+    fi
+}
 alias relog=': $@; zsh && logout'
 function reset {
     if [ "$#" -gt 0 ]; then
