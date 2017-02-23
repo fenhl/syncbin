@@ -7,20 +7,25 @@ Usage:
   alpha -h | --help
 
 Options:
-  -h, --help     Print this message and exit.
-  -l, --light    Convert a white-on-black image instead of a black-on-white image.
-  -v, --verbose  Show a progress line for the conversion.
-  --version      Print version info and exit.
+  -h, --help       Print this message and exit.
+  -l, --light      Convert a white-on-black image instead of a black-on-white image.
+  -v, --verbose    Show a progress line for the conversion.
+  --color=<color>  Draws all pixels using this color, given in HTML/CSS color syntax. Defaults to black (or white with --light).
+  --version        Print version info and exit.
 """
 
 import PIL.Image
+import PIL.ImageColor
 import docopt
 import pathlib
+import re
 import syncbin
 
 __version__ = syncbin.__version__
 
-def convert(input_image, light=False, *, verbose=False):
+def convert(input_image, light=False, *, color=None, verbose=False):
+    if color is None:
+        color = (255, 255, 255) if light else (0, 0, 0)
     assert input_image.mode == 'RGB' #TODO add support for other modes
     output_image = PIL.Image.new('RGBA', input_image.size)
     for y in range(input_image.size[1]):
@@ -30,16 +35,20 @@ def convert(input_image, light=False, *, verbose=False):
         for x in range(input_image.size[0]):
             if light:
                 alpha = sum(input_image.getpixel((x, y))) // 3
-                output_image.putpixel((x, y), (255, 255, 255, alpha)) #TODO preserve color
             else:
                 alpha = 255 - sum(input_image.getpixel((x, y))) // 3
-                output_image.putpixel((x, y), (0, 0, 0, alpha)) #TODO preserve color
+            output_image.putpixel((x, y), color + (alpha,)) #TODO preserve color
     if verbose:
         print('[ ok ]')
     return output_image
 
 if __name__ == '__main__':
     arguments = docopt.docopt(__doc__, version='alpha from fenhl/syncbin ' + __version__)
+    if arguments['--color'] is None:
+        color = None
+    else:
+        color = PIL.ImageColor.getrgb(arguments['--color'])
+        assert len(color) == 3
     with PIL.Image.open(arguments['<input>']) as input_image:
-        output_image = convert(input_image, light=arguments['--light'], verbose=arguments['--verbose'])
+        output_image = convert(input_image, light=arguments['--light'], color=color, verbose=arguments['--verbose'])
     output_image.save(arguments['<output>'])
