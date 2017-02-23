@@ -23,21 +23,28 @@ import syncbin
 
 __version__ = syncbin.__version__
 
+def calculate_alpha(pixel, mode, light):
+    if mode == 'RGB':
+        pixel_brightness = sum(pixel) // 3
+    elif mode == 'RGBA':
+        pixel_brightness = sum(pixel[:3]) // 3
+    else:
+        raise NotImplementedError('Image mode {} not currently supported'.format(input_image.mode)) #TODO add support for other modes
+    if light:
+        return pixel_brightness
+    else:
+        return 255 - pixel_brightness
+
 def convert(input_image, light=False, *, color=None, verbose=False):
     if color is None:
         color = (255, 255, 255) if light else (0, 0, 0)
-    if input_image.mode != 'RGB':
-        raise NotImplementedError('Image mode {} not currently supported'.format(input_image.mode)) #TODO add support for other modes
     output_image = PIL.Image.new('RGBA', input_image.size)
     for y in range(input_image.size[1]):
         if verbose:
             progress = min(4, int(5 * y / input_image.size[1]))
             print('[' + '=' * progress + '.' * (4 - progress) + ']', 'converting image: row', y + 1, 'of', input_image.size[1], end='\r', flush=True)
         for x in range(input_image.size[0]):
-            if light:
-                alpha = sum(input_image.getpixel((x, y))) // 3
-            else:
-                alpha = 255 - sum(input_image.getpixel((x, y))) // 3
+            alpha = calculate_alpha(input_image.getpixel((x, y)), input_image.mode, light)
             output_image.putpixel((x, y), color + (alpha,)) #TODO preserve color
     if verbose:
         print('[ ok ]')
