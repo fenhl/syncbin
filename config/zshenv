@@ -3,6 +3,7 @@
 # prepending to $PATH
 path=(
     "${HOME}/bin"
+    "/opt/bin"
     "${HOME}/git/fenhl.net/syncbin-private/master/bin"
     "/opt/git/fenhl.net/syncbin-private/master/bin"
     "${HOME}/git/github.com/fenhl/syncbin/master/bin"
