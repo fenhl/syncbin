@@ -66,6 +66,9 @@ function dawg {
 }
 alias doch='sudo $(fc -ln -1)'
 alias flush-dns-cache='clear-dns-cache'
+function frame {
+    ffmpeg -loglevel error -i - -ss "$1" -t 0.5 -r 1 -f image2 -
+}
 if alias g > /dev/null; then
     unalias g
 fi
