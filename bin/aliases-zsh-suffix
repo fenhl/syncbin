@@ -1,5 +1,6 @@
 alias -s json=jpy
 alias -s log=ssel
+alias -s mp4=mediainfo
 alias -s pem=read-pem
 alias -s plist=pledit
 alias -s txt=less
