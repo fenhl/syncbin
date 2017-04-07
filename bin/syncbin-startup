@@ -174,8 +174,8 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     #    try-lock softwareupdate '===.' && { # don't wait for this lock, one check at a time is enough
     #        print-progress '===.' 'running startup script: softwareupdate'
     #        softwareupdate-wrapper
+    #        unlock softwareupdate
     #    }
-    #    unlock softwareupdate
     #fi
     lock softwareupdate '===.'
     print-progress '===.' 'running startup script: xcode-select'
@@ -233,7 +233,12 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         print-warning '~/hub exists' '===.' 'running startup script: gitdir'
     fi
     if where gitdir &> /dev/null; then
-        gitdir update &> /dev/null
+        if try-lock gitdir '===.'; then
+            gitdir update &> /dev/null
+        else
+            lock gitdir '===.'
+        fi
+        unlock gitdir
     else
         print-warning 'gitdir not installed' '===.' 'running startup script: gitdir'
     fi
