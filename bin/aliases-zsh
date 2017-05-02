@@ -188,6 +188,11 @@ compdef rr=rm
 if ! (where shuf &> /dev/null) && where gshuf &> /dev/null; then
     alias shuf='gshuf'
 fi
+function sshmount {
+    sudo mkdir /Volumes/"$1"
+    sudo chown $(whoami) /Volumes/"$1"
+    sshfs "$1":/ /Volumes/"$1"
+}
 if ! (where svg2pdf &> /dev/null); then
     alias svg2pdf='cairosvg -f pdf'
 fi
