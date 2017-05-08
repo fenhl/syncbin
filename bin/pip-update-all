@@ -3,18 +3,19 @@
 if [[ -z ${PIP} ]]; then
     if where pip3 &> /dev/null; then
         PIP=pip3
+    elif where pip-3.6 &> /dev/null; then
+        PIP=pip-3.6
     elif where pip-3.5 &> /dev/null; then
         PIP=pip-3.5
     elif where pip-3.4 &> /dev/null; then
         PIP=pip-3.4
-    elif where pip-3.3 &> /dev/null; then
-        PIP=pip-3.3
-    elif where pip-3.2 &> /dev/null; then
-        PIP=pip-3.2
     else
         echo '[!!!!] no pip3 found' >&2
         exit 1
     fi
 fi
+
+#TODO use this after Debian stretch release
+#$PIP list --outdated --format=columns | sed 1,2d | awk '{print $1}' | xargs $PIP install -U
 
 $PIP list --outdated | grep '(' | sed 's/(.*//g' | xargs $PIP install -U
