@@ -20,7 +20,7 @@ if not syncbin.root():
     sys.exit(2)
 
 with contextlib.suppress(RuntimeError):
-    if syncbin.os() == 'Raspbian':
+    if syncbin.get_os() == 'Raspbian':
         sys.exit(2) # broken on Raspbian, skip for now
 
 if not os.path.exists(next(iter(basedir.data_dirs('syncbin/startup.json')))):

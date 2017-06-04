@@ -54,7 +54,7 @@ def git_dir(existing_only=True):
     else:
         return pathlib.Path(os.environ.get('GITDIR', '/opt/git' if root() else '{}/git'.format(os.environ['HOME'])))
 
-def os():
+def get_os():
     result = subprocess.check_output(['uname', '-s']).decode('utf-8')[:-1]
     if result == 'Linux':
         if which('lsb_release') is not None:
