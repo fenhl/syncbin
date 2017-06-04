@@ -77,16 +77,18 @@ echo
 # modify APT sources.list
 
 if isdeb; then
-    if (! [ "${OSName}" = "Ubuntu" ]) && ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'edit APT sources.list now?'; then
-        if [ $(whoami) = "root" ]; then
-            ${EDITOR:=nano} /etc/apt/sources.list
+    if (! [ "${OSName}" = "Ubuntu" ]); then
+        if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'edit APT sources.list now?'; then
+            if [ $(whoami) = "root" ]; then
+                ${EDITOR:=nano} /etc/apt/sources.list
+            else
+                sudo ${EDITOR:=nano} /etc/apt/sources.list
+            fi
+        elif yesno 'APT sources.list might be outdated or misconfigured, continue anyway?'; then
+            : # continue anyway
         else
-            sudo ${EDITOR:=nano} /etc/apt/sources.list
+            exit 1
         fi
-    elif yesno 'APT sources.list might be outdated or misconfigured, continue anyway?'; then
-        : # continue anyway
-    else
-        exit 1
     fi
     if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'update APT package index now?'; then
         if [ $(whoami) = "root" ]; then
