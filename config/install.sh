@@ -1,5 +1,13 @@
 #!/bin/sh
 
+isdeb () {
+    if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ] || [ "${OSName}" = "Ubuntu" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 yesno () {
     printf "[ ?? ] $1 [y/n] "
     while true; do
@@ -68,7 +76,7 @@ echo
 
 # modify APT sources.list
 
-if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
+if isdeb; then
     if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'edit APT sources.list now?'; then
         if [ $(whoami) = "root" ]; then
             ${EDITOR:=nano} /etc/apt/sources.list
@@ -97,7 +105,7 @@ fi
 
 if which zsh > /dev/null 2>&1; then
     : # found zsh
-elif [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
+elif isdeb; then
     if yesno 'Zsh not found, install using apt-get?'; then
         if which sudo > /dev/null 2>&1; then
             sudo apt-get install zsh
@@ -142,7 +150,7 @@ fi
 
 if which git > /dev/null 2>&1; then
     : # found git
-elif [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
+elif isdeb; then
     if yesno 'git not found, install using apt-get?'; then
         if which sudo > /dev/null 2>&1; then
             sudo apt-get install git
@@ -192,7 +200,7 @@ fi
 
 if which gem > /dev/null 2>&1; then
     : # found RubyGems
-elif [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
+elif isdeb; then
     if yesno 'RubyGems not found, install using apt-get?'; then
         if which sudo > /dev/null 2>&1; then
             sudo apt-get install rubygems
@@ -250,7 +258,7 @@ fi
 
 # install command-not-found
 
-if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
+if isdeb; then
     if which "command-not-found" > /dev/null 2>&1; then
         : # command-not-found handler already installed
     else
@@ -346,6 +354,6 @@ else
     echo '[ ** ] Looks like syncbin was successfully installed. You can now install Zsh, then `chsh -s /bin/zsh` and relog.'
 fi
 
-if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
+if isdeb; then
     echo '[ ** ] If you have root access, you should also run `syncbin bootstrap debian-root`.`'
 fi
