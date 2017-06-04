@@ -77,7 +77,7 @@ echo
 # modify APT sources.list
 
 if isdeb; then
-    if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'edit APT sources.list now?'; then
+    if (! [ "${OSName}" = "Ubuntu" ]) && ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'edit APT sources.list now?'; then
         if [ $(whoami) = "root" ]; then
             ${EDITOR:=nano} /etc/apt/sources.list
         else
