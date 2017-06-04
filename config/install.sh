@@ -74,22 +74,22 @@ fi
 printf ": ${OSName}\r[ ok ]"
 echo
 
-# modify APT sources.list
+# update APT
 
-if isdeb; then
-    if (! [ "${OSName}" = "Ubuntu" ]); then
-        if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'edit APT sources.list now?'; then
-            if [ $(whoami) = "root" ]; then
-                ${EDITOR:=nano} /etc/apt/sources.list
-            else
-                sudo ${EDITOR:=nano} /etc/apt/sources.list
-            fi
-        elif yesno 'APT sources.list might be outdated or misconfigured, continue anyway?'; then
-            : # continue anyway
+if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
+    if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'edit APT sources.list now?'; then
+        if [ $(whoami) = "root" ]; then
+            ${EDITOR:=nano} /etc/apt/sources.list
         else
-            exit 1
+            sudo ${EDITOR:=nano} /etc/apt/sources.list
         fi
+    elif yesno 'APT sources.list might be outdated or misconfigured, continue anyway?'; then
+        : # continue anyway
+    else
+        exit 1
     fi
+fi
+if isdeb; then
     if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'update APT package index now?'; then
         if [ $(whoami) = "root" ]; then
             apt-get update
@@ -260,7 +260,7 @@ fi
 
 # install command-not-found
 
-if isdeb; then
+if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
     if which "command-not-found" > /dev/null 2>&1; then
         : # command-not-found handler already installed
     else
