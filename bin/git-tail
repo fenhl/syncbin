@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# prints all initial commits (i.e., commits with no parents)
+
+git rev-list --max-parents=0 HEAD
