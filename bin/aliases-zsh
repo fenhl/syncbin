@@ -28,6 +28,12 @@ function adu {
         sudo apt-get autoremove
     fi
 }
+function bn {
+    git bisect $(git bisect terms --term-new)
+}
+function bo {
+    git bisect $(git bisect terms --term-old)
+}
 function brew-caveats {
     brew info ${@:-$(brew list)} | awk '/^==> Caveats$/,/^[a-z][a-zA-Z0-9_+-]+: stable |^==> (Dependencies|Options)$/'
 }
