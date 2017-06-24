@@ -315,6 +315,15 @@ fi
 
 # install Python 3 packages
 
+PythonPackages=(
+    'blessings'
+    'docopt'
+    'python-mpd2'
+    'pytz'
+    'requests'
+    'tzlocal'
+)
+
 if which python3 > /dev/null 2>&1; then
     if which pip3 > /dev/null 2>&1; then
         : # found Python 3 and pip3, install packages
@@ -326,9 +335,9 @@ if which python3 > /dev/null 2>&1; then
             install_python_packages_using_sudo='no'
         fi
         if [ "${install_python_packages_using_sudo}" = 'yes' ]; then
-            sudo pip3 install blessings docopt
+            sudo pip3 install $PythonPackages
         else
-            pip3 install blessings docopt
+            pip3 install $PythonPackages
         fi
     elif yesno 'pip3 not found, continue anyway?'; then
         : # continue anyway

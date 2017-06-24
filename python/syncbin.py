@@ -211,9 +211,12 @@ def bootstrap_gitdir():
         gitdir_gitdir.mkdir(parents=True)
     if not (gitdir_gitdir / 'master').exists():
         subprocess.check_call(['git', 'clone', 'https://github.com/fenhl/gitdir.git', 'master'], cwd=str(git_dir() / 'github.com' / 'fenhl' / 'gitdir'))
+    if not py_dir().exists():
+        try:
+            py_dir().mkdir()
+        except PermissionError:
+            subprocess.check_call(['sudo', 'mkdir', str(py_dir())])
     if not (py_dir() / 'gitdir').exists():
-        if not py_dir().exists():
-            sys.exit('[!!!!] run `syncbin bootstrap python` first')
         try:
             (py_dir() / 'gitdir').symlink_to(gitdir_gitdir / 'master' / 'gitdir')
         except PermissionError:
@@ -277,24 +280,7 @@ def bootstrap_no_battery():
 
 @bootstrap_setup('python')
 def bootstrap_python():
-    """Installs Python modules and creates `/opt/py`. Must be run twice, once before the gitdir setup, once after."""
-    pip_packages = [
-        'blessings',
-        'docopt',
-        'python-mpd2',
-        'pytz',
-        'requests',
-        'tzlocal'
-    ]
-    if root():
-        subprocess.check_call(['pip3', 'install'] + pip_packages)
-    else:
-        subprocess.check_call(['pip3', 'install', '--user'] + pip_packages)
-    if not py_dir().exists():
-        try:
-            py_dir().mkdir()
-        except PermissionError:
-            subprocess.check_call(['sudo', 'mkdir', str(py_dir())])
+    """Creates `/opt/py` and links Python modules."""
     try:
         sys.path.append(str(py_dir()))
         import gitdir.host
@@ -323,6 +309,8 @@ def bootstrap_python():
                 (py_dir() / 'lazyjson.py').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py')
             if not (py_dir() / 'timespec').exists():
                 (py_dir() / 'timespec').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'python-timespec' / 'master' / 'timespec')
+
+bootstrap_python.requires('gitdir')
 
 @bootstrap_python.test_installed
 def bootstrap_python():
