@@ -27,6 +27,7 @@ import os
 import subprocess
 import json
 import platform
+import shutil
 import stat
 
 try:
@@ -351,9 +352,7 @@ def bootstrap_ssh():
     if not hasattr(pathlib.Path, 'home'): # Python 3.4 and below
         return None
     config_path = (pathlib.Path.home() / '.ssh' / 'config')
-    if not config_path.is_symlink():
-        return False
-    return config_path.resolve() == git_dir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh'
+    return subprocess.run(['diff', str(config_path), str(git_dir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh')], stdout=subprocess.DEVNULL).returncode == 0
 
 @bootstrap_setup('sudo')
 def bootstrap_sudo():
