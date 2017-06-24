@@ -236,10 +236,7 @@ def bootstrap_gitdir():
 @bootstrap_setup('macbook')
 def bootstrap_macbook():
     """Installs `batcharge` for MacBooks."""
-    if hasattr(pathlib.Path, 'home'): # Python 3.5 and above
-        bin_path = (pathlib.Path.home() / 'bin')
-    else:
-        bin_path = pathlib.Path(input('[ ?? ] where should the `batcharge` symlink be created? '))
+    bin_path = (pathlib.Path.home() / 'bin')
     if not bin_path.exists():
         bin_path.mkdir()
     batcharge = bin_path / 'batcharge'
@@ -259,10 +256,7 @@ def bootstrap_macbook():
 @bootstrap_setup('no-battery')
 def bootstrap_no_battery():
     """Installs `batcharge` for devices without batteries."""
-    if hasattr(pathlib.Path, 'home'): # Python 3.5 and above
-        bin_path = (pathlib.Path.home() / 'bin')
-    else:
-        bin_path = pathlib.Path(input('[ ?? ] where should `batcharge` be saved? '))
+    bin_path = (pathlib.Path.home() / 'bin')
     if not bin_path.exists():
         bin_path.mkdir()
     batcharge = bin_path / 'batcharge'
@@ -277,7 +271,7 @@ def bootstrap_no_battery():
     if not (pathlib.Path.home() / 'bin' / 'batcharge').exists():
         return False
     with (pathlib.Path.home() / 'bin' / 'batcharge').open() as batcharge_f:
-        return batcharge_f.read == '#!/bin/sh\n\nexit 0\n'
+        return batcharge_f.read() == '#!/bin/sh\n\nexit 0\n'
 
 @bootstrap_setup('python')
 def bootstrap_python():
