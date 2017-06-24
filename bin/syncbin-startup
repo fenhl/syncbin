@@ -148,7 +148,7 @@ lock ssh '==..'
 print-progress '==..' 'running startup script: ssh'
 if ! diff ~/.ssh/config "$GITDIR/github.com/fenhl/syncbin/master/config/ssh" > /dev/null; then
     cp "$GITDIR/github.com/fenhl/syncbin/master/config/ssh" ~/.ssh/config || print-warning 'outdated SSH config' '==..' 'running startup script: ssh'
-    chmod 644 ~/.ssh/config || print-warning 'wrong permissions on SSH config' '==..' 'running startup script: ssh'
+    chmod 600 ~/.ssh/config || print-warning 'wrong permissions on SSH config' '==..' 'running startup script: ssh'
 fi
 unlock ssh
 
