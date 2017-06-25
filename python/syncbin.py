@@ -142,6 +142,7 @@ def bootstrap_debian_root():
     """Essential setup for Debian systems with root access"""
     apt_packages = [
         'exiftool',
+        'jq',
         'needrestart',
         'ntp',
         'ruby',
