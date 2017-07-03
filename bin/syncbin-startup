@@ -14,7 +14,7 @@ OPTIONS=$'Options:
 function has-cronjob {
     if crontab -l | grep "$1" &> /dev/null; then
         return 0
-    elif sudo -n crontab -l |& grep "$1" &> /dev/null
+    elif sudo -n crontab -l |& grep "$1" &> /dev/null; then
         return 0
     else
         return 1
