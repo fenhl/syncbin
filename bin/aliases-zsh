@@ -128,6 +128,9 @@ function mnt {
 }
 compdef mnt=mount
 alias notify='terminal-notifier -sound default -message'
+if ! (where pcregrep &> /dev/null); then
+    alias pcregrep='grep -P'
+fi
 function pw {
     if [[ $# -gt 0 ]]; then
         while [[ $# -gt 0 ]]; do
