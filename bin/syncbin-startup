@@ -11,6 +11,16 @@ OPTIONS=$'Options:
   --ignore-lock       Release and ignore the lock that prevents this script from running multiple times at once.
   --no-internet-test  Do not run `syncbin-hasinet\' to test for internet connectivity, but run all other startup scripts regardless.'
 
+function has-cronjob {
+    if crontab -l | grep "$1" &> /dev/null; then
+        return 0
+    elif sudo -n crontab -l |& grep "$1" &> /dev/null
+        return 0
+    else
+        return 1
+    fi
+}
+
 function is-omz-plugin {
     [[ -f "$1"/plugins/"$2"/"$2".plugin.zsh ]] || [[ -f "$1"/plugins/"$2"/_"$2" ]]
 }
@@ -232,7 +242,9 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     if [[ -d ~/hub ]]; then
         print-warning '~/hub exists' '===.' 'running startup script: gitdir'
     fi
-    if where gitdir &> /dev/null; then
+    if has-cronjob "${GITDIR}/github.com/fenhl/gitdir/master/gitdir/__main__.py update --quiet"; then
+        : # gitdir update has a cronjob, don't update now
+    elif where gitdir &> /dev/null; then
         if try-lock gitdir '===.'; then
             gitdir update &> /dev/null
         else
