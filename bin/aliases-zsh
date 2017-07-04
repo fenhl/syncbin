@@ -44,6 +44,9 @@ function chmox {
     fi
     chmod +x "$1"
 }
+if ! (crontab -il |& grep 'unrecognized option' &> /dev/null); then
+    alias crontab='crontab -i'
+fi
 if which discoveryutil &> /dev/null; then
     alias clear-dns-cache='sudo discoveryutil mdnsflushcache && sudo discoveryutil udnsflushcaches'
 else
