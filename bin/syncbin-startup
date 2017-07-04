@@ -12,7 +12,7 @@ OPTIONS=$'Options:
   --no-internet-test  Do not run `syncbin-hasinet\' to test for internet connectivity, but run all other startup scripts regardless.'
 
 function has-cronjob {
-    if crontab -l | grep "$1" &> /dev/null; then
+    if crontab -l |& grep "$1" &> /dev/null; then
         return 0
     elif sudo -n crontab -l |& grep "$1" &> /dev/null; then
         return 0
