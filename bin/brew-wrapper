@@ -1,0 +1,19 @@
+#!/bin/zsh
+
+if [[ -d "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" ]] && [[ -w "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" ]]; then
+    BREWUPDATEOUTPUT=$(brew update)
+    if [[ "$BREWUPDATEOUTPUT" != "Already up-to-date." ]]; then
+        echo "$BREWUPDATEOUTPUT" >! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log
+        brew upgrade &>>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log 2>&2
+        brew cleanup &>>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log 2>&2
+    fi
+elif [[ x"$1" == x'--startup' ]]; then
+    print-warning 'cannot log brew output' '===.' 'running startup script: brew'
+    brew update &> /dev/null
+    brew upgrade > /dev/null
+    brew cleanup > /dev/null
+else
+    brew update
+    brew upgrade
+    brew cleanup
+fi

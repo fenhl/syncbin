@@ -197,19 +197,12 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     unlock softwareupdate
     lock ruby '===.'
     print-progress '===.' 'running startup script: brew'
+    if has-cronjob "${GITDIR}/github.com/fenhl/syncbin/master/bin/brew-wrapper"; then
+        : # brew upgrade has a cronjob, don't upgrade now
+    elif where brew &> /dev/null; then
+        brew-wrapper --startup
+    fi
     if where brew &> /dev/null; then
-        if [[ -d "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" ]] && [[ -w "${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin" ]]; then
-            BREWUPDATEOUTPUT=$(brew update)
-            if [[ "$BREWUPDATEOUTPUT" != "Already up-to-date." ]]; then
-                echo "$BREWUPDATEOUTPUT" >! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log
-                brew upgrade &>>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log 2>&2
-                brew cleanup &>>! ${XDG_DATA_HOME:-${HOME}/.local/share}/syncbin/brew.log 2>&2
-            fi
-        else
-            print-warning 'cannot log brew output' '===.' 'running startup script: brew'
-            brew update &> /dev/null
-            brew upgrade > /dev/null
-        fi
         if brew command command-not-found-init &> /dev/null; then
             eval "$(brew command-not-found-init)"
         else
