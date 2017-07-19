@@ -25,7 +25,9 @@ function adu {
     else
         sudo apt-get update &&
         sudo apt-get dist-upgrade &&
-        sudo apt-get autoremove
+        sudo apt-get autoremove &&
+        sudo cron-apt &&
+        sudo "$(where night-device-report)"
     fi
 }
 function bn {
