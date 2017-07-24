@@ -132,7 +132,15 @@ function mnt {
     sudo mount "$1" "$2"
 }
 compdef mnt=mount
-alias notify='terminal-notifier -sound default -message'
+function notify {
+    if where terminal-notifier &> /dev/null; then
+        terminal-notifier -sound default -message "$*"
+    elif where ssmtp &> /dev/null; then
+        echo $'To: fenhl@fenhl.net\nFrom: '"$(whoami)"'@'"$(hostname -f)"$'\nSubject: notification\n\n'"$@" | ssmtp 'fenhl@fenhl.net'
+    else
+        echo "$@"
+    fi
+}
 if ! (where pcregrep &> /dev/null); then
     alias pcregrep='grep -P'
 fi
