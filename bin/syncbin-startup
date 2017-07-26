@@ -202,7 +202,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     unlock softwareupdate
     lock ruby '===.'
     print-progress '===.' 'running startup script: brew'
-    if has-cronjob "${GITDIR}/github.com/fenhl/syncbin/master/bin/brew-wrapper"; then
+    if has-cronjob 'brew-wrapper'; then
         : # brew upgrade has a cronjob, don't upgrade now
     elif where brew &> /dev/null; then
         brew-wrapper --startup
@@ -240,7 +240,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     if [[ -d ~/hub ]]; then
         print-warning '~/hub exists' '===.' 'running startup script: gitdir'
     fi
-    if has-cronjob "${GITDIR}/github.com/fenhl/gitdir/master/gitdir/__main__.py update --quiet"; then
+    if has-cronjob 'gitdir update --quiet' || has-cronjob "${GITDIR}/github.com/fenhl/gitdir/master/gitdir/__main__.py update --quiet"; then
         : # gitdir update has a cronjob, don't update now
     elif where gitdir &> /dev/null; then
         if try-lock gitdir '===.'; then
