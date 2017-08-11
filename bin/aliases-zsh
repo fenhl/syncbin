@@ -1,15 +1,6 @@
 alias -- -='cd -'
 function a {
-    if [[ $# -eq 0 ]]; then
-        atom . &&
-        ruler
-    elif [[ $# -eq 1 ]]; then
-        atom "$1" &&
-        ruler
-    else
-        echo '[ !! ] too many args' >&2
-        exit 1
-    fi
+    atom "$(gitdir path-stage "$@")"
 }
 function a2edit {
     sudo nano /etc/apache2/sites-available/"$1"
