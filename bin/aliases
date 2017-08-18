@@ -37,6 +37,7 @@ else
     alias sleep='sleeptill --relative'
     alias srsly='retry'
     alias sssel='ssel --sudo'
+    alias ssid='airport --getinfo | pcregrep -o1 " SSID: (.*)"'
     alias ssync='rsync --rsh=ssh'
     alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
     alias tf='tail -fn0'
