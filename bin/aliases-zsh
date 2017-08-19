@@ -18,8 +18,13 @@ function adu {
         sudo apt-get dist-upgrade &&
         sudo apt-get autoremove &&
         sudo cron-apt &&
-        sudo "$(where night-device-report)"
+        announce sudo "$(where night-device-report)"
     fi
+}
+function announce {
+    printf '[ ** ] '
+    echo "$@"
+    "$@"
 }
 function bn {
     git bisect $(git bisect terms --term-new)
