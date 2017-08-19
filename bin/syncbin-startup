@@ -221,7 +221,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         gem-wrapper
     fi
     unlock ruby
-    print-progress '===.' 'running startup script: rustup'
+    print-progress '===.' 'running startup script: rust'
     # rust has its own lock
     if where rustup &> /dev/null; then
         if ! rustup override list | grep 'no overrides' &> /dev/null; then
