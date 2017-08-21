@@ -51,7 +51,7 @@ class Bytes(int):
         if self >= 2 ** 20:
             return str(int(self) // (2 ** 20)) + 'MB'
         if self >= 2 ** 10:
-            return str(int(self) // (2 ** 20)) + 'KB'
+            return str(int(self) // (2 ** 10)) + 'KB'
         return str(int(self)) + 'B'
 
 ONE_GIG = Bytes(2 ** 30)
