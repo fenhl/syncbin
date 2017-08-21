@@ -85,7 +85,8 @@ if __name__ == '__main__':
             sys.exit(1)
         elif arguments['--verbose']:
             print('Available disk space: {}'.format(available))
-            print('{:B} bytes'.format(available))
+            print('{:B} bytes free'.format(available))
+            print('{:B} bytes total'.format(total))
             print('{} percent'.format(int(100 * available / total)))
         elif arguments['--bytes']:
             print('{:B}'.format(available))
