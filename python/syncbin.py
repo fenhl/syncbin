@@ -327,7 +327,7 @@ def bootstrap_rust():
     #    sys.exit('[!!!!] missing requests, run `syncbin bootstrap python` first')
     #response = requests.get('https://sh.rustup.rs/', stream=True)
     #response.raise_for_status()
-    sys.exit(subprocess.call('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y', shell=True))
+    subprocess.check_call('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y', shell=True)
 
 @bootstrap_rust.test_installed
 def bootstrap_rust():
