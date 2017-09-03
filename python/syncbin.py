@@ -431,7 +431,7 @@ def bootstrap_zsh():
 bootstrap_zsh.requires('gitdir')
 
 @bootstrap_zsh.test_installed
-def bootstrap_syncbin_private():
+def bootstrap_zsh():
     return (git_dir() / 'github.com' / 'zsh-users' / 'zsh-syntax-highlighting' / 'master').is_dir()
 
 def bootstrap(*setups):
