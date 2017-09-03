@@ -124,7 +124,7 @@ def bootstrap_setup(setup_name):
 
 @bootstrap_setup('brew')
 def bootstrap_brew():
-    """Installs various utilities for OS X using Homebrew"""
+    """Installs various utilities for macOS using Homebrew"""
     try:
         subprocess.check_call(['brew', 'install', 'git', 'jq', 'ruby', 'terminal-notifier'])
     except subprocess.CalledProcessError:
@@ -180,7 +180,7 @@ def bootstrap_debian_root():
 
 @bootstrap_setup('finder')
 def bootstrap_finder():
-    """Configure useful defaults for Finder on OS X"""
+    """Configure useful defaults for Finder on macOS"""
     print('[....] configuring Finder', end='\r', flush=True)
     subprocess.check_call(['defaults', 'write', '-g', 'NSScrollViewRubberbanding', '-int', '0'])
     subprocess.check_call(['defaults', 'write', 'com.apple.finder', 'AppleShowAllFiles', '-bool', 'true'])
@@ -415,7 +415,7 @@ def bootstrap_zsh():
     if yesno('install oh-my-zsh?'):
         gitdir.host.by_name('github.com').clone('robbyrussell/oh-my-zsh')
     if platform.system() == 'Darwin' and which('zsh') == '/bin/zsh':
-        # OS X but Homebrew Zsh not installed
+        # macOS but Homebrew Zsh not installed
         if yesno('install newer Zsh version using Homebrew?'):
             subprocess.check_call(['brew', 'install', 'zsh'])
             needs_append = True
