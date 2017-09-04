@@ -437,7 +437,8 @@ def bootstrap_zsh():
 if bootstrap_syncbin_private.is_installed():
     import syncbin_private
 
-    syncbin_private.update_bootstrap_setups(BOOTSTRAP_SETUPS)
+    if hasattr(syncbin_private, 'update_bootstrap_setups'):
+        syncbin_private.update_bootstrap_setups(BOOTSTRAP_SETUPS)
 
 def bootstrap(*setups):
     for setup_name in setups:
