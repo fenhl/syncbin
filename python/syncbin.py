@@ -281,7 +281,7 @@ def bootstrap_python():
         sys.path.append(str(py_dir()))
         import gitdir.host
     except ImportError:
-        print('[ ** ] run `syncbin bootstrap gitdir`, then re-run `syncbin bootstrap python` to install essentials from github')
+        print('[ ** ] run `syncbin bootstrap gitdir`, then re-run `syncbin bootstrap python` to install packages from github')
     else:
         gitdir.host.by_name('github.com').clone('fenhl/python-xdg-basedir')
         gitdir.host.by_name('github.com').clone('fenhl/fancyio')

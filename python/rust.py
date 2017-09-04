@@ -10,16 +10,18 @@ Usage:
   rust --version
 
 Options:
-  -R, --release     Build with the `--release' flag and skip tests.
-  -c, --crates      Update Cargo.lock even if not ignored.
-  -h, --help        Print this message and exit.
-  -q, --quiet       Don't print progress.
-  -r, --run         Add a `cargo run' step at the end.
-  --all-toolchains  Update all Rust toolchains.
-  --ignore-lock     Release and ignore the lock that prevents this script from running multiple times at once.
-  --no-project      Only update Rust itself, don't attempt to update any git repo or cargo project.
-  --skip-if-locked  If another instance of the script is already running, do nothing.
-  --version         Print version info and exit.
+  -R, --release        Build with the `--release' flag and skip tests.
+  -c, --crates         Update Cargo.lock even if not ignored.
+  -h, --help           Print this message and exit.
+  -q, --quiet          Don't print progress.
+  -r, --run            Add a `cargo run' step at the end.
+  --all-toolchains     Update all Rust toolchains.
+  --ignore-lock        Release and ignore the lock that prevents this script from running multiple times at once.
+  --no-project         Only update Rust itself, don't attempt to update any git repo or cargo project.
+  --no-timeout         Don't automatically abort the update process of a toolchain. Overrides `--timeout'.
+  --skip-if-locked     If another instance of the script is already running, do nothing.
+  --timeout=<seconds>  The update process of a toolchain is aborted after this many seconds [Default: 300].
+  --version            Print version info and exit.
 """
 
 import sys
@@ -67,12 +69,12 @@ def default_toolchain():
     else:
         raise NotImplementedError('Failed to parse default toolchain')
 
-def multirust_update(toolchain=None):
+def multirust_update(toolchain=None, timeout=300):
     if toolchain is None:
         toolchain = current_toolchain()
     update_popen = subprocess.Popen(['rustup', 'update', toolchain], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
-        if update_popen.wait(timeout=300) != 0:
+        if update_popen.wait(timeout=timeout) != 0:
             print('[!!!!]', 'updating Rust {}: failed'.format(toolchain), file=sys.stderr)
             sys.exit(update_popen.returncode)
     except subprocess.TimeoutExpired:
@@ -115,17 +117,22 @@ if __name__ == '__main__':
                 # lock acquired
                 atexit.register(os.rmdir, LOCKDIR)
                 break
+    if arguments['--no-timeout']:
+        timeout = None
+    else:
+        timeout = int(arguments['--timeout'])
+    timeout
     if arguments['--all-toolchains']:
         set_status(0, 'updating Rust nightly')
-        multirust_update('nightly')
+        multirust_update('nightly', timeout=timeout)
         set_status(1, 'updating Rust beta   ')
-        multirust_update('beta')
+        multirust_update('beta', timeout=timeout)
         set_status(2, 'updating Rust stable')
-        multirust_update('stable')
+        multirust_update('stable', timeout=timeout)
     else:
         toolchain = current_toolchain()
         set_status(0, 'updating Rust {}'.format(toolchain))
-        multirust_update(toolchain)
+        multirust_update(toolchain, timeout=timeout)
     if arguments['--no-project']:
         set_status(5, 'update complete      ')
         sys.exit()
