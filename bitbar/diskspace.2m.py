@@ -13,3 +13,5 @@ available = diskspace.Bytes(usage.free)
 
 if available < 5 * diskspace.ONE_GIG or available / total < 0.05:
     print('disk: {}% ({})'.format(int(100 * available / total), available))
+    print('---')
+    print('Open DaisyDisk|bash=/usr/bin/open param1=-a param2=DaisyDisk terminal=false')
