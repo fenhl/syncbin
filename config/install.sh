@@ -236,7 +236,12 @@ if mkdir -p /opt/git/github.com 2> /dev/null && [ -d /opt/git/github.com ]; then
 elif which sudo > /dev/null 2>&1; then
     if yesno 'could not create /opt/git/github.com, try using sudo?'; then
         if sudo mkdir -p /opt/git/github.com; then
-            sudo chown "$(whoami)" /opt/git/github.com
+            if getent group git > /dev/null; then
+                sudo chown -R "$(whoami)":git /opt/git
+                sudo chmod -R g+rw /opt/git
+            else
+                sudo chown -R "$(whoami)" /opt/git
+            fi
             HUB=/opt/git/github.com
         fi
     fi
