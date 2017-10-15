@@ -136,27 +136,25 @@ if __name__ == '__main__':
     if arguments['--no-project']:
         set_status(5, 'update complete      ')
         sys.exit()
-    with open('/dev/null', 'a') as dev_null:
-        if subprocess.call(['git', 'branch'], stdout=dev_null, stderr=dev_null) == 0:
-            set_status(3, 'updating repo        ')
-            subprocess.check_call(['git', 'fetch', '--quiet'])
-            try:
-                subprocess.check_call(['git', 'merge', '--quiet', 'FETCH_HEAD'], stdout=dev_null)
-            except subprocess.CalledProcessError:
-                subprocess.check_call(['git', 'merge', '--abort'])
-                raise
+    if subprocess.call(['git', 'branch'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0:
+        set_status(3, 'updating repo        ')
+        subprocess.check_call(['git', 'fetch', '--quiet'])
+        try:
+            subprocess.check_call(['git', 'merge', '--quiet', 'FETCH_HEAD'], stdout=subprocess.DEVNULL)
+        except subprocess.CalledProcessError:
+            subprocess.check_call(['git', 'merge', '--abort'])
+            raise
+    elif not QUIET:
+        print('[ ** ]', 'not a git repo, skipping repo update step')
+    if os.path.exists('Cargo.lock'): # `cargo update` complains if no Cargo.lock exists yet
+        if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=subprocess.DEVNULL) == 0:
+            set_status(4, 'updating crates     ')
+            update_crates = subprocess.Popen(['cargo', 'update'], stdout=subprocess.DEVNULL)
+            if update_crates.wait() != 0:
+                print('[!!!!]', 'updating crates: failed', file=sys.stderr)
+                sys.exit(update_crates.returncode)
         elif not QUIET:
-            print('[ ** ]', 'not a git repo, skipping repo update step')
-    with open('/dev/null', 'a') as dev_null:
-        if os.path.exists('Cargo.lock'): # `cargo update` complains if no Cargo.lock exists yet
-            if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=dev_null) == 0:
-                set_status(4, 'updating crates     ')
-                update_crates = subprocess.Popen(['cargo', 'update'], stdout=dev_null)
-                if update_crates.wait() != 0:
-                    print('[!!!!]', 'updating crates: failed', file=sys.stderr)
-                    sys.exit(update_crates.returncode)
-            elif not QUIET:
-                print('[ ** ]', 'Cargo.lock tracked by git, skipping crates update step, `--crates` to override')
+            print('[ ** ]', 'Cargo.lock tracked by git, skipping crates update step, `--crates` to override')
     set_status(5, 'update complete')
     cargo_build = subprocess.Popen(['cargo', 'build'] + (['--release'] if arguments['--release'] else []))
     if cargo_build.wait() != 0:
