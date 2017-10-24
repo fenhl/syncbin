@@ -24,6 +24,7 @@ path=(
     "/opt/X11/bin"
     "/usr/local/MacGPG2/bin"
     "/usr/texbin"
+    "/usr/local/opt/llvm/bin"
     $path
 )
 # appending to $PATH
