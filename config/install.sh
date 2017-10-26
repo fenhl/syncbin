@@ -48,6 +48,19 @@ githubinstall () {
     fi
 }
 
+pi_reinstall=no
+
+# command-line argument parsing
+for arg in "$@"; do
+    case "$arg" in
+        --pi)
+            pi_reinstall=yes
+            ;;
+        *)
+            ;;
+    esac
+done
+
 printf "[....] getting OS"
 
 OSName=$(uname -s)
@@ -77,20 +90,22 @@ echo
 # update APT
 
 if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
-    if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'edit APT sources.list now?'; then
-        if [ $(whoami) = "root" ]; then
-            ${EDITOR:=nano} /etc/apt/sources.list
+    if [ $pi_reinstall = no ]; then
+        if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'edit APT sources.list now?'; then
+            if [ $(whoami) = "root" ]; then
+                ${EDITOR:=nano} /etc/apt/sources.list
+            else
+                sudo ${EDITOR:=nano} /etc/apt/sources.list
+            fi
+        elif yesno 'APT sources.list might be outdated or misconfigured, continue anyway?'; then
+            : # continue anyway
         else
-            sudo ${EDITOR:=nano} /etc/apt/sources.list
+            exit 1
         fi
-    elif yesno 'APT sources.list might be outdated or misconfigured, continue anyway?'; then
-        : # continue anyway
-    else
-        exit 1
     fi
 fi
 if isdeb; then
-    if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno 'update APT package index now?'; then
+    if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && ([ $pi_reinstall = yes ] || yesno 'update APT package index now?'); then
         if [ $(whoami) = "root" ]; then
             apt-get update
         else
@@ -234,7 +249,7 @@ if mkdir -p /opt/git/github.com 2> /dev/null && [ -d /opt/git/github.com ]; then
         fi
     fi
 elif which sudo > /dev/null 2>&1; then
-    if yesno 'could not create /opt/git/github.com, try using sudo?'; then
+    if [ $pi_reinstall = yes ] || yesno 'could not create /opt/git/github.com, try using sudo?'; then
         if sudo mkdir -p /opt/git/github.com; then
             if getent group git > /dev/null; then
                 sudo chown -R "$(whoami)":git /opt/git
@@ -269,13 +284,13 @@ if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
     if which "command-not-found" > /dev/null 2>&1; then
         : # command-not-found handler already installed
     else
-        if yesno 'command-not-found not found, install using apt-get?'; then
+        if [ $pi_reinstall = yes ] || yesno 'command-not-found not found, install using apt-get?'; then
             if which sudo > /dev/null 2>&1; then
                 sudo apt-get install 'command-not-found'
             else
                 apt-get install 'command-not-found'
             fi
-            if ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno "edit root's crontab now?"; then
+            if [ $pi_reinstall = no ] && ([ $(whoami) = "root" ] || which sudo > /dev/null 2>&1) && yesno "edit root's crontab now?"; then
                 if [ $(whoami) = "root" ]; then
                     crontab -e
                 else
@@ -325,6 +340,8 @@ if which python3 > /dev/null 2>&1; then
         : # found Python 3 and pip3, install packages
         if [ $(whoami) = "root" ]; then
             install_python_packages_using_sudo='no'
+        elif [ $pi_reinstall = yes ]; then
+            install_python_packages_using_sudo='yes'
         elif yesno 'use sudo to install Python packages?'; then
             install_python_packages_using_sudo='yes'
         else
@@ -355,12 +372,14 @@ ln -fs ${HUB}/fenhl/syncbin/master/config/zshrc ~/.zshrc
 ln -fs ${HUB}/fenhl/syncbin/master/config/bash_profile ~/.bash_profile
 ln -fs ${HUB}/fenhl/syncbin/master/config/profile ~/.profile
 
+if [ $pi_reinstall = yes ]; then
+    : # Zsh is already installed and enabled
 if which zsh > /dev/null 2>&1; then
     echo '[ ** ] Looks like syncbin was successfully installed. You can now `chsh -s /bin/zsh` and relog.'
 else
     echo '[ ** ] Looks like syncbin was successfully installed. You can now install Zsh, then `chsh -s /bin/zsh` and relog.'
 fi
 
-if isdeb; then
+if isdeb && [ $pi_reinstall = no ]; then
     echo '[ ** ] If you have root access, you should also run `syncbin bootstrap debian-root`.`'
 fi
