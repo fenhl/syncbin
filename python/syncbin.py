@@ -24,6 +24,7 @@ import contextlib
 import getpass
 import pathlib
 import os
+import requests
 import subprocess
 import json
 import platform
@@ -235,6 +236,24 @@ def bootstrap_gitdir():
     else:
         return True
 
+# install lns
+
+@bootstrap_setup('lns')
+def bootstrap_lns():
+    bin_path = (pathlib.Path.home() / 'bin')
+    if not bin_path.exists():
+        bin_path.mkdir()
+    subprocess.run(['tar', '-xzf', '-'], input=requests.get('http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz').content, cwd=str(bin_path), check=True)
+    (bin_path / 'lns.tar.gz').unlink()
+    (bin_path / 'lns').rename(bin_path / '.lnsdir')
+    (bin_path / '.lnsdir' / 'lns').rename(bin_path / 'lns')
+    shutil.rmtree(str(bin_path / '.lnsdir'))
+    (bin_path / 'lns').chmod(0o755)
+
+@bootstrap_lns.test_installed
+def bootstrap_lns():
+    return which('lns') is not None
+
 @bootstrap_setup('macbook')
 def bootstrap_macbook():
     """Installs `batcharge` for MacBooks."""
@@ -313,7 +332,7 @@ bootstrap_python.requires('gitdir')
 def bootstrap_python():
     try:
         sys.path.append(str(py_dir()))
-        import basedir, blessings, docopt, gitdir, lazyjson, requests
+        import basedir, fancyio, lazyjson, timespec
     except ImportError:
         return False
     else:
