@@ -274,6 +274,21 @@ def bootstrap_macbook():
         return False
     return config_path.resolve() == git_dir() / 'fenhl.net' / 'syncbin-private' / 'master' / 'python' / 'batcharge_macbook.py'
 
+@bootstrap_setup('nginx')
+def bootstrap_nginx():
+    """Installs the nginx_ensite utility"""
+    try:
+        sys.path.append(str(py_dir()))
+        import gitdir.host
+    except ImportError:
+        print('[ ** ] run `syncbin bootstrap gitdir`, then re-run `syncbin bootstrap nginx` to install packages from github')
+    gitdir.host.by_name('github.com').clone('perusio/nginx_ensite')
+    subprocess.run(['sudo', 'make', 'install'], cwd=str(gitdir.host.by_name('github.com').repo('perusio/nginx_ensite').branch_path()))
+
+@bootstrap_nginx.test_installed
+def bootstrap_nginx():
+    return which('nginx_ensite') is not None
+
 @bootstrap_setup('no-battery')
 def bootstrap_no_battery():
     """Installs `batcharge` for devices without batteries."""
