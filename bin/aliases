@@ -1,46 +1,39 @@
-USAGE=$'Usage:
-  . aliases'
-
-if [ $# -ne 0 ]; then
-    echo "$USAGE" >&2
-else
-    alias accio='. accio'
-    alias android-studio='open -a "Android Studio"'
-    alias cargo-lock-to-png='cargo-lock-to-dot Cargo.lock | dot -Tpng > Cargo.png'
-    alias dacapo='playlist repeat-current-once'
-    alias fav='t fave'
-    alias gp='git push'
-    alias gpp='git push && cd ../master && g pull && cd -'
-    alias http='python3 -m http.server'
-    alias inet='syncbin hasinet'
-    if [ -d /opt/git/github.com/jq-shell/jqsh/master ]; then
-        alias jqsh='cd /opt/git/github.com/jq-shell/jqsh/master && git pull && rustup --quiet --release && cd - > /dev/null && command jqsh'
-    elif [ -d "$HOME"/git/github.com/jq-shell/jqsh/master ]; then
-        alias jqsh='cd '"$HOME"'/git/github.com/jq-shell/jqsh/master && git pull && rustup --quiet --release && cd - > /dev/null && command jqsh'
-    fi
-    if ls --group > /dev/null 2>&1; then
-        # GNU ls
-        alias l="ls --color=always --group --time-style='+%Y-%m-%d %H:%M:%S' -Fabhl"
-    else
-        # BSD ls
-        alias l='ls -BFGahl'
-    fi
-    alias minecraft='open -a Minecraft'
-    alias mysql='mysql --silent'
-    alias pause='playlist pause-after-current'
-    alias pdb='python3 -m pdb'
-    alias pip3i='pip3 install'
-    alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'
-    alias py='python3 -q'
-    alias rot13='caesar --offset=13'
-    alias rt='t retweet'
-    alias sleep='sleeptill --relative'
-    alias srsly='retry'
-    alias sssel='ssel --sudo'
-    alias ssid='airport --getinfo | pcregrep -o1 " SSID: (.*)"'
-    alias ssync='rsync --rsh=ssh'
-    alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
-    alias tf='tail -fn0'
-    alias unixdate='command date -u "+[date] %s"'
-    alias whatismyip='curl ifconfig.me'
+alias accio='. accio'
+alias android-studio='open -a "Android Studio"'
+alias cargo-lock-to-png='cargo-lock-to-dot Cargo.lock | dot -Tpng > Cargo.png'
+alias dacapo='playlist repeat-current-once'
+alias fav='t fave'
+alias gp='git push'
+alias gpp='git push && cd ../master && g pull && cd -'
+alias http='python3 -m http.server'
+alias inet='syncbin hasinet'
+if [ -d /opt/git/github.com/jq-shell/jqsh/master ]; then
+    alias jqsh='cd /opt/git/github.com/jq-shell/jqsh/master && git pull && rustup --quiet --release && cd - > /dev/null && command jqsh'
+elif [ -d "$HOME"/git/github.com/jq-shell/jqsh/master ]; then
+    alias jqsh='cd '"$HOME"'/git/github.com/jq-shell/jqsh/master && git pull && rustup --quiet --release && cd - > /dev/null && command jqsh'
 fi
+if ls --group > /dev/null 2>&1; then
+    # GNU ls
+    alias l="ls --color=always --group --time-style='+%Y-%m-%d %H:%M:%S' -Fabhl"
+else
+    # BSD ls
+    alias l='ls -BFGahl'
+fi
+alias minecraft='open -a Minecraft'
+alias mysql='mysql --silent'
+alias pause='playlist pause-after-current'
+alias pdb='python3 -m pdb'
+alias pip3i='pip3 install'
+alias png2gif='convert -delay 10 -loop 0 *.png animaion.gif'
+alias py='python3 -q'
+alias rot13='caesar --offset=13'
+alias rt='t retweet'
+alias sleep='sleeptill --relative'
+alias srsly='retry'
+alias sssel='ssel --sudo'
+alias ssid='airport --getinfo | pcregrep -o1 " SSID: (.*)"'
+alias ssync='rsync --rsh=ssh'
+alias sudo='sudo -p '"'"'[sudo] Password for %p:'"'"' '
+alias tf='tail -fn0'
+alias unixdate='command date -u "+[date] %s"'
+alias whatismyip='curl ifconfig.me'
