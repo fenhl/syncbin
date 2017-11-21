@@ -370,12 +370,14 @@ def bootstrap_rust():
 
 @bootstrap_setup('ssh')
 def bootstrap_ssh():
-    """Copies the `syncbin` SSH config file, and optionally copies the public key onto mercredi."""
+    """Copies the `syncbin` SSH config file, generates a public key if none exists, and optionally copies it onto mercredi."""
     config_path = (pathlib.Path.home() / '.ssh' / 'config')
     shutil.copy2(str(git_dir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh'), str(config_path))
     config_path.chmod(0o600) # http://serverfault.com/a/253314
     if platform.system() == 'Darwin' and which('ssh-copy-id') is None:
         subprocess.check_call(['brew', 'install', 'ssh-copy-id'])
+    with open('/dev/zero', 'rb') as dev_zero:
+        subprocess.check_call(['ssh-keygen', '-q', '-N', ''], stdin=dev_zero, stdout=subprocess.DEVNULL)
     if yesno('copy SSH pubkey onto mercredi?'):
         subprocess.check_call(['ssh-copy-id', 'mercredi'])
 
