@@ -319,6 +319,17 @@ fi
 
 if which python3 > /dev/null 2>&1; then
     if which pip3 > /dev/null 2>&1; then
+        : # found pip3
+    elif isdeb; then
+        if yesno 'pip3 not found, install using apt-get?'; then
+            if which sudo > /dev/null 2>&1; then
+                sudo apt-get install python3-pip
+            else
+                apt-get install python3-pip
+            fi
+        fi
+    fi
+    if which pip3 > /dev/null 2>&1; then
         : # found Python 3 and pip3, install packages
         if [ $(whoami) = "root" ]; then
             install_python_packages_using_sudo='no'
