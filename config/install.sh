@@ -356,6 +356,11 @@ else
     exit 1
 fi
 
+# set up some directories that syncbin tools expect to exist
+
+mkdir -p "${HOME}/.local/share/syncbin"
+mkdir -p "${HOME}/.ssh"
+
 # install syncbin
 
 githubinstall fenhl syncbin || exit 1
