@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# If any arguments are given, opens the first one in a new Firefox tab.
+# Otherwise, reads HTML from standard input and sends it to Firefox.
+
+if [ $# -eq 0 ]; then
+    firefox-tab "data:text/html;base64,$(base64 <&0)"
+else
+    firefox-tab "$1"
+fi
