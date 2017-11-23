@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# A thin wrapper around `cmark` to generate a full HTML page.
+
+echo '<!DOCTYPE html>'
+echo '<html>'
+echo '<head>'
+echo '<meta charset="utf-8" />'
+if [ $# -gt 0 ]; then
+    echo '<title>'"$@"'</title>'
+fi
+echo '</head>'
+echo '<body>'
+cmark
+echo '</body>'
+echo '</html>'
