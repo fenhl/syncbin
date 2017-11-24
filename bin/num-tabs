@@ -27,7 +27,7 @@ EOF
 
 terminal_tabs=$(osascript -e "${terminal_script}")
 atom_tabs=$(($(osascript -e "${atom_script}") / 2))
-firefox_tabs=$(python3 -c "${firefox_script}")
+firefox_tabs=$(/usr/local/bin/python3 -c "${firefox_script}")
 total=$(($terminal_tabs + $atom_tabs + $firefox_tabs))
 
 if [ x$1 = x-v ] || [ x$1 = x--verbose ]; then
