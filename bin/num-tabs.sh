@@ -1,0 +1,40 @@
+#!/bin/sh
+
+read -d '' terminal_script << EOF
+tell application "Terminal"
+    set c to 0
+    repeat with i from 1 to (count of windows)
+        set c to c + (count of tabs in window i)
+    end repeat
+    c
+end tell
+EOF
+
+read -d '' atom_script << EOF
+tell application "Atom" to count windows
+EOF
+
+export firefox_file=$(find ~/Library/Application\ Support/Firefox/Profiles/*.default/sessionstore-backups/recovery.jsonlz4)
+
+read -d '' firefox_script << EOF
+import os, sys, json, lz4
+
+with open(os.environ['firefox_file'], 'rb') as f:
+    magic = f.read(8)
+    jdata = json.loads(lz4.block.decompress(f.read()).decode('utf-8'))
+print(sum(len(win.get('tabs', [])) for win in jdata.get('windows', [])))
+EOF
+
+terminal_tabs=$(osascript -e "${terminal_script}")
+atom_tabs=$(($(osascript -e "${atom_script}") / 2))
+firefox_tabs=$(python3 -c "${firefox_script}")
+total=$(($terminal_tabs + $atom_tabs + $firefox_tabs))
+
+if [ x$1 = x-v ] || [ x$1 = x--verbose ]; then
+    echo "Terminal: $terminal_tabs"
+    echo "Atom: $atom_tabs"
+    echo "Firefox: $firefox_tabs"
+    echo "total: $total"
+else
+    echo $total
+fi
