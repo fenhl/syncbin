@@ -362,6 +362,14 @@ def bootstrap_rust():
     #    sys.exit('[!!!!] missing requests, run `syncbin bootstrap python` first')
     #response = requests.get('https://sh.rustup.rs/', stream=True)
     #response.raise_for_status()
+    if get_os() in ('Debian', 'Raspbian', 'Ubuntu'):
+        apt_packages = [
+            'curl'
+        ]
+        if getpass.getuser() == 'root':
+            subprocess.check_call(['apt-get', 'install'] + apt_packages)
+        else:
+            subprocess.check_call(['sudo', 'apt-get', 'install'] + apt_packages)
     subprocess.check_call('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y', shell=True)
 
 @bootstrap_rust.test_installed
