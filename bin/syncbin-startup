@@ -268,15 +268,19 @@ fi
 
 lock syncbin-omz '===='
 print-progress '====' 'running startup script: oh-my-zsh'
-for plugin ($OMZ_PLUGINS); do
-    if is-omz-plugin ${HOME}/git/github.com/robbyrussell/oh-my-zsh/master $plugin; then
-        fpath=(${HOME}/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin $fpath)
-    elif is-omz-plugin /opt/git/github.com/robbyrussell/oh-my-zsh/master $plugin; then
-        fpath=(/opt/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin $fpath)
-    else
-        print-warning 'unknown oh-my-zsh plugin: '"$plugin" '====' 'running startup script: oh-my-zsh'
-    fi
-done
+if [[ -d ${HOME}/git/github.com/robbyrussell/oh-my-zsh/master ]] || [[ -d /opt/git/github.com/robbyrussell/oh-my-zsh/master ]]; then
+    for plugin ($OMZ_PLUGINS); do
+        if is-omz-plugin ${HOME}/git/github.com/robbyrussell/oh-my-zsh/master $plugin; then
+            fpath=(${HOME}/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin $fpath)
+        elif is-omz-plugin /opt/git/github.com/robbyrussell/oh-my-zsh/master $plugin; then
+            fpath=(/opt/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin $fpath)
+        else
+            print-warning 'unknown oh-my-zsh plugin: '"$plugin" '====' 'running startup script: oh-my-zsh'
+        fi
+    done
+else
+    print-warning 'oh-my-zsh not installed' '====' 'running startup script: oh-my-zsh'
+fi
 print-progress '====' 'running startup script: sip'
 if where csrutil &> /dev/null; then
     if csrutil status | grep enabled > /dev/null; then
