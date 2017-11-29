@@ -9,6 +9,10 @@ Host ergomwai-ip4
     HostName 192.168.1.34
 
 Host familiepc
+    HostName mercredi.fenhl.net
+    Port 2219
+
+Host familiepc-ip4
     HostName 192.168.178.71
 
 Host fevereiro
