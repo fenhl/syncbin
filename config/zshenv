@@ -20,6 +20,7 @@ path=(
     "${HOME}/.cargo/bin"
     "${HOME}/.multirust/toolchains/stable/cargo/bin"
     "/usr/local/opt/ruby/bin"
+    "${HOME}/.local/share/go/bin"
     "/Applications/Alice.app/Contents/Resources/bin"
     "/opt/X11/bin"
     "/usr/local/MacGPG2/bin"
@@ -74,6 +75,9 @@ fi
 
 # Atom config
 export ATOM_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}/atom"
+
+# Go config
+export GOPATH="${HOME}/.local/share/go"
 
 # Java config
 export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home"
