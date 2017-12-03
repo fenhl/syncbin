@@ -1,6 +1,6 @@
 alias accio='. accio'
 alias android-studio='open -a "Android Studio"'
-alias cargo-lock-to-png='cargo-lock-to-dot Cargo.lock | dot -Tpng > Cargo.png'
+alias cargo-png='cargo-graph Cargo.lock | dot -Tpng'
 alias dacapo='playlist repeat-current-once'
 alias fav='t fave'
 alias gp='git push'
