@@ -101,6 +101,9 @@ export PYTHONPATH
 export PYTHONSTARTUP="${GITDIR}/github.com/fenhl/syncbin/master/config/pythonstartup.py"
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 
+# oh-my-zsh config
+export ZSH="${GITDIR}/github.com/robbyrussell/oh-my-zsh/master"
+
 # Ruby config
 export GEM_HOME="${HOME}/.local/share/gem"
 
