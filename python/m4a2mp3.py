@@ -65,5 +65,7 @@ if __name__ == '__main__':
                 src_path = None
             else:
                 sys.exit('[!!!!] unsupported file extension {!r}'.format(arg_path.suffix))
+    if src_path is not None:
+        conversions[src_path] = src_path.parent / '{}.mp3'.format(src_path.stem)
     for src_path, dest_path in conversions.items():
         convert(src_path, dest_path, delete)
