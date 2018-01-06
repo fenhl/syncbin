@@ -16,22 +16,18 @@ Options:
   -q, --quiet          Don't print progress.
   -r, --run            Add a `cargo run' step at the end.
   --all-toolchains     Update all Rust toolchains.
-  --ignore-lock        Release and ignore the lock that prevents this script from running multiple times at once.
   --no-project         Only update Rust itself, don't attempt to update any git repo or cargo project.
   --no-timeout         Don't automatically abort the update process of a toolchain. Overrides `--timeout'.
-  --skip-if-locked     If another instance of the script is already running, do nothing.
   --timeout=<seconds>  The update process of a toolchain is aborted after this many seconds [Default: 300].
   --version            Print version info and exit.
 """
 
 import sys
 
-import atexit
 from docopt import docopt
 import os
 import re
 import subprocess
-import time
 
 try:
     with open(os.path.join(os.environ.get('GITDIR', '/opt/git'), 'github.com', 'fenhl', 'syncbin', 'master', 'version.txt')) as version_file:
@@ -39,7 +35,6 @@ try:
 except:
     __version__ = '0.0'
 
-LOCKDIR = '/tmp/syncbin-rs.lock'
 QUIET = False
 
 def current_toolchain(cwd=None):
@@ -101,22 +96,6 @@ if __name__ == '__main__':
         sys.exit()
     if arguments['--quiet']:
         QUIET = True
-    if arguments['--ignore-lock']:
-        print('[ !! ]', 'releasing rustup lock', file=sys.stderr)
-        os.rmdir(LOCKDIR)
-    else:
-        set_status(0, 'acquiring lock')
-        while True:
-            try:
-                os.mkdir(LOCKDIR)
-            except OSError:
-                if arguments['--skip-if-locked']:
-                    sys.exit()
-                time.sleep(1) # lock exists, try again in a sec
-            else:
-                # lock acquired
-                atexit.register(os.rmdir, LOCKDIR)
-                break
     if arguments['--no-timeout']:
         timeout = None
     else:
@@ -164,8 +143,6 @@ if __name__ == '__main__':
     else:
         exit_status = subprocess.call(['cargo', 'test'])
     if exit_status == 0 and arguments['--run']:
-        os.rmdir(LOCKDIR) # unlock
-        atexit.unregister(os.rmdir)
         try:
             sys.exit(subprocess.call(['cargo', 'run'] + (['--release'] if arguments['--release'] else [])))
         except KeyboardInterrupt:

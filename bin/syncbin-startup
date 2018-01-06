@@ -229,7 +229,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         elif [[ "$(rust default)" != "stable" ]]; then
             print-warning 'Rust not defaulting to stable' '===.' 'running startup script: rustup'
         fi
-        rust --quiet --no-project --skip-if-locked
+        rust --quiet --no-project
     elif where rustc &> /dev/null; then
         print-warning 'rustup not installed' '===.' 'running startup script: rustup'
     fi
