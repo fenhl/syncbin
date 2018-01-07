@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+
+"""Fill a partially transparent image with a single color, given in HTML/CSS color syntax..
+
+Usage:
+  alpha [options] <input> <color> <output>
+  alpha -h | --help
+
+Options:
+  -h, --help       Print this message and exit.
+  -v, --verbose    Show a progress line for the conversion.
+  --version        Print version info and exit.
+"""
+
+import PIL.Image
+import PIL.ImageColor
+import docopt
+import pathlib
+import re
+import syncbin
+
+__version__ = syncbin.__version__
+
+def get_alpha(pixel, mode):
+    if mode == 'RGB':
+        return 255
+    elif mode == 'RGBA':
+        return pixel[3]
+    else:
+        raise NotImplementedError('Image mode {} not currently supported'.format(input_image.mode)) #TODO add support for other modes
+
+def convert(input_image, color, *, verbose=False):
+    output_image = PIL.Image.new('RGBA', input_image.size)
+    for y in range(input_image.size[1]):
+        if verbose:
+            progress = min(4, int(5 * y / input_image.size[1]))
+            print('[' + '=' * progress + '.' * (4 - progress) + ']', 'converting image: row', y + 1, 'of', input_image.size[1], end='\r', flush=True)
+        for x in range(input_image.size[0]):
+            alpha = get_alpha(input_image.getpixel((x, y)), input_image.mode)
+            output_image.putpixel((x, y), color + (alpha,))
+    if verbose:
+        print('[ ok ]')
+    return output_image
+
+if __name__ == '__main__':
+    arguments = docopt.docopt(__doc__, version='fill from fenhl/syncbin ' + __version__)
+    color = PIL.ImageColor.getrgb(arguments['<color>'])
+    assert len(color) == 3
+    with PIL.Image.open(arguments['<input>']) as input_image:
+        output_image = convert(input_image, color, verbose=arguments['--verbose'])
+    output_image.save(arguments['<output>'])
