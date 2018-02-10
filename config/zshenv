@@ -8,6 +8,7 @@ path=(
     "/opt/git/fenhl.net/syncbin-private/master/bin"
     "${HOME}/git/github.com/fenhl/syncbin/master/bin"
     "/opt/git/github.com/fenhl/syncbin/master/bin"
+    "${HOME}/berryconda3/bin" # https://github.com/jjhelmus/berryconda
     "/usr/local/bin"
     "/usr/bin"
     "/bin"
