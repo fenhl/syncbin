@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+
+"""Open a gitdir's stage in Atom."""
+
+import sys
+
+import gitdir.host
+import gitdir.host.fenhl
+import gitdir.host.github
+import pathlib
+import subprocess
+
+def make_path(args):
+    if len(args) == 0:
+        return pathlib.Path()
+    elif len(args) == 1:
+        if '/' in args[0]:
+            return gitdir.host.github.GitHub().repo(args[0]).stage_path
+        github = gitdir.host.github.GitHub().repo(f'fenhl/{args[0]}').stage_path
+        mercredi = gitdir.host.fenhl.Fenhl().repo(args[0]).stage_path
+        if github.exists() and mercredi.exists():
+            raise ValueError('Repo exists on fenhl.net and github.com, specify host')
+        elif github.exists():
+            return github
+        elif mercredi.exists():
+            return mercredi
+        else:
+            raise ValueError('No such repo')
+    elif len(args) == 2:
+        return gitdir.host.by_name(args[0]).repo(args[1]).stage_path
+    else:
+        raise ValueError('Too many arguments')
+
+if __name__ == '__main__':
+    path = make_path(sys.argv[1:])
+    if not path.exists():
+        sys.exit('[!!!!] no such repo')
+    sys.exit(subprocess.call(['atom', str(path)]))

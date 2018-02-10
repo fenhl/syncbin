@@ -1,12 +1,4 @@
 alias -- -='cd -'
-function a {
-    : from syncbin
-    if [ "$#" -lt 2 ]; then
-        atom "$(gitdir path-stage github.com "$@")"
-    else
-        atom "$(gitdir path-stage "$@")"
-    fi
-}
 function a2edit {
     : from syncbin
     sudo nano /etc/apache2/sites-available/"$1"
