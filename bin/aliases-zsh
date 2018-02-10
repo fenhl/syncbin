@@ -1,5 +1,6 @@
 alias -- -='cd -'
 function a {
+    : from syncbin
     if [ "$#" -lt 2 ]; then
         atom "$(gitdir path-stage github.com "$@")"
     else
@@ -7,14 +8,17 @@ function a {
     fi
 }
 function a2edit {
+    : from syncbin
     sudo nano /etc/apache2/sites-available/"$1"
     sudo a2ensite "$1" > /dev/null
     sudo service apache2 reload
 }
 function activate {
+    : from syncbin
     . "$1"/bin/activate
 }
 function adu {
+    : from syncbin
     if [[ "$(uname -s)" == "Darwin" ]]; then
         sudo softwareupdate -ir
     else
@@ -26,21 +30,26 @@ function adu {
     fi
 }
 function announce {
+    : from syncbin
     printf '[ ** ] '
     echo "$@"
     "$@"
 }
 function bn {
+    : from syncbin
     git bisect $(git bisect terms --term-new)
 }
 function bo {
+    : from syncbin
     git bisect $(git bisect terms --term-old)
 }
 function brew-caveats {
+    : from syncbin
     brew info ${@:-$(brew list)} | awk '/^==> Caveats$/,/^[a-z][a-zA-Z0-9_+-]+: stable |^==> (Dependencies|Options)$/'
 }
 alias caveats='brew-caveats'
 function chmox {
+    : from syncbin
     if ! [[ -f "$1" ]]; then
         touch "$1"
     fi
@@ -55,6 +64,7 @@ else
     alias clear-dns-cache='sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder'
 fi
 function date {
+    : from syncbin
     if [ "$#" -gt 0 ]; then
         command date "$@"
         return $?
@@ -64,6 +74,7 @@ function date {
     fi
 }
 function dawg {
+    : from syncbin
     if [ "$#" -eq 2 ]; then
         mkdir /tmp/dawg &&
         mv "$1" /tmp/dawg/dawg &&
@@ -78,12 +89,14 @@ function dawg {
 alias doch='sudo $(fc -ln -1)'
 alias flush-dns-cache='clear-dns-cache'
 function frame {
+    : from syncbin
     ffmpeg -loglevel error -i - -ss "$1" -t 0.5 -r 1 -f image2 -
 }
 if alias g > /dev/null; then
     unalias g
 fi
 function g { # from https://github.com/pengwynn/dotfiles/blob/master/git/git.zsh
+    : from syncbin
     if [ "$#" -gt 0 ]; then
         git "$@"
         return $?
@@ -97,13 +110,16 @@ if alias ga > /dev/null; then
     unalias ga
 fi
 function gco {
+    : from syncbin
     git checkout "$@" 2>/dev/null || g checkout -b "$@"
 }
 function gd {
+    : from syncbin
     git diff --color "$@" | less -R
 }
 alias gds='gd --staged'
 function gpu {
+    : from syncbin
     git push --set-upstream origin "$(git rev-parse --abbrev-ref HEAD)"
 }
 alias history='fc -il 1'
@@ -111,6 +127,7 @@ if alias ll > /dev/null; then
     unalias ll
 fi
 function ll {
+    : from syncbin
     if ls --group > /dev/null 2>&1; then
         # GNU ls
         CLICOLOR_FORCE=1 ls --color=always --group -Fabhl "$@" | less -R
@@ -131,11 +148,13 @@ if ! (where pip3 &> /dev/null); then
     fi
 fi
 function mnt {
+    : from syncbin
     sudo mkdir "$2" &&
     sudo mount "$1" "$2"
 }
 compdef mnt=mount
 function notify {
+    : from syncbin
     if where terminal-notifier &> /dev/null; then
         terminal-notifier -sound default -message "$*"
     elif where ssmtp &> /dev/null; then
@@ -148,6 +167,7 @@ if ! (where pcregrep &> /dev/null); then
     alias pcregrep='grep -P'
 fi
 function pw {
+    : from syncbin
     if [[ $# -gt 0 ]]; then
         while [[ $# -gt 0 ]]; do
             pwgen -1cnsy "$1" 1
@@ -159,6 +179,7 @@ function pw {
 }
 alias rand='shuf -n 1 -i'
 function read-pem {
+    : from syncbin
     if [[ $# -eq 1 ]]; then
         sudo openssl x509 -in "$1" -text -noout
     else
@@ -167,6 +188,7 @@ function read-pem {
 }
 alias relog=': $@; zsh && logout'
 function reset {
+    : from syncbin
     if [ "$#" -gt 0 ]; then
         command reset "$@"
         return $?
@@ -176,6 +198,7 @@ function reset {
     fi
 }
 function retab {
+    : from syncbin
     if where tab &> /dev/null; then
         tab "$@"
         logout
@@ -185,11 +208,13 @@ function retab {
     fi
 }
 function retry {
+    : from syncbin
     until eval ${(q)@}; do
         command sleep 1 || return 1
     done
 }
 function rm { # remove current directory when called without arguments
+    : from syncbin
     if [ "$#" -gt 0 ]; then
         command rm "$@"
         return $?
@@ -199,6 +224,7 @@ function rm { # remove current directory when called without arguments
     fi
 }
 function rr {
+    : from syncbin
     if [ "$#" -gt 0 ]; then
         command rm -rf "$@"
         return $?
@@ -212,6 +238,7 @@ if ! (where shuf &> /dev/null) && where gshuf &> /dev/null; then
     alias shuf='gshuf'
 fi
 function sshmount {
+    : from syncbin
     sudo mkdir /Volumes/"$1"
     sudo chown $(whoami) /Volumes/"$1"
     sshfs "$1":/ /Volumes/"$1"
@@ -230,6 +257,7 @@ if ! (where tac &> /dev/null); then
     alias tac='tail -r'
 fi
 function take {
+    : from syncbin
     mkdir -p "$1" &&
     cd "$1"
 }
@@ -238,6 +266,7 @@ if ! (where tweet &> /dev/null); then
     alias tweet='t update'
 fi
 function udawg {
+    : from syncbin
     if [ "$#" -eq 2 ]; then
         mkdir /tmp/dawg &&
         mv "$1"/"$2" /tmp/dawg/dawg &&
@@ -250,6 +279,7 @@ function udawg {
     fi
 }
 function umnt {
+    : from syncbin
     sudo umount "$1" &&
     sudo rmdir "$1"
 }
