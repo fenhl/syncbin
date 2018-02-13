@@ -17,6 +17,7 @@ path=(
     "/sbin"
     "/opt/local/bin"
     "/opt/local/sbin"
+    "/opt/night/bin"
     "/opt/wurstmineberg/bin"
     "${HOME}/.cargo/bin"
     "${HOME}/.multirust/toolchains/stable/cargo/bin"
