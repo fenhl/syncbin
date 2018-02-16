@@ -14,9 +14,9 @@ function adu {
     if [[ "$(uname -s)" == "Darwin" ]]; then
         sudo softwareupdate -ir
     else
-        sudo apt-get update &&
-        sudo apt-get dist-upgrade &&
-        sudo apt-get autoremove &&
+        sudo apt-get -y update &&
+        sudo apt-get -y dist-upgrade &&
+        sudo apt-get -y autoremove &&
         sudo cron-apt &&
         announce sudo "$(where night-device-report)"
     fi
