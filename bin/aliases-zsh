@@ -112,7 +112,8 @@ function gd {
 alias gds='gd --staged'
 function gpu {
     : from syncbin
-    git push --set-upstream origin "$(git rev-parse --abbrev-ref HEAD)"
+    git push --set-upstream origin "$(git rev-parse --abbrev-ref HEAD)" &&
+    gpp
 }
 alias history='fc -il 1'
 if alias ll > /dev/null; then
