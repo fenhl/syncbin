@@ -9,7 +9,7 @@ Usage:
 
 Options:
   -h, --help              Print this message and exit.
-  --branch=<branch_name>  The branch to reset to [Default: master].
+  --branch=<branch_name>  The branch to reset to. Defaults to the current branch.
   --remote=<remote_name>  The remote to reset to [Default: origin].
   --version               Print version info and exit.
 """
@@ -24,5 +24,9 @@ __version__ = syncbin.__version__
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='git reset-to-remote from fenhl/syncbin ' + __version__)
+    if arguments['--branch']:
+        branch = arguments['--branch']
+    else:
+        branch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).decode('utf-8')[:-1]
     subprocess.check_call(['git', 'fetch', arguments['--remote']])
-    sys.exit(subprocess.call(['git', 'reset', '--hard', arguments['--remote'] + '/' + arguments['--branch']]))
+    sys.exit(subprocess.call(['git', 'reset', '--hard', arguments['--remote'] + '/' + branch]))
