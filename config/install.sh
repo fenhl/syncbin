@@ -287,7 +287,9 @@ if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
         : # command-not-found handler already installed
     else
         if [ $pi_reinstall = yes ] || yesno 'command-not-found not found, install using apt-get?'; then
-            if which sudo > /dev/null 2>&1; then
+            if [ $pi_reinstall = yes ]; then
+                sudo apt-get -y install 'command-not-found'
+            elif which sudo > /dev/null 2>&1; then
                 sudo apt-get install 'command-not-found'
             else
                 apt-get install 'command-not-found'
