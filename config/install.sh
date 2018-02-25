@@ -109,7 +109,7 @@ if isdeb; then
         if [ $(whoami) = "root" ]; then
             apt-get update
         elif [ $pi_reinstall = yes ]; then
-            sudo apt-get -f update
+            sudo apt-get -y update
         else
             sudo apt-get update
         fi

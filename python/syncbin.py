@@ -120,6 +120,7 @@ def bootstrap_setup(setup_name):
         f.test_installed = test_installed
         f.requirements = []
         f.requires = requires
+        f.apt_packages = set()
         return f
     return inner_wrapper
 
@@ -141,23 +142,22 @@ def bootstrap_brew():
 @bootstrap_setup('debian-root')
 def bootstrap_debian_root():
     """Essential setup for Debian systems with root access"""
-    apt_packages = [
-        'exiftool',
-        'htop',
-        'jq',
-        'needrestart',
-        'ntp',
-        'ruby',
-        'ruby-dev',
-        'screen',
-        'ssmtp' #TODO configure
-    ]
     if getpass.getuser() == 'root':
-        subprocess.check_call(['apt-get', 'install'] + apt_packages)
         subprocess.check_call(['chmod', 'u+s', which('ping')])
     else:
-        subprocess.check_call(['sudo', 'apt-get', 'install'] + apt_packages)
         subprocess.check_call(['sudo', 'chmod', 'u+s', which('ping')])
+
+bootstrap_debian_root.apt_packages = {
+    'exiftool',
+    'htop',
+    'jq',
+    'needrestart',
+    'ntp',
+    'ruby',
+    'ruby-dev',
+    'screen',
+    'ssmtp' #TODO configure
+}
 
 @bootstrap_debian_root.test_installed
 def bootstrap_debian_root():
@@ -362,15 +362,9 @@ def bootstrap_rust():
     #    sys.exit('[!!!!] missing requests, run `syncbin bootstrap python` first')
     #response = requests.get('https://sh.rustup.rs/', stream=True)
     #response.raise_for_status()
-    if get_os() in ('Debian', 'Raspbian', 'Ubuntu'):
-        apt_packages = [
-            'curl'
-        ]
-        if getpass.getuser() == 'root':
-            subprocess.check_call(['apt-get', 'install'] + apt_packages)
-        else:
-            subprocess.check_call(['sudo', 'apt-get', 'install'] + apt_packages)
     subprocess.check_call('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y', shell=True)
+
+bootstrap_rust.apt_packages = {'curl'}
 
 @bootstrap_rust.test_installed
 def bootstrap_rust():
@@ -488,14 +482,16 @@ if bootstrap_syncbin_private.is_installed():
         syncbin_private.update_bootstrap_setups(BOOTSTRAP_SETUPS)
 
 def bootstrap(*setups):
+    if get_os() in ('Debian', 'Raspbian', 'Ubuntu'):
+        subprocess.check_call(([] if getpass.getuser() == 'root' else ['sudo']) + ['apt-get', 'install', '-y'] + list(set.union(*(setup_f.apt_packages for setup_f in setups.values()))))
     for setup_name in setups:
         if setup_name not in BOOTSTRAP_SETUPS:
             print('[!!!!] Unknown setup for `syncbin bootstrap`: {!r}'.format(setup_name), file=sys.stderr)
             bootstrap_help(file=sys.stderr)
             sys.exit(1)
-    for setup_name in setups:
+    for setup_f in setups.values():
         #TODO check requirements
-        BOOTSTRAP_SETUPS[setup_name]()
+        setup_f()
 
 def bootstrap_help(file=sys.stdout):
     print('[ ** ] Available setups:', file=file)
