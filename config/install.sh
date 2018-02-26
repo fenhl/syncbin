@@ -311,7 +311,7 @@ if [ $pi_reinstall = yes ]; then
     # install Python 3 using Berryconda
     wget -O berryconda-install.sh https://github.com/jjhelmus/berryconda/releases/download/v2.0.0/Berryconda3-2.0.0-Linux-armv7l.sh
     chmod +x berryconda-install.sh
-    ./berryconda-install.sh
+    ./berryconda-install.sh -b
     rm berryconda-install.sh
 elif which python3 > /dev/null 2>&1; then
     : # already installed
