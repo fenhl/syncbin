@@ -483,15 +483,15 @@ if bootstrap_syncbin_private.is_installed():
 
 def bootstrap(*setups):
     if get_os() in ('Debian', 'Raspbian', 'Ubuntu'):
-        subprocess.check_call(([] if getpass.getuser() == 'root' else ['sudo']) + ['apt-get', 'install', '-y'] + list(set.union(*(setup_f.apt_packages for setup_f in setups.values()))))
+        subprocess.check_call(([] if getpass.getuser() == 'root' else ['sudo']) + ['apt-get', 'install', '-y'] + list(set.union(*(BOOTSTRAP_SETUPS[setup_name].apt_packages for setup_name in setups))))
     for setup_name in setups:
         if setup_name not in BOOTSTRAP_SETUPS:
             print('[!!!!] Unknown setup for `syncbin bootstrap`: {!r}'.format(setup_name), file=sys.stderr)
             bootstrap_help(file=sys.stderr)
             sys.exit(1)
-    for setup_f in setups.values():
+    for setup_name in setups:
         #TODO check requirements
-        setup_f()
+        BOOTSTRAP_SETUPS[setup_name]()
 
 def bootstrap_help(file=sys.stdout):
     print('[ ** ] Available setups:', file=file)
