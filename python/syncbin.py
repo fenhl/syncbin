@@ -244,7 +244,6 @@ def bootstrap_lns():
     if not bin_path.exists():
         bin_path.mkdir()
     subprocess.run(['tar', '-xzf', '-'], input=requests.get('http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz').content, cwd=str(bin_path), check=True)
-    (bin_path / 'lns.tar.gz').unlink()
     (bin_path / 'lns').rename(bin_path / '.lnsdir')
     (bin_path / '.lnsdir' / 'lns').rename(bin_path / 'lns')
     shutil.rmtree(str(bin_path / '.lnsdir'))
