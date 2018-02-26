@@ -453,8 +453,7 @@ def bootstrap_zsh():
     import gitdir.host
 
     gitdir.host.by_name('github.com').clone('zsh-users/zsh-syntax-highlighting')
-    if yesno('install oh-my-zsh?'):
-        gitdir.host.by_name('github.com').clone('robbyrussell/oh-my-zsh')
+    gitdir.host.by_name('github.com').clone('robbyrussell/oh-my-zsh')
     if platform.system() == 'Darwin' and which('zsh') == '/bin/zsh':
         # macOS but Homebrew Zsh not installed
         if yesno('install newer Zsh version using Homebrew?'):
