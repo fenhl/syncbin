@@ -28,7 +28,7 @@ Or on macOS, which doesn't have `wget`:
 curl -Lo syncbin-install.sh https://raw.github.com/fenhl/syncbin/master/config/install.sh && sh syncbin-install.sh && rm syncbin-install.sh
 ```
 
-It is tested on Debian jessie, Raspbian stretch, OS X El Capitan, and CentOS 6.5. If it doesn't work for you, feel free to open an issue.
+It is tested on Debian jessie, Raspbian stretch, Ubuntu Artful Aardvark, OS X El Capitan, and CentOS 6.5. If it doesn't work for you, feel free to open an issue.
 
 [Fenhl]: http://fenhl.net/ (Fenhl)
 [homebrew]: https://github.com/Homebrew/homebrew (github: Homebrew: homebrew)
