@@ -34,12 +34,12 @@ path=(
 if [[ -x /usr/libexec/java_home ]]; then
     path=($path "$(/usr/libexec/java_home)/bin")
 fi
-if [[ -d /usr/local/opt/android-sdk ]]; then
+if [[ -d "${HOME}/Library/Android/sdk" ]]; then
     path=(
         $path
-        "/usr/local/opt/android-sdk/platform-tools"
-        "/usr/local/opt/android-sdk/tools"
-        /usr/local/opt/android-sdk/build-tools/*
+        "${HOME}/Library/Android/sdk/platform-tools"
+        "${HOME}/Library/Android/sdk/tools"
+        "${HOME}"/Library/Android/sdk/build-tools/*
     )
 fi
 # remove duplicates
