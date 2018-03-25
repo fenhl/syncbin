@@ -3,7 +3,7 @@
 """Show available space on main disk
 
 Usage:
-  diskspace [options]
+  diskspace [options] [<path>]
   diskspace -h | --help
   diskspace --version
 
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     else:
         min_space = Bytes(0) if arguments['--min-percent'] else float('inf')
     try:
-        usage = shutil.disk_usage('/')
+        usage = shutil.disk_usage(arguments['<path>'] or '/')
         total = Bytes(usage.total)
         available = Bytes(usage.free)
     except:
