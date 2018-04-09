@@ -26,6 +26,8 @@ def get_alpha(pixel, mode):
         return 255
     elif mode == 'RGBA':
         return pixel[3]
+    elif mode == 'LA':
+        return pixel[1]
     else:
         raise NotImplementedError('Image mode {} not currently supported'.format(input_image.mode)) #TODO add support for other modes
 
