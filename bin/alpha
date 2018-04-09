@@ -28,6 +28,8 @@ def calculate_alpha(pixel, mode, light):
         pixel_brightness = sum(pixel) // 3
     elif mode == 'RGBA':
         pixel_brightness = sum(pixel[:3]) // 3
+    elif mode == 'LA':
+        pixel_brightness = pixel[0]
     else:
         raise NotImplementedError('Image mode {} not currently supported'.format(input_image.mode)) #TODO add support for other modes
     if light:
