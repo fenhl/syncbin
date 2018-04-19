@@ -57,10 +57,10 @@ def git_dir(existing_only=True):
         return pathlib.Path(os.environ.get('GITDIR', '/opt/git' if root() else '{}/git'.format(os.environ['HOME'])))
 
 def get_os():
-    result = subprocess.check_output(['uname', '-s']).decode('utf-8')[:-1]
+    result = subprocess.run(['uname', '-s'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
     if result == 'Linux':
         if which('lsb_release') is not None:
-            result = subprocess.check_output(['lsb_release', '-si']).decode('utf-8')[:-1]
+            result = subprocess.run(['lsb_release', '-si'], stdout=subprocess.PIPE, check=True).decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
         elif pathlib.Path('/etc/redhat-release').exists():
             with open('/etc/redhat-release') as redhat_release_f:
                 result = redhat_release_f.read().split(' ')[0]
@@ -80,7 +80,10 @@ def py_dir():
 def root():
     if getpass.getuser() == 'root':
         return True
-    return subprocess.call(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
+    return subprocess.run(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
+
+def sip():
+    return 'enabled' in subprocess.run(['csrutil', 'status'], encoding='utf-8', stdout=subprocess.PIPE).stdout
 
 def version():
     try:
@@ -91,7 +94,7 @@ def version():
 
 def which(cmd):
     try:
-        return subprocess.check_output(['which', cmd], stderr=subprocess.DEVNULL).decode('utf-8')[:-1]
+        return subprocess.run(['which', cmd], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
     except subprocess.CalledProcessError:
         return None
 
@@ -128,24 +131,24 @@ def bootstrap_setup(setup_name):
 def bootstrap_brew():
     """Installs various utilities for macOS using Homebrew"""
     try:
-        subprocess.check_call(['brew', 'install', 'git', 'jq', 'ruby', 'terminal-notifier'])
+        subprocess.run(['brew', 'install', 'git', 'jq', 'ruby', 'terminal-notifier'], check=True)
     except subprocess.CalledProcessError:
-        subprocess.check_call(['brew', 'link', '--overwrite', 'ruby'])
-    subprocess.check_call(['brew', 'cask', 'install', 'qlmarkdown'])
+        subprocess.run(['brew', 'link', '--overwrite', 'ruby'], check=True)
+    subprocess.run(['brew', 'cask', 'install', 'qlmarkdown'], check=True)
 
 @bootstrap_brew.test_installed
 def bootstrap_brew():
     if which('brew') is None:
         return False
-    return len(json.loads(subprocess.check_output(['brew', 'info', '--json=v1', 'terminal-notifier']).decode('utf-8'))[0]['installed']) > 0
+    return len(json.loads(subprocess.run(['brew', 'info', '--json=v1', 'terminal-notifier'], stdout=subprocess.PIPE, check=True).decode('utf-8'))[0]['installed']) > 0 #TODO (Python 3.6) replace decode call with encoding arg
 
 @bootstrap_setup('debian-root')
 def bootstrap_debian_root():
     """Essential setup for Debian systems with root access"""
     if getpass.getuser() == 'root':
-        subprocess.check_call(['chmod', 'u+s', which('ping')])
+        subprocess.run(['chmod', 'u+s', which('ping')], check=True)
     else:
-        subprocess.check_call(['sudo', 'chmod', 'u+s', which('ping')])
+        subprocess.run(['sudo', 'chmod', 'u+s', which('ping')], check=True)
 
 bootstrap_debian_root.apt_packages = {
     'exiftool',
@@ -163,18 +166,18 @@ bootstrap_debian_root.apt_packages = {
 def bootstrap_debian_root():
     if getpass.getuser() == 'root':
         try:
-            subprocess.check_call(['systemctl', '-q', 'is-active', 'ntp'], stderr=subprocess.DEVNULL)
+            subprocess.run(['systemctl', '-q', 'is-active', 'ntp'], stderr=subprocess.DEVNULL, check=True)
         except (FileNotFoundError, subprocess.CalledProcessError):
             return False
         else:
             return True
     else:
         try:
-            subprocess.check_call(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
         except:
             return None
         try:
-            subprocess.check_call(['sudo', '-n', 'systemctl', '-q', 'is-active', 'ntp'], stderr=subprocess.DEVNULL)
+            subprocess.run(['sudo', '-n', 'systemctl', '-q', 'is-active', 'ntp'], stderr=subprocess.DEVNULL, check=True)
         except subprocess.CalledProcessError:
             return False
         else:
@@ -184,24 +187,30 @@ def bootstrap_debian_root():
 def bootstrap_finder():
     """Configure useful defaults for Finder on macOS"""
     print('[....] configuring Finder', end='\r', flush=True)
-    subprocess.check_call(['defaults', 'write', '-g', 'NSScrollViewRubberbanding', '-int', '0'])
-    subprocess.check_call(['defaults', 'write', 'com.apple.finder', 'AppleShowAllFiles', '-bool', 'true'])
-    subprocess.check_call(['defaults', 'write', 'com.apple.finder', '_FXShowPosixPathInTitle', '-bool', 'true'])
+    if sip():
+        print('[ !! ] System Integrity Protection is enabled, skipping Play key fix', file=sys.stderr)
+        print('[....] configuring Finder', end='\r', flush=True)
+    else:
+        subprocess.run(['launchctl', 'unload', '-w', '/System/Library/LaunchAgents/com.apple.rcd.plist'], check=True) #FROM https://www.howtogeek.com/274345/stop-itunes-from-launching-when-you-press-play-on-your-macs-keyboard/
+    subprocess.run(['defaults', 'write', '-g', 'NSScrollViewRubberbanding', '-int', '0'], check=True)
+    subprocess.run(['defaults', 'write', 'com.apple.finder', 'AppleShowAllFiles', '-bool', 'true'], check=True)
+    subprocess.run(['defaults', 'write', 'com.apple.finder', '_FXShowPosixPathInTitle', '-bool', 'true'], check=True)
     print('[ ok ]')
     print('[....] restarting Finder', end='\r', flush=True)
-    subprocess.check_call(['killall', 'Finder'])
+    subprocess.run(['killall', 'Finder'], check=True)
     print('[ ok ]')
     print('[....] configuring Dock', end='\r', flush=True)
-    subprocess.check_call(['defaults', 'write', 'com.apple.Dock', 'showhidden', '-bool', 'true'])
+    subprocess.run(['defaults', 'write', 'com.apple.Dock', 'showhidden', '-bool', 'true'], check=True)
     print('[ ok ]')
     print('[....] restarting Dock', end='\r', flush=True)
-    subprocess.check_call(['killall', 'Dock'])
+    subprocess.run(['killall', 'Dock'], check=True)
     print('[ ok ]')
 
 @bootstrap_finder.test_installed
 def bootstrap_finder():
     try:
-        return subprocess.check_output(['defaults', 'read', 'com.apple.finder', '_FXShowPosixPathInTitle'], stderr=subprocess.STDOUT) == b'1\n'
+        #TODO check if Play key has been fixed
+        return subprocess.run(['defaults', 'read', 'com.apple.finder', '_FXShowPosixPathInTitle'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=True).stdout == b'1\n'
     except FileNotFoundError:
         return None
     except subprocess.CalledProcessError:
@@ -214,17 +223,17 @@ def bootstrap_gitdir():
     if not gitdir_gitdir.exists():
         gitdir_gitdir.mkdir(parents=True)
     if not (gitdir_gitdir / 'master').exists():
-        subprocess.check_call(['git', 'clone', 'https://github.com/fenhl/gitdir.git', 'master'], cwd=str(git_dir() / 'github.com' / 'fenhl' / 'gitdir'))
+        subprocess.run(['git', 'clone', 'https://github.com/fenhl/gitdir.git', 'master'], cwd=str(git_dir() / 'github.com' / 'fenhl' / 'gitdir'), check=True)
     if not py_dir().exists():
         try:
             py_dir().mkdir()
         except PermissionError:
-            subprocess.check_call(['sudo', 'mkdir', str(py_dir())])
+            subprocess.run(['sudo', 'mkdir', str(py_dir())], check=True)
     if not (py_dir() / 'gitdir').exists():
         try:
             (py_dir() / 'gitdir').symlink_to(gitdir_gitdir / 'master' / 'gitdir')
         except PermissionError:
-            subprocess.check_call(['sudo', 'ln', '-s', str(gitdir_gitdir / 'master' / 'gitdir'), str(py_dir() / 'gitdir')])
+            subprocess.run(['sudo', 'ln', '-s', str(gitdir_gitdir / 'master' / 'gitdir'), str(py_dir() / 'gitdir')], check=True)
 
 @bootstrap_gitdir.test_installed
 def bootstrap_gitdir():
@@ -323,13 +332,13 @@ def bootstrap_python():
         gitdir.host.by_name('github.com').clone('fenhl/python-timespec')
         if root() and getpass.getuser() != 'root':
             if not (py_dir() / 'basedir.py').exists():
-                subprocess.check_output(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), str(py_dir() / 'basedir.py')])
+                subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), str(py_dir() / 'basedir.py')], check=True)
             if not (py_dir() / 'fancyio.py').exists():
-                subprocess.check_output(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'fancyio' / 'master' / 'fancyio.py'), str(py_dir() / 'fancyio.py')])
+                subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'fancyio' / 'master' / 'fancyio.py'), str(py_dir() / 'fancyio.py')], check=True)
             if not (py_dir() / 'lazyjson.py').exists():
-                subprocess.check_output(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), str(py_dir() / 'lazyjson.py')])
+                subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), str(py_dir() / 'lazyjson.py')], check=True)
             if not (py_dir() / 'timespec').exists():
-                subprocess.check_output(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-timespec' / 'master' / 'timespec'), str(py_dir() / 'timespec')])
+                subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-timespec' / 'master' / 'timespec'), str(py_dir() / 'timespec')], check=True)
         else:
             if not (py_dir() / 'basedir.py').exists():
                 (py_dir() / 'basedir.py').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py')
@@ -361,7 +370,7 @@ def bootstrap_rust():
     #    sys.exit('[!!!!] missing requests, run `syncbin bootstrap python` first')
     #response = requests.get('https://sh.rustup.rs/', stream=True)
     #response.raise_for_status()
-    subprocess.check_call('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y', shell=True)
+    subprocess.run('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y', shell=True, check=True)
 
 bootstrap_rust.apt_packages = {'curl'}
 
@@ -376,11 +385,11 @@ def bootstrap_ssh():
     shutil.copy2(str(git_dir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh'), str(config_path))
     config_path.chmod(0o600) # http://serverfault.com/a/253314
     if platform.system() == 'Darwin' and which('ssh-copy-id') is None:
-        subprocess.check_call(['brew', 'install', 'ssh-copy-id'])
+        subprocess.run(['brew', 'install', 'ssh-copy-id'], check=True)
     with open('/dev/zero', 'rb') as dev_zero:
-        subprocess.check_call(['ssh-keygen', '-q', '-N', ''], stdin=dev_zero, stdout=subprocess.DEVNULL)
+        subprocess.run(['ssh-keygen', '-q', '-N', ''], stdin=dev_zero, stdout=subprocess.DEVNULL, check=True)
     if yesno('copy SSH pubkey onto mercredi?'):
-        subprocess.check_call(['ssh-copy-id', 'mercredi'])
+        subprocess.run(['ssh-copy-id', 'mercredi'], check=True)
 
 @bootstrap_ssh.test_installed
 def bootstrap_ssh():
@@ -394,20 +403,15 @@ def bootstrap_sudo():
     """Configures passwordless `sudo`."""
     sudoers_d = pathlib.Path('/etc/sudoers.d')
     if not sudoers_d.exists():
-        subprocess.check_call(['sudo', 'mkdir', '-p', str(sudoers_d)])
+        subprocess.run(['sudo', 'mkdir', '-p', str(sudoers_d)], check=True)
     print('[ ** ] For passwordless login, insert the following line into the opened document:')
     print('fenhl ALL=(ALL) NOPASSWD: ALL')
     input('[ ?? ] Press return to continue')
-    subprocess.check_call(['sudo', 'nano', str(sudoers_d / 'fenhl')])
+    subprocess.run(['sudo', 'nano', str(sudoers_d / 'fenhl')], check=True)
 
 @bootstrap_sudo.test_installed
 def bootstrap_sudo():
-    try:
-        subprocess.check_call(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    except subprocess.CalledProcessError:
-        return False
-    else:
-        return True
+    return subprocess.run(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
 
 @bootstrap_setup('syncbin-private')
 def bootstrap_syncbin_private():
@@ -436,10 +440,10 @@ def bootstrap_t():
     except PermissionError:
         sys.exit('[!!!!] Permission denied. Fix /opt/git permissions, then try again.')
     if root() and getpass.getuser() != 'root':
-        subprocess.check_call(['sudo', 'gem', 'install', 't'])
+        subprocess.run(['sudo', 'gem', 'install', 't'], check=True)
     else:
-        subprocess.check_call(['gem', 'install', 't'])
-    subprocess.check_call(['t', 'authorize', '--display-uri'])
+        subprocess.run(['gem', 'install', 't'], check=True)
+    subprocess.run(['t', 'authorize', '--display-uri'], check=True)
 
 @bootstrap_t.test_installed
 def bootstrap_t():
@@ -456,7 +460,7 @@ def bootstrap_zsh():
     if platform.system() == 'Darwin' and which('zsh') == '/bin/zsh':
         # macOS but Homebrew Zsh not installed
         if yesno('install newer Zsh version using Homebrew?'):
-            subprocess.check_call(['brew', 'install', 'zsh'])
+            subprocess.run(['brew', 'install', 'zsh'], check=True)
             needs_append = True
             with open('/etc/shells') as shells:
                 for line in shells:
@@ -464,7 +468,7 @@ def bootstrap_zsh():
                         needs_append = False
                         break
             if needs_append:
-                subprocess.check_output(['sudo', 'tee', '-a', '/etc/shells'], input=b'/usr/local/bin/zsh\n')
+                subprocess.run(['sudo', 'tee', '-a', '/etc/shells'], input=b'/usr/local/bin/zsh\n', stdout=subprocess.DEVNULL, check=True)
             print('[ ** ] Added to /etc/shells. You can now `chsh -s /usr/local/bin/zsh` and relog.')
 
 bootstrap_zsh.requires('gitdir')
@@ -481,7 +485,7 @@ if bootstrap_syncbin_private.is_installed():
 
 def bootstrap(*setups):
     if get_os() in ('Debian', 'Raspbian', 'Ubuntu'):
-        subprocess.check_call(([] if getpass.getuser() == 'root' else ['sudo']) + ['apt-get', 'install', '-y'] + list(set.union(*(BOOTSTRAP_SETUPS[setup_name].apt_packages for setup_name in setups))))
+        subprocess.run(([] if getpass.getuser() == 'root' else ['sudo']) + ['apt-get', 'install', '-y'] + list(set.union(*(BOOTSTRAP_SETUPS[setup_name].apt_packages for setup_name in setups))), check=True)
     for setup_name in setups:
         if setup_name not in BOOTSTRAP_SETUPS:
             print('[!!!!] Unknown setup for `syncbin bootstrap`: {!r}'.format(setup_name), file=sys.stderr)
@@ -529,11 +533,11 @@ if __name__ == '__main__':
         else:
             bootstrap(*arguments['<setup>'])
     elif arguments['hasinet']:
-        sys.exit(subprocess.call(['syncbin-hasinet']))
+        sys.exit(subprocess.run(['syncbin-hasinet']).returncode)
     elif arguments['install']:
-        sys.exit(subprocess.call(['sh', str(git_dir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'install.sh')]))
+        sys.exit(subprocess.run(['sh', str(git_dir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'install.sh')]).returncode)
     elif arguments['startup']:
-        sys.exit(subprocess.call(['syncbin-startup'] + (['--ignore-lock'] if arguments['--ignore-lock'] else []) + (['--no-internet-test'] if arguments['--no-internet-test'] else [])))
+        sys.exit(subprocess.run(['syncbin-startup'] + (['--ignore-lock'] if arguments['--ignore-lock'] else []) + (['--no-internet-test'] if arguments['--no-internet-test'] else [])).returncode)
     elif arguments['update']:
         mode = None
         if arguments['public']:
@@ -545,14 +549,14 @@ if __name__ == '__main__':
         if which('zsh') is None:
             # Zsh missing, use bash
             if arguments['<old>'] is None:
-                sys.exit(subprocess.call(['bash', 'syncbin-update'] + ([] if mode is None else [mode])))
+                sys.exit(subprocess.run(['bash', 'syncbin-update'] + ([] if mode is None else [mode])).returncode)
             else:
-                sys.exit(subprocess.call(['bash', 'syncbin-update'] + ([] if mode is None else [mode]) + [arguments['<old>'], arguments['<new>']]))
+                sys.exit(subprocess.run(['bash', 'syncbin-update'] + ([] if mode is None else [mode]) + [arguments['<old>'], arguments['<new>']]).returncode)
         else:
             # use Zsh
             if arguments['<old>'] is None:
-                sys.exit(subprocess.call(['syncbin-update'] + ([] if mode is None else [mode])))
+                sys.exit(subprocess.run(['syncbin-update'] + ([] if mode is None else [mode])).returncode)
             else:
-                sys.exit(subprocess.call(['syncbin-update'] + ([] if mode is None else [mode]) + [arguments['<old>'], arguments['<new>']]))
+                sys.exit(subprocess.run(['syncbin-update'] + ([] if mode is None else [mode]) + [arguments['<old>'], arguments['<new>']]).returncode)
     else:
         raise NotImplementedError('unknown subcommand')
