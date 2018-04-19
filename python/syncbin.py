@@ -60,7 +60,7 @@ def get_os():
     result = subprocess.run(['uname', '-s'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
     if result == 'Linux':
         if which('lsb_release') is not None:
-            result = subprocess.run(['lsb_release', '-si'], stdout=subprocess.PIPE, check=True).decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
+            result = subprocess.run(['lsb_release', '-si'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
         elif pathlib.Path('/etc/redhat-release').exists():
             with open('/etc/redhat-release') as redhat_release_f:
                 result = redhat_release_f.read().split(' ')[0]
@@ -94,7 +94,7 @@ def version():
 
 def which(cmd):
     try:
-        return subprocess.run(['which', cmd], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
+        return subprocess.run(['which', cmd], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).stdout.decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
     except subprocess.CalledProcessError:
         return None
 
@@ -140,7 +140,7 @@ def bootstrap_brew():
 def bootstrap_brew():
     if which('brew') is None:
         return False
-    return len(json.loads(subprocess.run(['brew', 'info', '--json=v1', 'terminal-notifier'], stdout=subprocess.PIPE, check=True).decode('utf-8'))[0]['installed']) > 0 #TODO (Python 3.6) replace decode call with encoding arg
+    return len(json.loads(subprocess.run(['brew', 'info', '--json=v1', 'terminal-notifier'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8'))[0]['installed']) > 0 #TODO (Python 3.6) replace decode call with encoding arg
 
 @bootstrap_setup('debian-root')
 def bootstrap_debian_root():
