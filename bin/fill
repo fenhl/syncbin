@@ -3,8 +3,8 @@
 """Fill a partially transparent image with a single color, given in HTML/CSS color syntax..
 
 Usage:
-  alpha [options] <input> <color> <output>
-  alpha -h | --help
+  fill [options] <input> <color> <output>
+  fill -h | --help
 
 Options:
   -h, --help       Print this message and exit.
