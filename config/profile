@@ -59,9 +59,9 @@ export TEXINPUTS
 
 # add aliases from syncbin
 if [ -d /opt/git/github.com/fenhl/syncbin/master ]; then
-    . /opt/git/github.com/fenhl/syncbin/master/bin/aliases-sh
+    . /opt/git/github.com/fenhl/syncbin/master/bin/aliases
 elif [ -d ~/git/github.com/fenhl/syncbin/master ]; then
-    . ~/git/github.com/fenhl/syncbin/master/bin/aliases-sh
+    . ~/git/github.com/fenhl/syncbin/master/bin/aliases
 fi
 
 PS1='[??.>] '
