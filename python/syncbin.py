@@ -282,6 +282,18 @@ def bootstrap_macbook():
         return False
     return config_path.resolve() == git_dir() / 'fenhl.net' / 'syncbin-private' / 'master' / 'python' / 'batcharge_macbook.py'
 
+@bootstrap_setup('macos')
+def bootstrap_macos():
+    """Disables IPv6 privacy extensions on macOS."""
+    subprocess.run(['sudo', 'sysctl', '-w', 'net.inet6.ip6.use_tempaddr=0'], check=True)
+    subprocess.run(['sudo', 'tee', '-a', '/etc/sysctl.conf'], input='net.inet6.ip6.use_tempaddr=0\n', encoding='utf-8', stdout=subprocess.DEVNULL, check=True)
+    if yesno('Open System Preferences to disable and reenable network interfaces now?'):
+        subprocess.run(['open', '-Wa', 'System Preferences'], check=True)
+
+@bootstrap_macos.test_installed
+def bootstrap_macos():
+    return 'net.inet6.ip6.use_tempaddr=0' in subprocess.run(['sudo', 'cat', '/etc/sysctl.conf'], stdout=subprocess.PIPE, encoding='utf-8', check=True).stdout
+
 @bootstrap_setup('nginx')
 def bootstrap_nginx():
     """Installs the nginx_ensite utility"""
