@@ -30,8 +30,8 @@ curl -Lo syncbin-install.sh https://raw.github.com/fenhl/syncbin/master/config/i
 
 It is tested on Debian jessie, Raspbian stretch, Ubuntu Artful Aardvark, OS X El Capitan, and CentOS 6.5. If it doesn't work for you, feel free to open an issue.
 
-[Fenhl]: http://fenhl.net/ (Fenhl)
-[homebrew]: https://github.com/Homebrew/homebrew (github: Homebrew: homebrew)
-[lns]: http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.html (man page for lns)
+[Fenhl]: https://fenhl.net/ (Fenhl)
+[homebrew]: https://brew.sh/ (github: Homebrew: homebrew)
+[lns]: https://www.chiark.greenend.org.uk/~sgtatham/utils/lns.html (man page for lns)
 [oh-my-zsh]: https://github.com/robbyrussell/oh-my-zsh (github: robbyrussell: oh-my-zsh)
 [zsh-completions]: https://github.com/zsh-users/zsh-completinos (github: zsh-users: zsh-completions)
