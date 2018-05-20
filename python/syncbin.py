@@ -172,10 +172,12 @@ def bootstrap_debian_root():
         else:
             return True
     else:
+        # make sure sudo and systemctl work
         try:
-            subprocess.run(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            subprocess.run(['sudo', '-n', 'systemctl'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
         except:
             return None
+        # check if ntp (installed by this setup) is running
         try:
             subprocess.run(['sudo', '-n', 'systemctl', '-q', 'is-active', 'ntp'], stderr=subprocess.DEVNULL, check=True)
         except subprocess.CalledProcessError:
@@ -424,7 +426,7 @@ def bootstrap_sudo():
 
 @bootstrap_sudo.test_installed
 def bootstrap_sudo():
-    return subprocess.run(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
+    return subprocess.run(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0 #TODO remove false positive due to sudo mode
 
 @bootstrap_setup('syncbin-private')
 def bootstrap_syncbin_private():
