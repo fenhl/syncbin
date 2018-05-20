@@ -292,7 +292,8 @@ def bootstrap_macos():
 
 @bootstrap_macos.test_installed
 def bootstrap_macos():
-    return 'net.inet6.ip6.use_tempaddr=0' in subprocess.run(['sudo', 'cat', '/etc/sysctl.conf'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8') #TODO (Python 3.6) replace decode call with encoding arg
+    with contextlib.suppress(subprocess.CalledProcessError):
+        return 'net.inet6.ip6.use_tempaddr=0' in subprocess.run(['sudo', '-n', 'cat', '/etc/sysctl.conf'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8') #TODO (Python 3.6) replace decode call with encoding arg
 
 @bootstrap_setup('nginx')
 def bootstrap_nginx():
