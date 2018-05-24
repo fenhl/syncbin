@@ -116,6 +116,14 @@ function gpu {
     gpp
 }
 alias history='fc -il 1'
+function jpg2png {
+    for file in $1/*.jpg; do
+        printf '[....] '"$file"'\r' &&
+        convert "$file" "${file/.jpg/.png}" &&
+        rm "$file" &&
+        echo '[ ok ]'
+    done
+}
 if alias ll > /dev/null; then
     unalias ll
 fi
@@ -158,6 +166,9 @@ function notify {
 }
 if ! (where pcregrep &> /dev/null); then
     alias pcregrep='grep -P'
+fi
+if ! (where pip3i &> /dev/null); then
+    alias pip3i='pip3 install'
 fi
 function pw {
     : from syncbin
