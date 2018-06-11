@@ -347,20 +347,20 @@ def bootstrap_python():
         gitdir.host.by_name('github.com').clone('fenhl/python-timespec')
         if root() and getpass.getuser() != 'root':
             if not (py_dir() / 'basedir.py').exists():
-                subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py'), str(py_dir() / 'basedir.py')], check=True)
+                subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir'), str(py_dir() / 'basedir')], check=True)
             if not (py_dir() / 'fancyio.py').exists():
                 subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'fancyio' / 'master' / 'fancyio.py'), str(py_dir() / 'fancyio.py')], check=True)
             if not (py_dir() / 'lazyjson.py').exists():
-                subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py'), str(py_dir() / 'lazyjson.py')], check=True)
+                subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson'), str(py_dir() / 'lazyjson')], check=True)
             if not (py_dir() / 'timespec').exists():
                 subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-timespec' / 'master' / 'timespec'), str(py_dir() / 'timespec')], check=True)
         else:
             if not (py_dir() / 'basedir.py').exists():
-                (py_dir() / 'basedir.py').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir.py')
+                (py_dir() / 'basedir').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir')
             if not (py_dir() / 'fancyio.py').exists():
                 (py_dir() / 'fancyio.py').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'fancyio' / 'master' / 'fancyio.py')
             if not (py_dir() / 'lazyjson.py').exists():
-                (py_dir() / 'lazyjson.py').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson.py')
+                (py_dir() / 'lazyjson').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'lazyjson' / 'master' / 'lazyjson')
             if not (py_dir() / 'timespec').exists():
                 (py_dir() / 'timespec').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'python-timespec' / 'master' / 'timespec')
 
