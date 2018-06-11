@@ -6,6 +6,7 @@ alias fav='t fave'
 alias gp='git pull --rebase --autostash'
 alias http='python3 -m http.server'
 alias inet='syncbin hasinet'
+alias jq='command jq -Sa --indent 4'
 if [ -d /opt/git/github.com/jq-shell/jqsh/master ]; then
     alias jqsh='cd /opt/git/github.com/jq-shell/jqsh/master && git pull && rustup --quiet --release && cd - > /dev/null && command jqsh'
 elif [ -d "$HOME"/git/github.com/jq-shell/jqsh/master ]; then
