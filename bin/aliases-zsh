@@ -129,7 +129,10 @@ if alias ll > /dev/null; then
 fi
 function ll {
     : from syncbin
-    if ls --group > /dev/null 2>&1; then
+    if where exa &> /dev/null; then
+        # exa
+        exa -Fabgl -TL1 --sort=Name --color=always --time-style=long-iso "$@" | less -R
+    elif ls --group > /dev/null 2>&1; then
         # GNU ls
         CLICOLOR_FORCE=1 ls --color=always --group -Fabhl "$@" | less -R
     else
