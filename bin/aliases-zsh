@@ -193,6 +193,11 @@ function read-pem {
         echo $'Usage:\n  read-pem <cert>' >&2
     fi
 }
+function reconnect {
+    retry ssh "$1" true &&
+    notify "connection to $1 restored" &&
+    ssh "$@"
+}
 alias relog=': $@; zsh && logout'
 function reset {
     : from syncbin
