@@ -1,0 +1,8 @@
+#!/bin/bash
+# the inverse of `uniq -c`
+
+while read -r n line; do
+    for (( i = 0; i < n; i++ )); do
+        printf '%s\n' "$line"
+    done
+done
