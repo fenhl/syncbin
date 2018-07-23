@@ -118,7 +118,7 @@ def update_project(path, arguments):
         exit_status = subprocess.call(['cargo', 'test'], cwd=str(path))
     if exit_status == 0 and arguments['--run']:
         try:
-            return subprocess.call(['cargo', 'run'] + (['--release'] if arguments['--release'] else [])), cwd=str(path)
+            return subprocess.call(['cargo', 'run'] + (['--release'] if arguments['--release'] else []), cwd=str(path))
         except KeyboardInterrupt:
             print()
             return 130
