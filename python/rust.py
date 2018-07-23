@@ -15,6 +15,7 @@ Options:
   -h, --help           Print this message and exit.
   -q, --quiet          Don't print progress.
   -r, --run            Add a `cargo run' step at the end.
+  --all-projects       Update all git repos listed at $XDG_CONFIG_DIRS/fenhl/syncbin.json instead of just the current directory.
   --all-toolchains     Update all Rust toolchains.
   --no-project         Only update Rust itself, don't attempt to update any git repo or cargo project.
   --no-timeout         Don't automatically abort the update process of a toolchain. Overrides `--timeout'.
@@ -24,7 +25,8 @@ Options:
 
 import sys
 
-from docopt import docopt
+import basedir
+import docopt
 import os
 import re
 import subprocess
@@ -32,7 +34,7 @@ import subprocess
 try:
     with open(os.path.join(os.environ.get('GITDIR', '/opt/git'), 'github.com', 'fenhl', 'syncbin', 'master', 'version.txt')) as version_file:
         __version__ = version_file.read().strip()
-except:
+except Exception:
     __version__ = '0.0'
 
 QUIET = False
@@ -86,8 +88,48 @@ def set_status(progress, message, newline=False):
     else:
         print('[' + '=' * progress + '.' * (4 - progress) + ']', message, end='\n' if newline else '\r')
 
+def update_project(path, arguments):
+    if subprocess.call(['git', 'branch'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=str(path)) == 0:
+        set_status(3, 'updating repo        ')
+        subprocess.check_call(['git', 'fetch', '--quiet'], cwd=str(path))
+        try:
+            subprocess.check_call(['git', 'merge', '--quiet', 'FETCH_HEAD'], stdout=subprocess.DEVNULL, cwd=str(path))
+        except subprocess.CalledProcessError:
+            subprocess.check_call(['git', 'merge', '--abort'], cwd=str(path))
+            raise
+    elif not QUIET:
+        print('[ ** ]', 'not a git repo, skipping repo update step')
+    if os.path.exists('Cargo.lock'): # `cargo update` complains if no Cargo.lock exists yet
+        if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=subprocess.DEVNULL, cwd=str(path)) == 0:
+            set_status(4, 'updating crates     ')
+            update_crates = subprocess.Popen(['cargo', 'update'], stdout=subprocess.DEVNULL, cwd=str(path))
+            if update_crates.wait() != 0:
+                print('[!!!!]', 'updating crates: failed', file=sys.stderr)
+                return update_crates.returncode
+        elif not QUIET:
+            print('[ ** ]', 'Cargo.lock tracked by git, skipping crates update step, `--crates` to override')
+    set_status(5, 'update complete')
+    cargo_build = subprocess.Popen(['cargo', 'build'] + (['--release'] if arguments['--release'] else []), cwd=str(path))
+    if cargo_build.wait() != 0:
+        return cargo_build.returncode
+    if arguments['--release']:
+        exit_status = 0
+    else:
+        exit_status = subprocess.call(['cargo', 'test'], cwd=str(path))
+    if exit_status == 0 and arguments['--run']:
+        try:
+            return subprocess.call(['cargo', 'run'] + (['--release'] if arguments['--release'] else [])), cwd=str(path)
+        except KeyboardInterrupt:
+            print()
+            return 130
+        except ProcessLookupError:
+            print()
+            return 0
+    else:
+        return exit_status
+
 if __name__ == '__main__':
-    arguments = docopt(__doc__, version='rust from fenhl/syncbin ' + __version__)
+    arguments = docopt.docopt(__doc__, version='rust from fenhl/syncbin ' + __version__)
     if arguments['current']:
         print(current_toolchain())
         sys.exit()
@@ -114,42 +156,10 @@ if __name__ == '__main__':
         multirust_update(toolchain, timeout=timeout)
     if arguments['--no-project']:
         set_status(5, 'update complete      ')
-        sys.exit()
-    if subprocess.call(['git', 'branch'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0:
-        set_status(3, 'updating repo        ')
-        subprocess.check_call(['git', 'fetch', '--quiet'])
-        try:
-            subprocess.check_call(['git', 'merge', '--quiet', 'FETCH_HEAD'], stdout=subprocess.DEVNULL)
-        except subprocess.CalledProcessError:
-            subprocess.check_call(['git', 'merge', '--abort'])
-            raise
-    elif not QUIET:
-        print('[ ** ]', 'not a git repo, skipping repo update step')
-    if os.path.exists('Cargo.lock'): # `cargo update` complains if no Cargo.lock exists yet
-        if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=subprocess.DEVNULL) == 0:
-            set_status(4, 'updating crates     ')
-            update_crates = subprocess.Popen(['cargo', 'update'], stdout=subprocess.DEVNULL)
-            if update_crates.wait() != 0:
-                print('[!!!!]', 'updating crates: failed', file=sys.stderr)
-                sys.exit(update_crates.returncode)
-        elif not QUIET:
-            print('[ ** ]', 'Cargo.lock tracked by git, skipping crates update step, `--crates` to override')
-    set_status(5, 'update complete')
-    cargo_build = subprocess.Popen(['cargo', 'build'] + (['--release'] if arguments['--release'] else []))
-    if cargo_build.wait() != 0:
-        sys.exit(cargo_build.returncode)
-    if arguments['--release']:
-        exit_status = 0
+    elif arguments['--all-projects']:
+        for path in map(pathlib.Path, basedir.config_dirs('fenhl/syncbin.json').json()['rust']['projects']):
+            exit_status = update_project(path, arguments)
+            if exit_status != 0:
+                sys.exit(exit_status)
     else:
-        exit_status = subprocess.call(['cargo', 'test'])
-    if exit_status == 0 and arguments['--run']:
-        try:
-            sys.exit(subprocess.call(['cargo', 'run'] + (['--release'] if arguments['--release'] else [])))
-        except KeyboardInterrupt:
-            print()
-            sys.exit(130)
-        except ProcessLookupError:
-            print()
-            sys.exit()
-    else:
-        sys.exit(exit_status)
+        sys.exit(update_project(pathlib.Path(), arguments))
