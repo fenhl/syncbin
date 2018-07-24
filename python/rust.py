@@ -25,6 +25,8 @@ Options:
 
 import sys
 
+sys.path.append('/opt/py')
+
 import basedir
 import docopt
 import os
