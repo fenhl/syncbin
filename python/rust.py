@@ -70,7 +70,7 @@ def default_toolchain():
         raise NotImplementedError('Failed to parse default toolchain')
 
 def env(*args):
-    return ['/usr/bin/env', 'PATH={}:{}'.format(pathlib.Path.home() / '.cargo' / 'bin', os.environ['PATH'])] + args
+    return ['/usr/bin/env', 'PATH={}:{}'.format(pathlib.Path.home() / '.cargo' / 'bin', os.environ['PATH']), *args]
 
 def multirust_update(toolchain=None, timeout=300):
     if toolchain is None:
