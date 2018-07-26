@@ -84,7 +84,7 @@ def multirust_update(toolchain=None, timeout=300):
     subprocess.check_call([rustup_path(), 'self', 'update'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def rustup_path():
-    if subprocess.run(['which', cmd], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+    if subprocess.run(['which', 'rustup'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
         return 'rustup'
     else:
         return str(pathlib.Path.home() / '.cargo' / 'bin' / 'rustup')
