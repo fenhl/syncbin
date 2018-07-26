@@ -43,7 +43,7 @@ except Exception:
 QUIET = False
 
 def current_toolchain(cwd=None):
-    show_override = subprocess.Popen([rustup_path(), 'override', 'list'], stdout=subprocess.PIPE, cwd=cwd)
+    show_override = subprocess.Popen(env('rustup', 'override', 'list'), stdout=subprocess.PIPE, cwd=cwd)
     out, _ = show_override.communicate(timeout=5)
     for line in out.decode('utf-8').split('\n'):
         if line == 'no overrides':
@@ -55,7 +55,7 @@ def current_toolchain(cwd=None):
         raise ValueError('Current toolchain could not be determined')
 
 def default_toolchain():
-    show_default = subprocess.Popen([rustup_path(), 'show'], stdout=subprocess.PIPE)
+    show_default = subprocess.Popen(env('rustup', 'show'), stdout=subprocess.PIPE)
     out, _ = show_default.communicate(timeout=5)
     for line in out.decode('utf-8').split('\n'):
         if line == 'no active toolchain':
@@ -69,10 +69,13 @@ def default_toolchain():
     else:
         raise NotImplementedError('Failed to parse default toolchain')
 
+def env(*args):
+    return ['/usr/bin/env', 'PATH={}:{}'.format(pathlib.Path.home() / '.cargo' / 'bin', os.environ['PATH'])] + args
+
 def multirust_update(toolchain=None, timeout=300):
     if toolchain is None:
         toolchain = current_toolchain()
-    update_popen = subprocess.Popen([rustup_path(), 'update', toolchain], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    update_popen = subprocess.Popen(env('rustup', 'update', toolchain), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         if update_popen.wait(timeout=timeout) != 0:
             print('[!!!!]', 'updating Rust {}: failed'.format(toolchain), file=sys.stderr)
@@ -81,13 +84,7 @@ def multirust_update(toolchain=None, timeout=300):
         update_popen.terminate()
         print('[!!!!]', 'updating Rust {}: timed out'.format(toolchain), file=sys.stderr)
         sys.exit(update_popen.returncode)
-    subprocess.check_call([rustup_path(), 'self', 'update'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-def rustup_path():
-    if subprocess.run(['which', 'rustup'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
-        return 'rustup'
-    else:
-        return str(pathlib.Path.home() / '.cargo' / 'bin' / 'rustup')
+    subprocess.check_call(env('rustup', 'self', 'update'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def set_status(progress, message, newline=False):
     if QUIET:
@@ -111,23 +108,23 @@ def update_project(path, arguments):
     if pathlib.Path('Cargo.lock').exists(): # `cargo update` complains if no Cargo.lock exists yet
         if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=subprocess.DEVNULL, cwd=str(path)) == 0:
             set_status(4, 'updating crates     ')
-            update_crates = subprocess.Popen(['cargo', 'update'], stdout=subprocess.DEVNULL, cwd=str(path))
+            update_crates = subprocess.Popen(env('cargo', 'update'), stdout=subprocess.DEVNULL, cwd=str(path))
             if update_crates.wait() != 0:
                 print('[!!!!]', 'updating crates: failed', file=sys.stderr)
                 return update_crates.returncode
         elif not QUIET:
             print('[ ** ]', 'Cargo.lock tracked by git, skipping crates update step, `--crates` to override')
     set_status(5, 'update complete')
-    cargo_build = subprocess.Popen(['cargo', 'build'] + (['--release'] if arguments['--release'] else []), cwd=str(path))
+    cargo_build = subprocess.Popen(env('cargo', 'build', *(['--release'] if arguments['--release'] else [])), cwd=str(path))
     if cargo_build.wait() != 0:
         return cargo_build.returncode
     if arguments['--release']:
         exit_status = 0
     else:
-        exit_status = subprocess.call(['cargo', 'test'], cwd=str(path))
+        exit_status = subprocess.call(env('cargo', 'test'), cwd=str(path))
     if exit_status == 0 and arguments['--run']:
         try:
-            return subprocess.call(['cargo', 'run'] + (['--release'] if arguments['--release'] else []), cwd=str(path))
+            return subprocess.call(env('cargo', 'run', *(['--release'] if arguments['--release'] else [])), cwd=str(path))
         except KeyboardInterrupt:
             print()
             return 130
