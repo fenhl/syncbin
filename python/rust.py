@@ -30,11 +30,12 @@ sys.path.append('/opt/py')
 import basedir
 import docopt
 import os
+import pathlib
 import re
 import subprocess
 
 try:
-    with open(os.path.join(os.environ.get('GITDIR', '/opt/git'), 'github.com', 'fenhl', 'syncbin', 'master', 'version.txt')) as version_file:
+    with pathlib.Path(os.environ.get('GITDIR', '/opt/git'), 'github.com', 'fenhl', 'syncbin', 'master', 'version.txt').open() as version_file:
         __version__ = version_file.read().strip()
 except Exception:
     __version__ = '0.0'
@@ -42,7 +43,7 @@ except Exception:
 QUIET = False
 
 def current_toolchain(cwd=None):
-    show_override = subprocess.Popen(['rustup', 'override', 'list'], stdout=subprocess.PIPE, cwd=cwd)
+    show_override = subprocess.Popen([rustup_path(), 'override', 'list'], stdout=subprocess.PIPE, cwd=cwd)
     out, _ = show_override.communicate(timeout=5)
     for line in out.decode('utf-8').split('\n'):
         if line == 'no overrides':
@@ -54,7 +55,7 @@ def current_toolchain(cwd=None):
         raise ValueError('Current toolchain could not be determined')
 
 def default_toolchain():
-    show_default = subprocess.Popen(['rustup', 'show'], stdout=subprocess.PIPE)
+    show_default = subprocess.Popen([rustup_path(), 'show'], stdout=subprocess.PIPE)
     out, _ = show_default.communicate(timeout=5)
     for line in out.decode('utf-8').split('\n'):
         if line == 'no active toolchain':
@@ -71,7 +72,7 @@ def default_toolchain():
 def multirust_update(toolchain=None, timeout=300):
     if toolchain is None:
         toolchain = current_toolchain()
-    update_popen = subprocess.Popen(['rustup', 'update', toolchain], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    update_popen = subprocess.Popen([rustup_path(), 'update', toolchain], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         if update_popen.wait(timeout=timeout) != 0:
             print('[!!!!]', 'updating Rust {}: failed'.format(toolchain), file=sys.stderr)
@@ -80,7 +81,13 @@ def multirust_update(toolchain=None, timeout=300):
         update_popen.terminate()
         print('[!!!!]', 'updating Rust {}: timed out'.format(toolchain), file=sys.stderr)
         sys.exit(update_popen.returncode)
-    subprocess.check_call(['rustup', 'self', 'update'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.check_call([rustup_path(), 'self', 'update'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+def rustup_path():
+    if subprocess.run(['which', cmd], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+        return 'rustup'
+    else:
+        return str(pathlib.Path.home() / '.cargo' / 'bin' / 'rustup')
 
 def set_status(progress, message, newline=False):
     if QUIET:
@@ -101,7 +108,7 @@ def update_project(path, arguments):
             raise
     elif not QUIET:
         print('[ ** ]', 'not a git repo, skipping repo update step')
-    if os.path.exists('Cargo.lock'): # `cargo update` complains if no Cargo.lock exists yet
+    if pathlib.Path('Cargo.lock').exists(): # `cargo update` complains if no Cargo.lock exists yet
         if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=subprocess.DEVNULL, cwd=str(path)) == 0:
             set_status(4, 'updating crates     ')
             update_crates = subprocess.Popen(['cargo', 'update'], stdout=subprocess.DEVNULL, cwd=str(path))
