@@ -108,23 +108,23 @@ def update_project(path, arguments):
     if pathlib.Path('Cargo.lock').exists(): # `cargo update` complains if no Cargo.lock exists yet
         if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=subprocess.DEVNULL, cwd=str(path)) == 0:
             set_status(4, 'updating crates     ')
-            update_crates = subprocess.Popen(env('cargo', 'update'), stdout=subprocess.DEVNULL, cwd=str(path))
+            update_crates = subprocess.Popen(env('cargo', 'update', '--quiet'), cwd=str(path))
             if update_crates.wait() != 0:
                 print('[!!!!]', 'updating crates: failed', file=sys.stderr)
                 return update_crates.returncode
         elif not QUIET:
             print('[ ** ]', 'Cargo.lock tracked by git, skipping crates update step, `--crates` to override')
     set_status(5, 'update complete')
-    cargo_build = subprocess.Popen(env('cargo', 'build', *(['--release'] if arguments['--release'] else [])), cwd=str(path))
+    cargo_build = subprocess.Popen(env('cargo', 'build', *(['--release'] if arguments['--release'] else []), *(['--quiet'] if QUIET else [])), cwd=str(path))
     if cargo_build.wait() != 0:
         return cargo_build.returncode
     if arguments['--release']:
         exit_status = 0
     else:
-        exit_status = subprocess.call(env('cargo', 'test'), cwd=str(path))
+        exit_status = subprocess.call(env('cargo', 'test', *(['--quiet'] if QUIET else [])), cwd=str(path))
     if exit_status == 0 and arguments['--run']:
         try:
-            return subprocess.call(env('cargo', 'run', *(['--release'] if arguments['--release'] else [])), cwd=str(path))
+            return subprocess.call(env('cargo', 'run', *(['--release'] if arguments['--release'] else []), *(['--quiet'] if QUIET else [])), cwd=str(path))
         except KeyboardInterrupt:
             print()
             return 130
