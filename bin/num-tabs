@@ -25,8 +25,8 @@ with open(os.environ['firefox_file'], 'rb') as f:
 print(sum(len(win.get('tabs', [])) for win in jdata.get('windows', [])))
 EOF
 
-terminal_tabs=$(osascript -e "${terminal_script}")
-atom_tabs=$(($(osascript -e "${atom_script}") / 2))
+terminal_tabs=$(osascript -e "${terminal_script}" 2> /dev/null)
+atom_tabs=$(($(osascript -e "${atom_script}" 2> /dev/null) / 2))
 firefox_tabs=$(/usr/local/bin/python3 -c "${firefox_script}")
 total=$(($terminal_tabs + $atom_tabs + $firefox_tabs))
 
