@@ -28,12 +28,10 @@ path=(
     "/usr/local/MacGPG2/bin"
     "/usr/texbin"
     "/usr/local/opt/llvm/bin"
+    "/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home/bin" #TODO does this ever need to be updated?
     $path
 )
 # appending to $PATH
-if [[ -x /usr/libexec/java_home ]]; then
-    path=($path "$(/usr/libexec/java_home)/bin")
-fi
 if [[ -d "${HOME}/Library/Android/sdk" ]]; then
     path=(
         $path
