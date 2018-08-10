@@ -249,6 +249,10 @@ compdef rr=rm
 if ! (where shuf &> /dev/null) && where gshuf &> /dev/null; then
     alias shuf='gshuf'
 fi
+function sshdu {
+    : from syncbin
+    ssh -C "$1" ncdu -o- / | ncdu -f-
+}
 function sshmount {
     : from syncbin
     sudo mkdir /Volumes/"$1"
