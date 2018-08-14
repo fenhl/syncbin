@@ -221,9 +221,15 @@ function retab {
 }
 function retry {
     : from syncbin
-    until eval ${(q)@}; do
-        command sleep 1 || return 1
-    done
+    if [[ $# -eq 0 ]]; then
+        until eval "$(fc -ln -1)"; do
+            command sleep 1 || return 1
+        done
+    else
+        until eval ${(q)@}; do
+            command sleep 1 || return 1
+        done
+    fi
 }
 function rm { # remove current directory when called without arguments
     : from syncbin
