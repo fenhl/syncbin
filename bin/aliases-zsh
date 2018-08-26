@@ -124,6 +124,11 @@ function jpg2png {
         echo '[ ok ]'
     done
 }
+if echo '{}' | command jq -Sa --indent 4 '.' &> /dev/null; then
+    alias jq='command jq -Sa --indent 4'
+else
+    alias jq='command jq -S -a'
+fi
 if alias ll > /dev/null; then
     unalias ll
 fi
