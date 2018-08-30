@@ -1,1 +1,0 @@
-/opt/git/github.com/fenhl/python-xdg-basedir/master/basedir.py
