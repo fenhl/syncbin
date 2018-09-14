@@ -9,7 +9,7 @@ import pathlib
 import subprocess
 
 def run_node(node, *args, check=True, **kwargs):
-    configured_nodes = basedir.config_dirs('fenhl/info-beamer.json').json(base={}).get('nodes', {})
+    configured_nodes = basedir.config_dirs('fenhl/syncbin.json').json(base={}).get('info-beamer', {}).get('nodes', {})
     if node in configured_nodes:
         return subprocess.run(configured_nodes[node] + list(args), check=check, **kwargs)
     else:
