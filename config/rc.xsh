@@ -1,6 +1,14 @@
 import sys
 
-sys.path.append('/opt/py')
+sys.path = list(map(str, [
+    p'/opt/py',
+    p'~/py',
+    p'/opt/git/fenhl.net/syncbin-private/master/python',
+    p'~/git/fenhl.net/syncbin-private/master/python',
+    p'/opt/git/github.com/fenhl/syncbin/master/python',
+    p'~/git/github.com/fenhl/syncbin/master/python',
+    p'/usr/local/lib/python3.7/site-packages'
+])) + sys.path
 
 import basedir
 import gitdir.host.github
@@ -84,14 +92,7 @@ if p'/usr/local/opt/android-sdk'.exists():
     $ANDROID_HOME = p'/usr/local/opt/android-sdk'
 
 # Python config
-sys.path = list(more_itertools.unique_everseen(itertools.chain(map(str, [
-    p'/opt/py',
-    p'~/py',
-    p'/opt/git/fenhl.net/syncbin-private/master/python',
-    p'~/git/fenhl.net/syncbin-private/master/python',
-    p'/opt/git/github.com/fenhl/syncbin/master/python',
-    p'~/git/github.com/fenhl/syncbin/master/python'
-]), sys.path)))
+sys.path = list(more_itertools.unique_everseen(sys.path))
 $PYTHONPATH = sys.path
 $PYTHONSTARTUP = gitdir.host.github.GitHub().repo('fenhl/syncbin').branch_path() / 'config' / 'pythonstartup.py'
 $VIRTUAL_ENV_DISABLE_PROMPT = 1
