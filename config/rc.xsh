@@ -84,7 +84,7 @@ $LANGUAGE = $LC_ALL = $LC_CTYPE = $LANG = 'en_US.UTF-8'
 $ATOM_HOME = basedir.config_dirs('atom').path
 
 # Go config
-$GOPATH = p'~/.local/share/go'
+$GOPATH = ['~/.local/share/go']
 
 # Java config
 $JAVA_HOME = p'/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home'
@@ -101,4 +101,4 @@ $VIRTUAL_ENV_DISABLE_PROMPT = 1
 $GEM_HOME = p'~/.local/share/gem'
 
 # Rust config
-RUST_SRC_PATH = p'/opt/git/github.com/rust-lang/rust/master/src' # required by racer
+RUST_SRC_PATH = ['/opt/git/github.com/rust-lang/rust/master/src'] # required by racer
