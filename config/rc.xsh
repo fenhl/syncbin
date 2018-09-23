@@ -38,6 +38,9 @@ $XONSH_ENCODING = 'utf-8'
 $XONSH_ENCODING_ERRORS = 'strict'
 #TODO $XONSH_STDERR_PREFIX and $XONSH_STDERR_POSTFIX
 
+# xontribs
+xontrib load apt_tabcomplete click_tabcomplete coreutils distributed docker_tabcomplete jedi prompt_ret_code scrapy_tabcomplete vox_tabcomplete whole_word_jumping
+
 # prepending to $PATH
 $PATH = [
     '~/bin',
