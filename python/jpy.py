@@ -16,6 +16,7 @@ import sys
 sys.path.append('/opt/py')
 
 import builtins
+import decimal
 import docopt
 import json
 import lazyjson
@@ -35,6 +36,12 @@ obj = files
 true = True
 false = False
 null = None
+
+class DecimalEncoder(json.JSONEncoder): #FROM http://stackoverflow.com/a/3885198/667338
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return float(o) # do not use str as that would enclose the value in quotes
+        return super().default(o)
 
 def load(filename):
     try:
@@ -59,13 +66,13 @@ touch = load
 def l(json_node):
     if isinstance(json_node, lazyjson.Node):
         json_node = json_node.value()
-    print(json.dumps(json_node, sort_keys=True, indent=4, separators=(',', ': ')))
+    print(json.dumps(json_node, sort_keys=True, indent=4, separators=(',', ': '), cls=DecimalEncoder))
 
 def ll(json_node):
     if isinstance(json_node, lazyjson.Node):
         json_node = json_node.value()
     popen = subprocess.Popen('less', stdin=subprocess.PIPE, shell=True)
-    popen.communicate(input=json.dumps(json_node, sort_keys=True, indent=4, separators=(',', ': ')).encode('utf-8'))
+    popen.communicate(input=json.dumps(json_node, sort_keys=True, indent=4, separators=(',', ': '), cls=DecimalEncoder).encode('utf-8'))
 
 def keys(json_node):
     if isinstance(json_node, lazyjson.Node):
@@ -107,7 +114,7 @@ if __name__ == '__main__':
         # Set '_' to None to avoid recursion
         builtins._ = None
         if isinstance(value, lazyjson.Node):
-            text = json.dumps(value.value(), sort_keys=True, indent=4, separators=(',', ': '))
+            text = json.dumps(value.value(), sort_keys=True, indent=4, separators=(',', ': '), cls=DecimalEncoder)
         else:
             text = repr(value)
         try:
