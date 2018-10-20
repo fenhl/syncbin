@@ -10,7 +10,7 @@ import shutil
 
 volumes = basedir.config_dirs('fenhl/syncbin.json').json().get('diskspace', {}).get('volumes', ['/'])
 volumes_data = {
-    volume: {'usage': shutil.disk_usage('/')}
+    volume: {'usage': shutil.disk_usage(volume)}
     for volume in volumes
 }
 
