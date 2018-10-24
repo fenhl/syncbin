@@ -305,8 +305,9 @@ def bootstrap_nginx():
         import gitdir.host
     except ImportError:
         print('[ ** ] run `syncbin bootstrap gitdir`, then re-run `syncbin bootstrap nginx` to install packages from github')
-    gitdir.host.by_name('github.com').clone('perusio/nginx_ensite')
-    subprocess.run(['sudo', 'make', 'install'], cwd=str(gitdir.host.by_name('github.com').repo('perusio/nginx_ensite').branch_path()))
+    else:
+        gitdir.host.by_name('github.com').clone('perusio/nginx_ensite')
+        subprocess.run(['sudo', 'make', 'install'], cwd=str(gitdir.host.by_name('github.com').repo('perusio/nginx_ensite').branch_path()))
 
 @bootstrap_nginx.test_installed
 def bootstrap_nginx():
