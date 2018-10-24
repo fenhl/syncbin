@@ -19,7 +19,7 @@ Host fevereiro
     HostName 192.168.43.1
 
 Host gharch
-    HostName 2a01:7e01::f03c:91ff:febe:61bd
+    HostName 172.104.145.95
 
 Host hobbitmwai
     Hostname mercredi.fenhl.net
