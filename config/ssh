@@ -18,6 +18,9 @@ Host familiepc-ip4
 Host fevereiro
     HostName 192.168.43.1
 
+Host gharch
+    HostName 2a01:7e01::f03c:91ff:febe:61bd
+
 Host hobbitmwai
     Hostname mercredi.fenhl.net
     Port 2220
