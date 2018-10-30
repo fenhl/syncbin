@@ -40,7 +40,7 @@ if total > 0:
     for guild, response in zip(guilds, responses):
         if isinstance(response, Exception):
             print('---')
-            print(f'{e.__class__.__name__} for {guild["name"]}: {e}')
+            print(f'{response.__class__.__name__} for {guild["name"]}: {response}')
         else:
             for channel in response['channels']:
                 if len(channel['members']) > 0:
