@@ -19,17 +19,32 @@ for guild in guilds:
     else:
         auth = None
     response = requests.get(guild['apiUrl'], auth=auth)
-    response.raise_for_status()
-    responses.append(response.json())
+    try:
+        response.raise_for_status()
+    except requests.RequestException as e:
+        responses.append(e)
+    else:
+        responses.append(response.json())
 
-total = sum(sum(len(channel['members']) for channel in response['channels']) for response in responses)
+total = sum(
+    (
+        float('inf')
+        if isinstance(response, Exception) else
+        sum(len(channel['members']) for channel in response['channels'])
+    )
+    for response in responses
+)
 
 if total > 0:
-    print(f'{total}|templateImage={DISCORD_LOGO}')
+    print(f'{"?" if total == float("inf") else total}|templateImage={DISCORD_LOGO}')
     for guild, response in zip(guilds, responses):
-        for channel in response['channels']:
-            if len(channel['members']) > 0:
-                print('---')
-                print(f'{guild["name"]}#{channel["name"]}')
-                for member in channel['members']:
-                    print(f'{member["username"]}#{member["discriminator"]}')
+        if isinstance(response, Exception):
+            print('---')
+            print(f'{e.__class__.__name__} for {guild["name"]}: {e}')
+        else:
+            for channel in response['channels']:
+                if len(channel['members']) > 0:
+                    print('---')
+                    print(f'{guild["name"]}#{channel["name"]}')
+                    for member in channel['members']:
+                        print(f'{member["username"]}#{member["discriminator"]}')
