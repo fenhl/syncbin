@@ -34,17 +34,8 @@ Host mercredi
 Host weberserver
     HostName weberserver.fenhl.net
 
-Host wurstm
-    HostName wurstmineberg.de
-
 Host wurstm-hetzner
     HostName hetzner.wurstmineberg.de
-
-Host wurstm-nessus
-    HostName nessus.wurstmineberg.de
-
-Host wurstm-strato
-    HostName strato.wurstmineberg.de
 
 Host *
     User fenhl
