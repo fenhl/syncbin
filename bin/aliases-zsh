@@ -14,6 +14,7 @@ function adu {
     if [[ "$(uname -s)" == "Darwin" ]]; then
         sudo softwareupdate -ir
     else
+        night --timeout=10 defer "/dev/$(night hostname)/cronApt" r:10m
         sudo apt-get -y update &&
         sudo apt-get -y dist-upgrade &&
         sudo apt-get -y autoremove &&
