@@ -1,3 +1,7 @@
+Host bus
+    HostName bus.uberspace.de
+    User wmb
+
 Host cetus
     HostName cetus.uberspace.de
 
