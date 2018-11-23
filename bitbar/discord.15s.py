@@ -18,8 +18,8 @@ for guild in guilds:
         auth = (guild['username'], guild['password'])
     else:
         auth = None
-    response = requests.get(guild['apiUrl'], auth=auth)
     try:
+        response = requests.get(guild['apiUrl'], auth=auth)
         response.raise_for_status()
     except requests.RequestException as e:
         responses.append(e)
