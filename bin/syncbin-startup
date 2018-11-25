@@ -147,8 +147,9 @@ elif ! py-where blessings &> /dev/null; then
     echo '[ !! ] missing Python package “blessings”, install with `[sudo ]pip3 install blessings`'
 else
     test-missing-python-package basedir 'fenhl/python-xdg-basedir'
-    test-missing-python-package fancyio 'fenhl/fancyio'
+    test-missing-python-package click
     test-missing-python-package docopt
+    test-missing-python-package fancyio 'fenhl/fancyio'
     test-missing-python-package lazyjson 'fenhl/lazyjson'
     test-missing-python-package mpd 'python-mpd2'
     test-missing-python-package pytz
