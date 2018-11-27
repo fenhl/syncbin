@@ -3,6 +3,8 @@
 if [[ -z ${PIP} ]]; then
     if where pip3 &> /dev/null; then
         PIP=pip3
+    elif where pip-3.7 &> /dev/null; then
+        PIP=pip-3.7
     elif where pip-3.6 &> /dev/null; then
         PIP=pip-3.6
     elif where pip-3.5 &> /dev/null; then
@@ -15,7 +17,4 @@ if [[ -z ${PIP} ]]; then
     fi
 fi
 
-#TODO use this after Debian stretch release
-#$PIP list --outdated --format=columns | sed 1,2d | awk '{print $1}' | xargs $PIP install -U
-
-$PIP list --outdated | grep '(' | sed 's/(.*//g' | xargs $PIP install -U
+$PIP list --outdated --format=columns | sed 1,2d | awk '{print $1}' | xargs $PIP install --upgrade
