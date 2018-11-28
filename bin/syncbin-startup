@@ -206,7 +206,9 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     unlock softwareupdate
     lock python '===.'
     print-progress '===.' 'running startup script: pip'
-    if [[ -n "$(pip3 list --outdated)" ]]; then #TODO use $PIP from pip-update-all
+    if has-cronjob 'pip-update-all'; then
+        : # pip-update-all has a cronjob, don't check for updates now
+    elif [[ -n "$(pip3 list --outdated)" ]]; then #TODO use $PIP from pip-update-all
         print-warning 'Python package updates available. Install with `[sudo] pip-update-all`.' '===.' 'running startup script: pip'
     fi
     unlock python
