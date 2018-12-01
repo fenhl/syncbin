@@ -17,7 +17,7 @@ if [[ -z ${PIP} ]]; then
     fi
 fi
 
-$packages_to_update="$($PIP list --outdated --format=columns | sed 1,2d | awk '{print $1}')"
+packages_to_update="$($PIP list --outdated --format=columns | sed 1,2d | awk '{print $1}')"
 if [[ "$packages_to_update" == '' ]]; then
     : # already up to date
 else
