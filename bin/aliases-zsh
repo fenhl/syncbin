@@ -8,6 +8,7 @@ function a2edit {
 function activate {
     : from syncbin
     . "$1"/bin/activate
+    export PIP="$1"/bin/pip
 }
 function adu {
     : from syncbin

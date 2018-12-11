@@ -33,6 +33,7 @@ deactivate_venv_or_eof () {
         exit
     else
         deactivate
+        unset PIP
         zle accept-line-and-down-history
     fi
 }
