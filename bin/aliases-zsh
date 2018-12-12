@@ -118,6 +118,9 @@ function gpu {
     gpp
 }
 alias history='fc -il 1'
+function in {
+    ( cd "$1" && shift && "$@" )
+}
 function jpg2png {
     for file in $1/*.jpg; do
         printf '[....] '"$file"'\r' &&
