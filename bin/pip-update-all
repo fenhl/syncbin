@@ -17,9 +17,18 @@ if [[ -z ${PIP} ]]; then
     fi
 fi
 
-packages_to_update="$($PIP list --outdated --format=columns | sed 1,2d | awk '{print $1}')"
-if [[ "$packages_to_update" == '' ]]; then
-    : # already up to date
+if [[ x"${PIP}" == x'-m' ]]; then
+    packages_to_update="$(python3 -m pip list --outdated --format=columns | sed 1,2d | awk '{print $1}')"
+    if [[ "$packages_to_update" == '' ]]; then
+        : # already up to date
+    else
+        echo "$packages_to_update" | xargs python3 -m pip install --upgrade
+    fi
 else
-    echo "$packages_to_update" | xargs $PIP install --upgrade
+    packages_to_update="$($PIP list --outdated --format=columns | sed 1,2d | awk '{print $1}')"
+    if [[ "$packages_to_update" == '' ]]; then
+        : # already up to date
+    else
+        echo "$packages_to_update" | xargs $PIP install --upgrade
+    fi
 fi
