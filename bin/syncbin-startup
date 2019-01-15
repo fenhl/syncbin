@@ -236,7 +236,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     print-progress '===.' 'running startup script: rust'
     # rust has its own lock
     if where rustup &> /dev/null; then
-        if ! rustup override list | grep 'no overrides' &> /dev/null; then
+        if ! rust override &> /dev/null; then
             print-warning 'Rust toolchain overridden for '"$(pwd)" '===.' 'running startup script: rustup'
         elif [[ "$(rust default)" != "stable" ]]; then
             print-warning 'Rust not defaulting to stable' '===.' 'running startup script: rustup'
