@@ -6,6 +6,7 @@ Usage:
   rust [options]
   rust current
   rust default
+  rust rprompt
   rust -h | --help
   rust --version
 
@@ -86,6 +87,20 @@ def multirust_update(toolchain=None, timeout=300):
         sys.exit(update_popen.returncode)
     subprocess.check_call(env('rustup', 'self', 'update'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
+def rprompt(cwd=None):
+    if cwd is None:
+        cwd = pathlib.Path().resolve()
+    if subprocess.run(['which', 'rustup'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL).returncode != 0:
+        return '[rust: rustup not installed]'
+    overrides_out = subprocess.run(['rustup', 'override', 'list'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8') #TODO (Python 3.6) replace decode call with encoding arg
+    if overrides_out == 'no overrides\n':
+        return
+    for line in overrides_out.splitlines():
+        path, override = line.rsplit(None, 1)
+        path = pathlib.Path(path).resolve()
+        if path == cwd or path in cwd.parents:
+            return '[rust: {}]'.format(override.split('-')[0])
+
 def set_status(progress, message, newline=False):
     if QUIET:
         return
@@ -141,6 +156,11 @@ if __name__ == '__main__':
         sys.exit()
     if arguments['default']:
         print(default_toolchain())
+        sys.exit()
+    if arguments['rprompt']:
+        output = rprompt()
+        if output is not None:
+            print(output)
         sys.exit()
     if arguments['--quiet']:
         QUIET = True
