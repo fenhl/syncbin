@@ -221,7 +221,9 @@ if which gem > /dev/null 2>&1; then
     : # found RubyGems
 elif isdeb; then
     if [ $pi_reinstall = yes ] || yesno 'RubyGems not found, install using apt-get?'; then
-        if which sudo > /dev/null 2>&1; then
+        if [ $pi_reinstall = yes ]; then
+            sudo apt-get -y install ruby
+        elif which sudo > /dev/null 2>&1; then
             sudo apt-get install ruby
         else
             apt-get install ruby
