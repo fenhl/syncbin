@@ -342,7 +342,7 @@ if which python3 > /dev/null 2>&1; then
         fi
     fi
     if [ $pi_reinstall = yes ]; then
-        ${HOME}/berryconda3/bin/pip install blessings docopt python-mpd2 pytz requests tzlocal # when changing this, also change below
+        ${HOME}/berryconda3/bin/pip install blessings click docopt python-mpd2 pytz requests tzlocal # when changing this, also change below
     elif which pip3 > /dev/null 2>&1; then
         : # found Python 3 and pip3, install packages
         if [ $(whoami) = "root" ]; then
@@ -353,9 +353,9 @@ if which python3 > /dev/null 2>&1; then
             install_python_packages_using_sudo='no'
         fi
         if [ "${install_python_packages_using_sudo}" = 'yes' ]; then
-            sudo pip3 install blessings docopt python-mpd2 pytz requests tzlocal # when changing this, also change above and below
+            sudo pip3 install blessings click docopt python-mpd2 pytz requests tzlocal # when changing this, also change above and below
         else
-            pip3 install blessings docopt python-mpd2 pytz requests tzlocal # when changing this, also change above
+            pip3 install blessings click docopt python-mpd2 pytz requests tzlocal # when changing this, also change above
         fi
     elif yesno 'pip3 not found, continue anyway?'; then
         : # continue anyway

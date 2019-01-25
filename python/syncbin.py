@@ -343,12 +343,15 @@ def bootstrap_python():
         print('[ ** ] run `syncbin bootstrap gitdir`, then re-run `syncbin bootstrap python` to install packages from github')
     else:
         gitdir.host.by_name('github.com').clone('fenhl/python-xdg-basedir')
+        gitdir.host.by_name('github.com').clone('fenhl/python-class-key')
         gitdir.host.by_name('github.com').clone('fenhl/fancyio')
         gitdir.host.by_name('github.com').clone('fenhl/lazyjson')
         gitdir.host.by_name('github.com').clone('fenhl/python-timespec')
         if root() and getpass.getuser() != 'root':
             if not (py_dir() / 'basedir.py').exists():
                 subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir'), str(py_dir() / 'basedir')], check=True)
+            if not (py_dir() / 'class_key.py').exists():
+                subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'python-class-key' / 'master' / 'class_key.py'), str(py_dir() / 'class_key.py')], check=True)
             if not (py_dir() / 'fancyio.py').exists():
                 subprocess.run(['sudo', 'ln', '-s', str(git_dir() / 'github.com' / 'fenhl' / 'fancyio' / 'master' / 'fancyio.py'), str(py_dir() / 'fancyio.py')], check=True)
             if not (py_dir() / 'lazyjson.py').exists():
@@ -358,6 +361,8 @@ def bootstrap_python():
         else:
             if not (py_dir() / 'basedir.py').exists():
                 (py_dir() / 'basedir').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'python-xdg-basedir' / 'master' / 'basedir')
+            if not (py_dir() / 'basedir.py').exists():
+                (py_dir() / 'class_key.py').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'python-class-key' / 'master' / 'class_key.py')
             if not (py_dir() / 'fancyio.py').exists():
                 (py_dir() / 'fancyio.py').symlink_to(git_dir() / 'github.com' / 'fenhl' / 'fancyio' / 'master' / 'fancyio.py')
             if not (py_dir() / 'lazyjson.py').exists():
