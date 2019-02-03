@@ -17,10 +17,10 @@ function syncbin-prompt-user {
 
 function syncbin-prompt-host {
     if hostname -f &> /dev/null; then
-        if [[ $(hostname -f) =~ ^$DEFAULT_HOST ]]; then
-            echo ' '
-        else
+        if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
             echo '%B%F{white}'$(hostname -f | cut -c 1)'%b%f'
+        else
+            echo ' '
         fi
     else
         echo '%B%F{white}?%b%f'
