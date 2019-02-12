@@ -199,6 +199,8 @@ if __name__ == '__main__':
     if arguments['--no-project']:
         set_status(5, 'update complete      ')
     elif arguments['--all-projects']:
+        set_status(3, 'updating installed crates')
+        subprocess.check_call(['cargo', 'install-update', '--all'], stdout=subprocess.DEVNULL)
         for path in map(pathlib.Path, basedir.config_dirs('fenhl/syncbin.json').json(base={}).get('rust', {}).get('projects', [])):
             exit_status = update_project(path, arguments)
             if exit_status != 0:
