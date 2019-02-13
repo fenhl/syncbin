@@ -45,16 +45,7 @@ except Exception:
 QUIET = False
 
 def current_toolchain(cwd=None):
-    show_override = subprocess.Popen(env('rustup', 'override', 'list'), stdout=subprocess.PIPE, cwd=cwd)
-    out, _ = show_override.communicate(timeout=5)
-    for line in out.decode('utf-8').split('\n'):
-        if line == 'no overrides':
-            return default_toolchain()
-        match = re.search('\t(.*?)-', line)
-        if match:
-            return match.group(1)
-    else:
-        raise ValueError('Current toolchain could not be determined')
+    return override(cwd) or default_toolchain()
 
 def default_toolchain():
     show_default = subprocess.Popen(env('rustup', 'show'), stdout=subprocess.PIPE)
@@ -68,6 +59,8 @@ def default_toolchain():
             return 'stable'
         elif line.startswith('beta-') or line.startswith('\x1b(B\x1b[mbeta-') or line.startswith('\x1b[m\x0fbeta-'):
             return 'beta'
+        elif line.startswith('nightly-') or line.startswith('\x1b(B\x1b[mnightly-') or line.startswith('\x1b[m\x0fnightly-'):
+            return 'nightly'
     else:
         raise NotImplementedError('Failed to parse default toolchain')
 
