@@ -13,6 +13,7 @@ Usage:
 
 Options:
   -R, --release        Build with the `--release' flag and skip tests.
+  -T, --no-test        Skip the `cargo test` step.
   -c, --crates         Update Cargo.lock even if not ignored.
   -h, --help           Print this message and exit.
   -q, --quiet          Don't print progress.
@@ -136,7 +137,7 @@ def update_project(path, arguments):
     cargo_build = subprocess.Popen(env('cargo', 'build', *(['--release'] if arguments['--release'] else []), *(['--quiet'] if QUIET else [])), cwd=str(path))
     if cargo_build.wait() != 0:
         return cargo_build.returncode
-    if arguments['--release']:
+    if arguments['--release'] or arguments['--no-test']:
         exit_status = 0
     else:
         exit_status = subprocess.call(env('cargo', 'test', *(['--quiet'] if QUIET else [])), cwd=str(path))
