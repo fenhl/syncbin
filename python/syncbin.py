@@ -59,7 +59,7 @@ def git_dir(existing_only=True):
 def get_os():
     result = subprocess.run(['uname', '-s'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
     if result == 'Linux':
-        if which('lsb_release') is not None:
+        if shutil.which('lsb_release') is not None:
             result = subprocess.run(['lsb_release', '-si'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
         elif pathlib.Path('/etc/redhat-release').exists():
             with open('/etc/redhat-release') as redhat_release_f:
@@ -91,12 +91,6 @@ def version():
             return version_file.read().strip()
     except:
         return '0.0'
-
-def which(cmd):
-    try:
-        return subprocess.run(['which', cmd], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).stdout.decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
-    except subprocess.CalledProcessError:
-        return None
 
 def yesno(question):
     answer = input('[ ?? ] {} [y/n] '.format(question))
@@ -138,7 +132,7 @@ def bootstrap_brew():
 
 @bootstrap_brew.test_installed
 def bootstrap_brew():
-    if which('brew') is None:
+    if shutil.which('brew') is None:
         return False
     return len(json.loads(subprocess.run(['brew', 'info', '--json=v1', 'terminal-notifier'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8'))[0]['installed']) > 0 #TODO (Python 3.6) replace decode call with encoding arg
 
@@ -146,9 +140,9 @@ def bootstrap_brew():
 def bootstrap_debian_root():
     """Essential setup for Debian systems with root access"""
     if getpass.getuser() == 'root':
-        subprocess.run(['chmod', 'u+s', which('ping')], check=True)
+        subprocess.run(['chmod', 'u+s', shutil.which('ping')], check=True)
     else:
-        subprocess.run(['sudo', 'chmod', 'u+s', which('ping')], check=True)
+        subprocess.run(['sudo', 'chmod', 'u+s', shutil.which('ping')], check=True)
 
 bootstrap_debian_root.apt_packages = {
     'exiftool',
@@ -262,7 +256,7 @@ def bootstrap_lns():
 
 @bootstrap_lns.test_installed
 def bootstrap_lns():
-    return which('lns') is not None
+    return shutil.which('lns') is not None
 
 @bootstrap_setup('macbook')
 def bootstrap_macbook():
@@ -311,7 +305,7 @@ def bootstrap_nginx():
 
 @bootstrap_nginx.test_installed
 def bootstrap_nginx():
-    return which('nginx_ensite') is not None
+    return shutil.which('nginx_ensite') is not None
 
 @bootstrap_setup('no-battery')
 def bootstrap_no_battery():
@@ -397,7 +391,7 @@ bootstrap_rust.apt_packages = {'curl'}
 
 @bootstrap_rust.test_installed
 def bootstrap_rust():
-    return which('rustup') is not None
+    return shutil.which('rustup') is not None
 
 @bootstrap_setup('ssh')
 def bootstrap_ssh():
@@ -405,7 +399,7 @@ def bootstrap_ssh():
     config_path = (pathlib.Path.home() / '.ssh' / 'config')
     shutil.copy2(str(git_dir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh'), str(config_path))
     config_path.chmod(0o600) # http://serverfault.com/a/253314
-    if platform.system() == 'Darwin' and which('ssh-copy-id') is None:
+    if platform.system() == 'Darwin' and shutil.which('ssh-copy-id') is None:
         subprocess.run(['brew', 'install', 'ssh-copy-id'], check=True)
     with open('/dev/zero', 'rb') as dev_zero:
         subprocess.run(['ssh-keygen', '-q', '-N', ''], stdin=dev_zero, stdout=subprocess.DEVNULL, check=True)
@@ -468,7 +462,7 @@ def bootstrap_t():
 
 @bootstrap_t.test_installed
 def bootstrap_t():
-    return which('t') is not None
+    return shutil.which('t') is not None
 
 @bootstrap_setup('zsh')
 def bootstrap_zsh():
@@ -478,7 +472,7 @@ def bootstrap_zsh():
 
     gitdir.host.by_name('github.com').clone('zsh-users/zsh-syntax-highlighting')
     gitdir.host.by_name('github.com').clone('robbyrussell/oh-my-zsh')
-    if platform.system() == 'Darwin' and which('zsh') == '/bin/zsh':
+    if platform.system() == 'Darwin' and shutil.which('zsh') == '/bin/zsh':
         # macOS but Homebrew Zsh not installed
         if yesno('install newer Zsh version using Homebrew?'):
             subprocess.run(['brew', 'install', 'zsh'], check=True)
@@ -567,7 +561,7 @@ if __name__ == '__main__':
             mode = 'private'
         elif arguments['hooks']:
             mode = 'hooks'
-        if which('zsh') is None:
+        if shutil.which('zsh') is None:
             # Zsh missing, use bash
             if arguments['<old>'] is None:
                 sys.exit(subprocess.run(['bash', 'syncbin-update'] + ([] if mode is None else [mode])).returncode)
