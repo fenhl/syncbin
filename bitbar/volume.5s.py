@@ -21,5 +21,5 @@ if muted:
     print(f'|templateImage={MUTED}')
 elif volume < 6:
     print(f'|templateImage={LOW}')
-elif volume > 13:
+elif volume > 25:
     print(f'|templateImage={HIGH}')
