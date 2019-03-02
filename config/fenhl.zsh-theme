@@ -17,7 +17,7 @@ function syncbin-prompt-user {
 
 function syncbin-prompt-host {
     if hostname -f &> /dev/null; then
-        if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+        if [[ -n "$STY" ]] || [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
             echo '%B%F{white}'$(hostname -f | cut -c 1)'%b%f'
         else
             echo ' '
