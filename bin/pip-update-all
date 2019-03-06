@@ -19,18 +19,17 @@ fi
 
 if [[ x"${PIP}" == x'-m' ]]; then
     packages_to_update="$(python3 -m pip list --outdated --format=columns | sed 1,2d | awk '{print $1}')"
-    for exclude in $(echo $PIP_UPDATE_ALL_EXCLUDE); do
-        packages_to_update="$(echo "$packages_to_update" | grep -vFx "$exclude")"
-    done
-    if [[ "$packages_to_update" == '' ]]; then
-        : # already up to date
-    else
-        echo "$packages_to_update" | xargs python3 -m pip install --upgrade
-    fi
 else
     packages_to_update="$($PIP list --outdated --format=columns | sed 1,2d | awk '{print $1}')"
-    if [[ "$packages_to_update" == '' ]]; then
-        : # already up to date
+fi
+for exclude in $(echo $PIP_UPDATE_ALL_EXCLUDE); do
+    packages_to_update="$(echo "$packages_to_update" | grep -vFx "$exclude")"
+done
+if [[ "$packages_to_update" == '' ]]; then
+    : # already up to date
+else
+    if [[ x"${PIP}" == x'-m' ]]; then
+        echo "$packages_to_update" | xargs python3 -m pip install --upgrade
     else
         echo "$packages_to_update" | xargs $PIP install --upgrade
     fi
