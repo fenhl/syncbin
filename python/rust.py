@@ -124,7 +124,7 @@ def update_project(path, arguments):
             raise
     elif not QUIET:
         print('[ ** ]', 'not a git repo, skipping repo update step')
-    if pathlib.Path('Cargo.lock').exists(): # `cargo update` complains if no Cargo.lock exists yet
+    if (path / 'Cargo.lock').exists(): # `cargo update` complains if no Cargo.lock exists yet
         if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=subprocess.DEVNULL, cwd=str(path)) == 0:
             set_status(4, 'updating crates     ')
             update_crates = subprocess.Popen(env('cargo', 'update', '--quiet'), cwd=str(path))
