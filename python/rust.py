@@ -56,12 +56,11 @@ def default_toolchain():
             return None
         if '(default)' not in line:
             continue
-        if line.startswith('stable-') or line.startswith('\x1b(B\x1b[mstable-') or line.startswith('\x1b[m\x0fstable-'):
-            return 'stable'
-        elif line.startswith('beta-') or line.startswith('\x1b(B\x1b[mbeta-') or line.startswith('\x1b[m\x0fbeta-'):
-            return 'beta'
-        elif line.startswith('nightly-') or line.startswith('\x1b(B\x1b[mnightly-') or line.startswith('\x1b[m\x0fnightly-'):
-            return 'nightly'
+        match = line.split('-')[0]
+        for formatting_prefix in {'\x1b(B\x1b[m', '\x1b[m\x0f'}:
+            if line.startswith(formatting_prefix):
+                match = match[len(formatting_prefix):]
+        return match
     else:
         raise NotImplementedError('Failed to parse default toolchain')
 
