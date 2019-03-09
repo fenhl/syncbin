@@ -20,7 +20,7 @@ function adu {
         sudo apt-get -y dist-upgrade &&
         sudo apt-get -y autoremove &&
         sudo cron-apt &&
-        ( test -f /etc/apt/apt.conf.d/99night || announce sudo "$(where night-device-report)" )
+        announce sudo "$(where night-device-report)"
     fi
 }
 function announce {
