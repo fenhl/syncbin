@@ -56,7 +56,7 @@ def output_for_stream(stream):
     yield channel['display_name']
     yield '--{}'.format(channel['status'].replace('|', '¦').replace('\n', ' '))
     try:
-        for line in subprocess.check_output([str(STREAMLINK_PATH), channel['url']]).decode('utf-8').splitlines():
+        for line in subprocess.run([str(STREAMLINK_PATH), channel['url']], check=True, stdout=subprocess.PIPE, encoding='utf-8').stdout.splitlines():
             if line.startswith('Available streams: '):
                 available_streams = set(re.sub(' \\(.+?\\)', '', line[line.index(': ') + 2:]).split(', '))
                 for quality in QUALITY_PREFERENCES:
@@ -90,7 +90,9 @@ def handle_response(response):
     online_streams = [
         stream
         for stream in online_streams
-        if stream['channel']['_id'] not in CACHE.get('hiddenStreams', []) and stream['game'] not in CACHE.get('hiddenGames', {}).get(str(stream['channel']['_id']), {})
+        if stream['stream_type'] != 'rerun'
+            and stream['channel']['_id'] not in CACHE.get('hiddenStreams', [])
+            and stream['game'] not in CACHE.get('hiddenGames', {}).get(str(stream['channel']['_id']), {})
     ]
     streams_by_game = collections.defaultdict(list)
     for stream in online_streams:
