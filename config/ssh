@@ -32,6 +32,9 @@ Host hobbitmwai
 Host hobbitmwai-ip4
     HostName 192.168.178.56
 
+Host laire
+    HostName 139.162.138.16
+
 Host mercredi
     HostName mercredi.fenhl.net
 
