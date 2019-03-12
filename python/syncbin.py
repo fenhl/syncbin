@@ -388,7 +388,10 @@ def bootstrap_rust():
     subprocess.run('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y', shell=True, check=True)
     subprocess.run(['cargo', 'install', 'cargo-update'], check=True)
 
-bootstrap_rust.apt_packages = {'curl'}
+bootstrap_rust.apt_packages = {
+    'curl',
+    'pkg-config'
+}
 
 @bootstrap_rust.test_installed
 def bootstrap_rust():
