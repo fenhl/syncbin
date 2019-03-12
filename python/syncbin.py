@@ -390,6 +390,7 @@ def bootstrap_rust():
 
 bootstrap_rust.apt_packages = {
     'curl',
+    'libssl-dev',
     'pkg-config'
 }
 
