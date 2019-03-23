@@ -153,7 +153,8 @@ bootstrap_debian_root.apt_packages = {
     'ruby',
     'ruby-dev',
     'screen',
-    'ssmtp' #TODO configure
+    'ssmtp', #TODO configure
+    'unattended-upgrades' #TODO configure (unattended-upgrades config, call night-device-report)
 }
 
 @bootstrap_debian_root.test_installed
