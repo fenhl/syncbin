@@ -24,4 +24,8 @@ def run_node(node, *args, check=True, **kwargs):
         return subprocess.run(info_beamer_invocation() + [str(node_path)] + list(args), check=check, **kwargs)
 
 if __name__ == '__main__':
-    sys.exit(run_node(*sys.argv[1:], check=False).returncode)
+    if sys.argv[1] == '--list':
+        for node_name, invocation in basedir.config_dirs('fenhl/syncbin.json').json(base={}).get('info-beamer', {}).get('nodes', {}).items():
+            print('{}: {}'.format(node_name, ' '.join(shlex.quote(arg) for arg in invocation)))
+    else:
+        sys.exit(run_node(*sys.argv[1:], check=False).returncode)
