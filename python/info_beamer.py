@@ -6,6 +6,7 @@ sys.path.append('/opt/py')
 
 import basedir
 import pathlib
+import shlex
 import subprocess
 
 def info_beamer_invocation():
