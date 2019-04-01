@@ -1,0 +1,9 @@
+#!/bin/zsh
+
+while true; do
+    if rsync --rsh=ssh --archive --compress --progress --partial --append "$@"; then
+        exit
+    else
+        sleep 1
+    fi
+done
