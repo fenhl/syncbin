@@ -21,7 +21,6 @@ else
     # BSD ls
     alias l='ls -BFGahl'
 fi
-alias minecraft='open -a Minecraft'
 alias mysql='mysql --silent'
 alias pause='playlist pause-after-current'
 alias pdb='python3 -m pdb'

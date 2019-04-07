@@ -92,7 +92,7 @@ def handle_response(response):
         for stream in online_streams
         if stream['stream_type'] != 'rerun'
             and stream['channel']['_id'] not in CACHE.get('hiddenStreams', [])
-            and stream['game'] not in CACHE.get('hiddenGames', {}).get(str(stream['channel']['_id']), {})
+            and stream['game'] not in CACHE.get('hiddenGames', {}).get(str(stream['channel']['_id']), [])
     ]
     streams_by_game = collections.defaultdict(list)
     for stream in online_streams:
