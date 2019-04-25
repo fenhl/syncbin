@@ -4,6 +4,9 @@ import sys
 
 sys.path.append('/opt/git/github.com/fenhl/syncbin/master/python')
 
+import warnings
+
+warnings.filterwarnings('ignore')
 import basedir
 import requests
 

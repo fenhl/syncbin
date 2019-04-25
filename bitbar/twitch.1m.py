@@ -6,14 +6,16 @@ import sys
 
 sys.path.append('/opt/py')
 
-import basedir
 import collections
 import datetime
 import pathlib
 import re
-import requests
 import subprocess
 import traceback
+
+warnings.filterwarnings('ignore')
+import basedir
+import requests
 
 CACHE = basedir.data_dirs('bitbar/plugin-cache/twitch.json').lazy_json(writeable_only=True, default={})
 DEFER_DELTAS = {
