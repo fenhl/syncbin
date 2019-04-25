@@ -35,6 +35,7 @@ import docopt
 import os
 import pathlib
 import re
+import shutil
 import subprocess
 
 try:
@@ -84,7 +85,7 @@ def multirust_update(toolchain=None, timeout=300):
 def override(cwd=None):
     if cwd is None:
         cwd = pathlib.Path().resolve()
-    if subprocess.run(['which', 'rustup'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL).returncode != 0:
+    if shutil.which('rustup') is None:
         raise RuntimeError('rustup not installed')
     overrides_out = subprocess.run(['rustup', 'override', 'list'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8') #TODO (Python 3.6) replace decode call with encoding arg
     if overrides_out == 'no overrides\n':
