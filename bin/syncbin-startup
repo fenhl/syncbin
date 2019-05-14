@@ -29,7 +29,11 @@ function print-progress {
     if where clear-eol &> /dev/null && where py-where &> /dev/null && py-where blessings &> /dev/null; then
         printf '['"$1"'] '
         clear-eol
-        printf "$2"'\r'
+        if [[ "$SYNCBIN_VERBOSE" == "0" ]]; then
+            echo "$2"
+        else
+            printf "$2"'\r'
+        fi
     else
         printf '['"$1"'] '"$2"'\r'
     fi
@@ -96,6 +100,7 @@ function unlock {
 
 IGNOREINET=1
 IGNORELOCK=1
+SYNCBIN_VERBOSE=1
 
 while [[ $# -gt "0" ]]; do
     if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
@@ -110,6 +115,8 @@ while [[ $# -gt "0" ]]; do
         IGNOREINET=0
     elif [[ "$1" == "--ignore-lock" ]]; then
         IGNORELOCK=0
+    elif [[ "$1" == "-v" ]] || [[ "$1" == "--verbose" ]]; then
+        SYNCBIN_VERBOSE=0
     else
         echo $USAGE >&2
         exit 1

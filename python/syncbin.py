@@ -24,7 +24,6 @@ import contextlib
 import getpass
 import pathlib
 import os
-import requests
 import subprocess
 import json
 import platform
@@ -246,6 +245,11 @@ def bootstrap_gitdir():
 
 @bootstrap_setup('lns')
 def bootstrap_lns():
+    try:
+        import requests
+    except ImportError:
+        sys.exit('[!!!!] missing requests, run `syncbin bootstrap python` first')
+
     bin_path = (pathlib.Path.home() / 'bin')
     if not bin_path.exists():
         bin_path.mkdir()
