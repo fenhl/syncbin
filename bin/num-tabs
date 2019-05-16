@@ -1,21 +1,29 @@
 #!/bin/sh
 
-read -d '' terminal_script << EOF
+read -d '' terminal_test << EOF
 if application "Terminal" is running then
-    tell application "Terminal"
-        set c to 0
-        repeat with i from 1 to (count of windows)
-            set c to c + (count of tabs in window i)
-        end repeat
-        c
-    end tell
+    do shell script "echo running"
+end if
+EOF
+
+read -d '' terminal_script << EOF
+tell application "Terminal"
+    set c to 0
+    repeat with i from 1 to (count of windows)
+        set c to c + (count of tabs in window i)
+    end repeat
+    c
+end tell
+EOF
+
+read -d '' atom_test << EOF
+if application "Atom" is running then
+    do shell script "echo running"
 end if
 EOF
 
 read -d '' atom_script << EOF
-if application "Atom" is running then
-    tell application "Atom" to count windows
-end if
+tell application "Atom" to count windows
 EOF
 
 export firefox_file=$(find ~/Library/Application\ Support/Firefox/Profiles/*.default/sessionstore-backups/recovery.jsonlz4)
@@ -29,8 +37,16 @@ with open(os.environ['firefox_file'], 'rb') as f:
 print(sum(len(win.get('tabs', [])) for win in jdata.get('windows', [])))
 EOF
 
-terminal_tabs=$(osascript -e "${terminal_script}" 2> /dev/null)
-atom_tabs=$(($(osascript -e "${atom_script}" 2> /dev/null) / 2))
+if [ x"$(osascript -e "${terminal_test}" 2> /dev/null)" = x'running' ]; then
+    terminal_tabs=$(osascript -e "${terminal_script}" 2> /dev/null)
+else
+    terminal_tabs=0
+fi
+if [ x"$(osascript -e "${atom_test}" 2> /dev/null)" = x'running' ]; then
+    atom_tabs=$(($(osascript -e "${atom_script}" 2> /dev/null) / 2))
+else
+    atom_tabs=0
+fi
 firefox_tabs=$(/usr/local/bin/python3 -c "${firefox_script}")
 total=$(($terminal_tabs + $atom_tabs + $firefox_tabs))
 
