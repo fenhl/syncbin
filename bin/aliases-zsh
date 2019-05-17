@@ -49,6 +49,10 @@ function chmox {
     fi
     chmod +x "$1"
 }
+function cl {
+    cargo --color=always "$@" |& less -r
+    return $?
+}
 if ! (crontab -il |& grep 'unrecognized option' &> /dev/null); then
     alias crontab='crontab -i'
 fi
