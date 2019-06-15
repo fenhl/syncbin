@@ -53,6 +53,7 @@ function cl {
     cargo --color=always "$@" |& less -r
     return $?
 }
+compdef cl=cargo
 if ! (crontab -il |& grep 'unrecognized option' &> /dev/null); then
     alias crontab='crontab -i'
 fi
