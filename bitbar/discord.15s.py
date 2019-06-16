@@ -4,6 +4,7 @@ import sys
 
 sys.path.append('/opt/git/github.com/fenhl/syncbin/master/python')
 
+import decimal
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -28,7 +29,7 @@ for guild in guilds:
     except requests.RequestException as e:
         responses.append(e)
     else:
-        responses.append(response.json())
+        responses.append(response.json(parse_float=decimal.Decimal))
 
 total = sum(
     (
