@@ -3,9 +3,10 @@
 if __name__ != '__main__':
     raise ImportError('This module is not for importing!')
 
+import pathlib
 import sys
 
-sys.path.append('/opt/py')
+sys.path += ['/opt/py', str(pathlib.Path.home() / 'py')]
 
 import basedir
 import datetime

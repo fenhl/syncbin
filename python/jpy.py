@@ -11,9 +11,10 @@ Options:
 
 """
 
+import pathlib
 import sys
 
-sys.path.append('/opt/py')
+sys.path += ['/opt/py', str(pathlib.Path.home() / 'py')]
 
 import builtins
 import decimal

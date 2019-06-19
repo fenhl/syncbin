@@ -20,16 +20,16 @@ Options:
   --version              Print version info and exit.
 """
 
+import pathlib
 import sys
 
-sys.path.append('/opt/py')
+sys.path += ['/opt/py', str(pathlib.Path.home() / 'py')]
 
 import blessings
 import contextlib
 import docopt
 import mpd
 import os
-import pathlib
 import random
 import re
 import socket
