@@ -39,9 +39,19 @@ if [[ -n $current_commit_hash ]]; then
     else
         head_branch='master'
     fi
-    if [[ "${head_branch}" == "${current_branch}" ]]; then
+    if [[ "${head_branch}" != "${current_branch}" ]]; then
+        if [[ ${has_git_status} == "no" ]]; then
+            git_prompt="[git: "
+        elif [[ ${has_git_status} == "flags" ]]; then
+            git_prompt="${git_prompt} "
+        fi
+        has_git_status="words"
+        git_prompt="${git_prompt}${current_branch}"
+    fi
+    remote_branch="$(git for-each-ref --format='%(upstream:short)' refs/heads/"${current_branch}")"
+    if [[ x"$remote_branch" != x"" ]]; then
         current_rev=$(git rev-parse HEAD 2> /dev/null)
-        remote_rev=$(git rev-parse origin/"${head_branch}" 2> /dev/null)
+        remote_rev=$(git rev-parse origin/"${current_branch}" 2> /dev/null)
         if [[ x$current_rev != x$remote_rev ]]; then
             if [[ ${has_git_status} == "no" ]]; then
                 git_prompt="[git: "
@@ -51,21 +61,13 @@ if [[ -n $current_commit_hash ]]; then
             has_git_status="words"
             shared_rev=$(git merge-base "$current_rev" "$remote_rev")
             if [[ x$current_rev == x$shared_rev ]]; then
-                git_prompt="${git_prompt}behind"
+                git_prompt="${git_prompt}(behind)"
             elif [[ x$remote_rev == x$shared_rev ]]; then
-                git_prompt="${git_prompt}ahead"
+                git_prompt="${git_prompt}(ahead)"
             else
-                git_prompt="${git_prompt}diverged"
+                git_prompt="${git_prompt}(diverged)"
             fi
         fi
-    else
-        if [[ ${has_git_status} == "no" ]]; then
-            git_prompt="[git: "
-        elif [[ ${has_git_status} == "flags" ]]; then
-            git_prompt="${git_prompt} "
-        fi
-        has_git_status="words"
-        git_prompt="${git_prompt}${current_branch}"
     fi
     if [[ ${has_git_status} != "no" ]]; then
         has_git_status="end"
