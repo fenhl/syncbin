@@ -11,46 +11,65 @@ if [[ -n $current_commit_hash ]]; then
             git_prompt="[git: "
         fi
         has_git_status="flags"
-        git_prompt=${git_prompt}"?"
+        git_prompt="${git_prompt}?"
     fi
     if [[ $git_status =~ ($'\n'|^).?D ]]; then # removed files
         if [[ ${has_git_status} == "no" ]]; then
             git_prompt="[git: "
         fi
         has_git_status="flags"
-        git_prompt=${git_prompt}"-"
+        git_prompt="${git_prompt}-"
     fi
     if [[ $git_status =~ ($'\n'|^).?M ]]; then # changed files
         if [[ ${has_git_status} == "no" ]]; then
             git_prompt="[git: "
         fi
         has_git_status="flags"
-        git_prompt=${git_prompt}"≠"
+        git_prompt="${git_prompt}≠"
     fi
     if [[ $git_status =~ ($'\n'|^)A ]]; then # added files
         if [[ ${has_git_status} == "no" ]]; then
             git_prompt="[git: "
         fi
         has_git_status="flags"
-        git_prompt=${git_prompt}"+"
+        git_prompt="${git_prompt}+"
     fi
     if git branch -a 2> /dev/null | grep '  remotes/origin/HEAD -> origin/' &> /dev/null; then
         head_branch=$(git branch -a 2> /dev/null | grep '  remotes/origin/HEAD -> origin/' | cut -d'/' -f4)
     else
         head_branch='master'
     fi
-    if [[ "${head_branch}" != "${current_branch}" ]]; then
+    if [[ "${head_branch}" == "${current_branch}" ]]; then
+        current_rev=$(git rev-parse HEAD 2> /dev/null)
+        remote_rev=$(git rev-parse origin/"${head_branch}" 2> /dev/null)
+        if [[ x$current_rev != x$remote_rev ]]; then
+            if [[ ${has_git_status} == "no" ]]; then
+                git_prompt="[git: "
+            elif [[ ${has_git_status} == "flags" ]]; then
+                git_prompt="${git_prompt} "
+            fi
+            has_git_status="words"
+            shared_rev=$(git merge-base "$current_rev" "$remote_rev")
+            if [[ x$current_rev == x$shared_rev ]]; then
+                git_prompt="${git_prompt}behind"
+            elif [[ x$remote_rev == x$shared_rev ]]; then
+                git_prompt="${git_prompt}ahead"
+            else
+                git_prompt="${git_prompt}diverged"
+            fi
+        fi
+    else
         if [[ ${has_git_status} == "no" ]]; then
             git_prompt="[git: "
         elif [[ ${has_git_status} == "flags" ]]; then
-            git_prompt=${git_prompt}" "
+            git_prompt="${git_prompt} "
         fi
-        has_git_status="branch"
+        has_git_status="words"
         git_prompt="${git_prompt}${current_branch}"
     fi
     if [[ ${has_git_status} != "no" ]]; then
         has_git_status="end"
-        git_prompt=${git_prompt}"]"
+        git_prompt="${git_prompt}]"
     fi
     echo ${git_prompt}
 fi
