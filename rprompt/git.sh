@@ -57,6 +57,8 @@ if [[ -n $current_commit_hash ]]; then
                 git_prompt="[git: "
             elif [[ ${has_git_status} == "flags" ]]; then
                 git_prompt="${git_prompt} "
+            elif [[ ${has_git_status} == "words" ]]; then
+                git_prompt="${git_prompt} " # space between words
             fi
             has_git_status="words"
             shared_rev=$(git merge-base "$current_rev" "$remote_rev")
