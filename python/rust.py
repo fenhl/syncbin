@@ -85,9 +85,7 @@ def multirust_update(toolchain=None, timeout=300):
 def override(cwd=None):
     if cwd is None:
         cwd = pathlib.Path().resolve()
-    if shutil.which('rustup') is None:
-        raise RuntimeError('rustup not installed')
-    overrides_out = subprocess.run(['rustup', 'override', 'list'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8') #TODO (Python 3.6) replace decode call with encoding arg
+    overrides_out = subprocess.run(env('rustup', 'override', 'list'), stdout=subprocess.PIPE, check=True).stdout.decode('utf-8') #TODO (Python 3.6) replace decode call with encoding arg
     if overrides_out == 'no overrides\n':
         return
     for line in overrides_out.splitlines():
@@ -194,7 +192,7 @@ if __name__ == '__main__':
         set_status(5, 'update complete      ')
     elif arguments['--all-projects']:
         set_status(3, 'updating installed crates')
-        subprocess.check_call(['cargo', 'install-update', '--all', '--git'], stdout=subprocess.DEVNULL)
+        subprocess.check_call(env('cargo', 'install-update', '--all', '--git'), stdout=subprocess.DEVNULL)
         for path in map(pathlib.Path, basedir.config_dirs('fenhl/syncbin.json').json(base={}).get('rust', {}).get('projects', [])):
             exit_status = update_project(path, arguments)
             if exit_status != 0:
