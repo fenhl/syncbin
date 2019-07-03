@@ -5,8 +5,12 @@ Host bus
 Host cetus
     HostName cetus.uberspace.de
 
+Host equinox
+    HostName mercredi.fenhl.net
+    Port 2218
+
 Host ergomwai
-    Hostname mercredi.fenhl.net
+    HostName mercredi.fenhl.net
     Port 2221
 
 Host ergomwai-ip4
@@ -26,7 +30,7 @@ Host gharch
     HostName 172.104.145.95
 
 Host hobbitmwai
-    Hostname mercredi.fenhl.net
+    HostName mercredi.fenhl.net
     Port 2220
 
 Host hobbitmwai-ip4
