@@ -309,13 +309,14 @@ fi
 
 # install Python 3
 
-if [ $pi_reinstall = yes ]; then
-    # install Python 3 using Berryconda
-    wget -O berryconda-install.sh https://github.com/jjhelmus/berryconda/releases/download/v2.0.0/Berryconda3-2.0.0-Linux-armv7l.sh
-    chmod +x berryconda-install.sh
-    ./berryconda-install.sh -b
-    rm berryconda-install.sh
-elif which python3 > /dev/null 2>&1; then
+#if [ $pi_reinstall = yes ]; then
+#    # install Python 3 using Berryconda
+#    wget -O berryconda-install.sh https://github.com/jjhelmus/berryconda/releases/download/v2.0.0/Berryconda3-2.0.0-Linux-armv7l.sh
+#    chmod +x berryconda-install.sh
+#    ./berryconda-install.sh -b
+#    rm berryconda-install.sh
+#elif which python3 > /dev/null 2>&1; then
+if which python3 > /dev/null 2>&1; then
     : # already installed
 else
     if [ "${OSName}" = "OS X" ]; then
@@ -330,7 +331,8 @@ fi
 # install Python 3 packages
 
 if which python3 > /dev/null 2>&1; then
-    if [ $pi_reinstall = yes ] || which pip3 > /dev/null 2>&1; then
+    #if [ $pi_reinstall = yes ] || which pip3 > /dev/null 2>&1; then
+    if which pip3 > /dev/null 2>&1; then
         : # found pip3
     elif isdeb; then
         if yesno 'pip3 not found, install using apt-get?'; then
@@ -341,13 +343,14 @@ if which python3 > /dev/null 2>&1; then
             fi
         fi
     fi
-    if [ $pi_reinstall = yes ]; then
-        ${HOME}/berryconda3/bin/pip install blessings click docopt python-mpd2 pytz requests tzlocal # when changing this, also change below
-    elif which pip3 > /dev/null 2>&1; then
+    #if [ $pi_reinstall = yes ]; then
+    #    ${HOME}/berryconda3/bin/pip install blessings click docopt python-mpd2 pytz requests tzlocal # when changing this, also change below
+    #elif which pip3 > /dev/null 2>&1; then
+    if which pip3 > /dev/null 2>&1; then
         : # found Python 3 and pip3, install packages
         if [ $(whoami) = "root" ]; then
             install_python_packages_using_sudo='no'
-        elif yesno 'use sudo to install Python packages?'; then
+        elif [ $pi_reinstall = yes ] || yesno 'use sudo to install Python packages?'; then
             install_python_packages_using_sudo='yes'
         else
             install_python_packages_using_sudo='no'
