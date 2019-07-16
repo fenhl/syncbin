@@ -284,7 +284,8 @@ fi
 
 # install command-not-found
 
-if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
+#if [ "${OSName}" = "Debian" ] || [ "${OSName}" = "Raspbian" ]; then
+if [ "${OSName}" = "Debian" ]; then # command-not-found is currently broken on Raspbian, see https://raspberrypi.stackexchange.com/q/95292
     if which "command-not-found" > /dev/null 2>&1; then
         : # command-not-found handler already installed
     else
