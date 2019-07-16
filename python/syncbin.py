@@ -392,6 +392,7 @@ def bootstrap_rust():
     #response.raise_for_status()
     subprocess.run('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y', shell=True, check=True)
     subprocess.run(['cargo', 'install', 'cargo-update'], check=True)
+    subprocess.run(['cargo', 'install', '--git=https://github.com/fenhl/diskspace'], check=True)
 
 bootstrap_rust.apt_packages = {
     'curl',
