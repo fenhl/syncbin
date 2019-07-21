@@ -384,14 +384,9 @@ def bootstrap_python():
 @bootstrap_setup('rust')
 def bootstrap_rust():
     """Installs Rust via `rustup`."""
-    #try:
-    #    import requests
-    #except ImportError:
-    #    sys.exit('[!!!!] missing requests, run `syncbin bootstrap python` first')
-    #response = requests.get('https://sh.rustup.rs/', stream=True)
-    #response.raise_for_status()
+    #TODO install Rust via apt-get if on Debian ≥10
     subprocess.run('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y', shell=True, check=True)
-    subprocess.run(['cargo', 'install', 'cargo-update'], check=True)
+    subprocess.run(['cargo', 'install', 'cargo-update', 'exa'], check=True)
     subprocess.run(['cargo', 'install', '--git=https://github.com/fenhl/diskspace'], check=True)
 
 bootstrap_rust.apt_packages = {
