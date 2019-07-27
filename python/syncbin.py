@@ -144,6 +144,7 @@ def bootstrap_debian_root():
         subprocess.run(['sudo', 'chmod', 'u+s', shutil.which('ping')], check=True)
 
 bootstrap_debian_root.apt_packages = {
+    'exa',
     'exiftool',
     'htop',
     'jq',
@@ -386,6 +387,7 @@ def bootstrap_rust():
     """Installs Rust via `rustup`."""
     #TODO install Rust via apt-get if on Debian ≥10
     subprocess.run('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y', shell=True, check=True)
+    #TODO only install exa if it's not already installed
     subprocess.run(['cargo', 'install', 'cargo-update', 'exa'], check=True)
     subprocess.run(['cargo', 'install', '--git=https://github.com/fenhl/diskspace'], check=True)
 
