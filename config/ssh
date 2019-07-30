@@ -42,6 +42,10 @@ Host laire
 Host mercredi
     HostName mercredi.fenhl.net
 
+Host reiwa
+    HostName mercredi.fenhl.net
+    Port 2217
+
 Host weberserver
     HostName weberserver.fenhl.net
 
