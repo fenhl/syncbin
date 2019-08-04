@@ -193,6 +193,7 @@ if __name__ == '__main__':
     elif arguments['--all-projects']:
         set_status(3, 'updating installed crates')
         subprocess.check_call(env('cargo', 'install-update', '--all', '--git'), stdout=subprocess.DEVNULL)
+        subprocess.run(['rm', '-rf', '/tmp/cargo-update'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) # for some reason, cargo-update sometimes doesn't clean up its tempfiles?
         for path in map(pathlib.Path, basedir.config_dirs('fenhl/syncbin.json').json(base={}).get('rust', {}).get('projects', [])):
             exit_status = update_project(path, arguments)
             if exit_status != 0:
