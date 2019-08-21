@@ -120,28 +120,6 @@ if isdeb; then
     fi
 fi
 
-# install Zsh
-
-if which zsh > /dev/null 2>&1; then
-    : # found zsh
-elif isdeb; then
-    if yesno 'Zsh not found, install using apt-get?'; then
-        if which sudo > /dev/null 2>&1; then
-            sudo apt-get install zsh
-        else
-            apt-get install zsh
-        fi
-    fi
-fi
-
-if which zsh > /dev/null 2>&1; then
-    : # found zsh
-elif yesno 'Zsh not found, continue anyway?'; then
-    : # continue anyway
-else
-    exit 1
-fi
-
 # install and update homebrew
 
 GitInstallInstructions="open GitHub.app and in the Advanced preferences, Install Command Line Tools"
@@ -165,6 +143,34 @@ if [ "${OSName}" = "OS X" ]; then
     fi
 fi
 
+# install Zsh
+
+if which zsh > /dev/null 2>&1; then
+    : # found zsh
+elif isdeb; then
+    if yesno 'Zsh not found, install using apt-get?'; then
+        if which sudo > /dev/null 2>&1; then
+            sudo apt-get install zsh
+        else
+            apt-get install zsh
+        fi
+    fi
+fi
+
+if [ "${OSName}" = "OS X" ]; then
+    if which brew > /dev/null 2>&1; then
+        brew install zsh # install newer Zsh from Homebrew
+    fi
+fi
+
+if which zsh > /dev/null 2>&1; then
+    : # found zsh
+elif yesno 'Zsh not found, continue anyway?'; then
+    : # continue anyway
+else
+    exit 1
+fi
+
 # install git
 
 if which git > /dev/null 2>&1; then
@@ -182,21 +188,19 @@ elif [ "${OSName}" = "OS X" ]; then
         : # git installed
     else
         # install GitHub.app
-        if [ "${OSName}" = "OS X" ]; then
-            if which brew > /dev/null 2>&1; then
-                if brew cask 2>&1 | grep "Unknown command" > /dev/null; then
-                    echo '[ !! ] homebrew-cask not found, skipping GitHub.app install'
-                else
-                    if brew cask info github | grep "Not installed" > /dev/null; then
-                        echo '[ ** ] installing GitHub.app'
-                        brew cask install github || GitInstallInstructions="install GitHub.app, then ${GitInstallInstructions}"
-                    else
-                        : # GitHub.app is already installed
-                    fi
-                fi
+        if which brew > /dev/null 2>&1; then
+            if brew cask 2>&1 | grep "Unknown command" > /dev/null; then
+                echo '[ !! ] homebrew-cask not found, skipping GitHub.app install'
             else
-                echo '[ !! ] Homebrew not found, skipping GitHub.app install'
+                if brew cask info github | grep "Not installed" > /dev/null; then
+                    echo '[ ** ] installing GitHub.app'
+                    brew cask install github || GitInstallInstructions="install GitHub.app, then ${GitInstallInstructions}"
+                else
+                    : # GitHub.app is already installed
+                fi
             fi
+        else
+            echo '[ !! ] Homebrew not found, skipping GitHub.app install'
         fi
         echo '[ ** ] to install git,' ${GitInstallInstructions}
         if [ ${GitInstallInstructions} = "open GitHub.app and in the Advanced preferences, Install Command Line Tools" ] && which open > /dev/null 2>&1; then
@@ -240,6 +244,12 @@ else
 fi
 
 # get hub directory
+
+if [ "${OSName}" = "OS X" ]; then
+    #TODO automate
+    printf '[ !! ] make sure /opt/git is on a case-sensitive file system [press return to continue] '
+    read
+fi
 
 HUB="unknown"
 if mkdir -p /opt/git/github.com 2> /dev/null && [ -d /opt/git/github.com ]; then
