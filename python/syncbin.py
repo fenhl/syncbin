@@ -124,10 +124,10 @@ def bootstrap_setup(setup_name):
 def bootstrap_brew():
     """Installs various utilities for macOS using Homebrew"""
     try:
-        subprocess.run(['brew', 'install', 'git', 'jq', 'ruby', 'terminal-notifier'], check=True)
+        subprocess.run(['brew', 'install', 'git', 'jq', 'libheif', 'ruby', 'terminal-notifier'], check=True)
     except subprocess.CalledProcessError:
         subprocess.run(['brew', 'link', '--overwrite', 'ruby'], check=True)
-    subprocess.run(['brew', 'cask', 'install', 'bartender', 'bitbar', 'discord', 'firefox', 'libheif', 'qlmarkdown'], check=True)
+    subprocess.run(['brew', 'cask', 'install', 'bartender', 'bitbar', 'discord', 'firefox', 'qlmarkdown'], check=True)
 
 @bootstrap_brew.test_installed
 def bootstrap_brew():
