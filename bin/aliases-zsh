@@ -85,7 +85,6 @@ function dawg {
         exit 1
     fi
 }
-alias doch='sudo $(fc -ln -1)'
 alias flush-dns-cache='clear-dns-cache'
 function frame {
     : from syncbin
