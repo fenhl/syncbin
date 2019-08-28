@@ -1,0 +1,13 @@
+#!/usr/local/bin/zsh
+
+# for macOS
+
+if zsh -c "${2:-$1}" &> /tmp/cronjob-"$1".log; then
+    rm /tmp/cronjob-"$1".log
+    rm /Users/fenhl/Desktop/cronjob-"$1".log
+else
+    #terminal-notifier -sound default -message 'cronjob '"$1"' failed'
+    if [[ -s /tmp/cronjob-"$1".log ]]; then
+        mv /tmp/cronjob-"$1".log /Users/fenhl/Desktop
+    fi
+fi
