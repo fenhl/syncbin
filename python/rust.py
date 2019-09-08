@@ -85,7 +85,7 @@ def multirust_update(toolchain=None, timeout=300):
 def override(cwd=None):
     if cwd is None:
         cwd = pathlib.Path().resolve()
-    overrides_out = subprocess.run(env('rustup', 'override', 'list'), stdout=subprocess.PIPE, check=True).stdout.decode('utf-8') #TODO (Python 3.6) replace decode call with encoding arg
+    overrides_out = subprocess.run(env('rustup', 'override', 'list'), stdout=subprocess.PIPE, check=True, encoding='utf-8').stdout
     if overrides_out == 'no overrides\n':
         return
     for line in overrides_out.splitlines():
@@ -95,6 +95,11 @@ def override(cwd=None):
             return override.split('-')[0]
 
 def rprompt(cwd=None):
+    if cwd is None:
+        cwd = pathlib.Path().resolve()
+    overrides_out = subprocess.run(env('rustup', 'override', 'list'), stdout=subprocess.PIPE, check=True, encoding='utf-8').stdout
+    if '(not a directory)' in overrides_out:
+        return '[rust: nonexistent]'
     try:
         result = override(cwd)
     except RuntimeError as e:
