@@ -29,7 +29,12 @@ EOF
 export firefox_file=$(find ~/Library/Application\ Support/Firefox/Profiles/*.default/sessionstore-backups/recovery.jsonlz4)
 
 read -d '' firefox_script << EOF
-import os, sys, json, lz4.block
+import sys
+
+import json
+import os
+
+import lz4.block # PyPI: lz4
 
 with open(os.environ['firefox_file'], 'rb') as f:
     magic = f.read(8)
