@@ -7,9 +7,10 @@ Usage:
   jinit -h | --help
 
 Options:
-  -a, --array  Initialize with an empty array instead of an object.
-  -h, --help   Print this message and exit.
-  --version    Print version info and exit.
+  -a, --array           Initialize with an empty array instead of an object.
+  -h, --help            Print this message and exit.
+  -n, --noninteractive  Don't open `jpy`, just create the file.
+  --version             Print version info and exit.
 """
 
 import sys
@@ -39,4 +40,5 @@ if not path.parent.exists():
 with path.open('w') as f:
     print('[]' if arguments['--array'] else '{}', file=f)
 
-sys.exit(subprocess.call(['jpy', arguments['<file>']]))
+if not arguments['--noninteractive']:
+    sys.exit(subprocess.call(['jpy', arguments['<file>']]))
