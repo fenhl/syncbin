@@ -73,6 +73,21 @@ def get_os():
         raise RuntimeError('Unknown OS: {}'.format(result))
     return result
 
+@contextlib.contextmanager
+def lock(lock_name):
+    path = pathlib.Path(f'/tmp/syncbin-startup-{lock_name}.lock').resolve()
+    while True:
+        try:
+            path.mkdir()
+        except FileExistsError:
+            time.sleep(1)
+            continue
+        break
+    try:
+        yield path
+    finally:
+        path.rmdir()
+
 def py_dir():
     return pathlib.Path('/opt/py' if root() else '{}/py'.format(os.environ['HOME']))
 
@@ -242,7 +257,19 @@ def bootstrap_gitdir():
     else:
         return True
 
-# install lns
+@bootstrap_setup('keylayout')
+def bootstrap_keylayout():
+    if get_os() == 'macOS':
+        repo = gitdir.host.by_name('github.com').repo('fenhl/german-and-wanya-for-apple-international-english.keylayout')
+        repo.clone()
+        if getpass.getuser() == 'root':
+            shutil.copy(repo.branch_path() / 'German and Wanya for Apple International English.keylayout', '/Library/Keyboard Layouts')
+        else:
+            subprocess.run(['sudo', 'cp', repo.branch_path() / 'German and Wanya for Apple International English.keylayout', '/Library/Keyboard Layouts'], check=True)
+    else:
+        raise NotImplementedError(f"Don't know how to install the keyboard layout for {get_os()}")
+
+bootstrap_keylayout.requires('gitdir')
 
 @bootstrap_setup('lns')
 def bootstrap_lns():
@@ -308,6 +335,8 @@ def bootstrap_nginx():
     else:
         gitdir.host.by_name('github.com').clone('perusio/nginx_ensite')
         subprocess.run(['sudo', 'make', 'install'], cwd=str(gitdir.host.by_name('github.com').repo('perusio/nginx_ensite').branch_path()))
+
+bootstrap_nginx.requires('gitdir')
 
 @bootstrap_nginx.test_installed
 def bootstrap_nginx():

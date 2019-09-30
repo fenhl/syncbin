@@ -37,6 +37,7 @@ import os
 import re
 import shutil
 import subprocess
+import syncbin
 
 try:
     with pathlib.Path(os.environ.get('GITDIR', '/opt/git'), 'github.com', 'fenhl', 'syncbin', 'master', 'version.txt').open() as version_file:
@@ -68,20 +69,6 @@ def default_toolchain():
 def env(*args):
     return ['/usr/bin/env', 'PATH={}:{}'.format(pathlib.Path.home() / '.cargo' / 'bin', os.environ['PATH']), *args]
 
-def multirust_update(toolchain=None, timeout=300):
-    if toolchain is None:
-        toolchain = current_toolchain()
-    update_popen = subprocess.Popen(env('rustup', 'update', toolchain), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    try:
-        if update_popen.wait(timeout=timeout) != 0:
-            print('[!!!!]', 'updating Rust {}: failed'.format(toolchain), file=sys.stderr)
-            sys.exit(update_popen.returncode)
-    except subprocess.TimeoutExpired:
-        update_popen.terminate()
-        print('[!!!!]', 'updating Rust {}: timed out'.format(toolchain), file=sys.stderr)
-        sys.exit(update_popen.returncode)
-    subprocess.check_call(env('rustup', 'self', 'update'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
 def override(cwd=None):
     if cwd is None:
         cwd = pathlib.Path().resolve()
@@ -93,6 +80,10 @@ def override(cwd=None):
         path = pathlib.Path(path).resolve()
         if path == cwd or path in cwd.parents:
             return override.split('-')[0]
+
+def quiet():
+    if QUIET:
+        yield '--quiet'
 
 def rprompt(cwd=None):
     if cwd is None:
@@ -108,6 +99,22 @@ def rprompt(cwd=None):
         if result is not None:
             return '[rust: {}]'.format(result)
 
+def rustup_update(toolchain=None, timeout=300):
+    if toolchain is None:
+        toolchain = current_toolchain()
+    with syncbin.lock('rust'): # see https://github.com/rust-lang/rustup.rs/issues/988
+        update_popen = subprocess.Popen(env('rustup', 'update', toolchain), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        if update_popen.wait(timeout=timeout) != 0:
+            print('[!!!!]', 'updating Rust {}: failed'.format(toolchain), file=sys.stderr)
+            sys.exit(update_popen.returncode)
+    except subprocess.TimeoutExpired:
+        update_popen.terminate()
+        print('[!!!!]', 'updating Rust {}: timed out'.format(toolchain), file=sys.stderr)
+        sys.exit(update_popen.returncode)
+    with syncbin.lock('rust'): # see https://github.com/rust-lang/rustup.rs/issues/988
+        subprocess.check_call(env('rustup', 'self', 'update'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
 def set_status(progress, message, newline=False):
     if QUIET:
         return
@@ -119,9 +126,9 @@ def set_status(progress, message, newline=False):
 def update_project(path, arguments):
     if subprocess.call(['git', 'branch'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=str(path)) == 0:
         set_status(3, 'updating repo        ')
-        subprocess.check_call(['git', 'fetch', '--quiet'], cwd=str(path))
+        subprocess.check_call(['git', 'fetch', *quiet()], cwd=str(path))
         try:
-            subprocess.check_call(['git', 'merge', '--quiet', 'FETCH_HEAD'], stdout=subprocess.DEVNULL, cwd=str(path))
+            subprocess.check_call(['git', 'merge', *quiet(), 'FETCH_HEAD'], stdout=subprocess.DEVNULL, cwd=str(path))
         except subprocess.CalledProcessError:
             subprocess.check_call(['git', 'merge', '--abort'], cwd=str(path))
             raise
@@ -130,23 +137,23 @@ def update_project(path, arguments):
     if (path / 'Cargo.lock').exists(): # `cargo update` complains if no Cargo.lock exists yet
         if arguments['--crates'] or subprocess.call(['git', 'check-ignore', 'Cargo.lock'], stdout=subprocess.DEVNULL, cwd=str(path)) == 0:
             set_status(4, 'updating crates     ')
-            update_crates = subprocess.Popen(env('cargo', 'update', '--quiet'), cwd=str(path))
+            update_crates = subprocess.Popen(env('cargo', 'update', *quiet()), cwd=str(path))
             if update_crates.wait() != 0:
                 print('[!!!!]', 'updating crates: failed', file=sys.stderr)
                 return update_crates.returncode
         elif not QUIET:
             print('[ ** ]', 'Cargo.lock tracked by git, skipping crates update step, `--crates` to override')
     set_status(5, 'update complete')
-    cargo_build = subprocess.Popen(env('cargo', 'build', *(['--release'] if arguments['--release'] else []), *(['--quiet'] if QUIET else [])), cwd=str(path))
+    cargo_build = subprocess.Popen(env('cargo', 'build', *(['--release'] if arguments['--release'] else []), *quiet()), cwd=str(path))
     if cargo_build.wait() != 0:
         return cargo_build.returncode
     if arguments['--release'] or arguments['--no-test']:
         exit_status = 0
     else:
-        exit_status = subprocess.call(env('cargo', 'test', *(['--quiet'] if QUIET else [])), cwd=str(path))
+        exit_status = subprocess.call(env('cargo', 'test', *quiet()), cwd=str(path))
     if exit_status == 0 and arguments['--run']:
         try:
-            return subprocess.call(env('cargo', 'run', *(['--release'] if arguments['--release'] else []), *(['--quiet'] if QUIET else [])), cwd=str(path))
+            return subprocess.call(env('cargo', 'run', *(['--release'] if arguments['--release'] else []), *quiet()), cwd=str(path))
         except KeyboardInterrupt:
             print()
             return 130
@@ -184,15 +191,15 @@ if __name__ == '__main__':
     timeout
     if arguments['--all-toolchains']:
         set_status(0, 'updating Rust nightly')
-        multirust_update('nightly', timeout=timeout)
+        rustup_update('nightly', timeout=timeout)
         set_status(1, 'updating Rust beta   ')
-        multirust_update('beta', timeout=timeout)
+        rustup_update('beta', timeout=timeout)
         set_status(2, 'updating Rust stable')
-        multirust_update('stable', timeout=timeout)
+        rustup_update('stable', timeout=timeout)
     else:
         toolchain = current_toolchain()
         set_status(0, 'updating Rust {}'.format(toolchain))
-        multirust_update(toolchain, timeout=timeout)
+        rustup_update(toolchain, timeout=timeout)
     if arguments['--no-project']:
         set_status(5, 'update complete      ')
     elif arguments['--all-projects']:

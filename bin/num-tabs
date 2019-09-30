@@ -26,6 +26,7 @@ read -d '' atom_script << EOF
 tell application "Atom" to count windows
 EOF
 
+# see https://support.mozilla.org/gl/questions/1264072
 export firefox_file=$(find ~/Library/Application\ Support/Firefox/Profiles/*.default-release/sessionstore-backups/recovery.jsonlz4)
 
 read -d '' firefox_script << EOF
