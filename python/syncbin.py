@@ -481,7 +481,12 @@ bootstrap_syncbin_private.requires('gitdir')
 
 @bootstrap_syncbin_private.test_installed
 def bootstrap_syncbin_private():
-    return (git_dir() / 'fenhl.net' / 'syncbin-private' / 'master').is_dir()
+    try:
+        import syncbin_private
+    except ImportError:
+        return False
+    else:
+        return True
 
 @bootstrap_setup('t')
 def bootstrap_t():
