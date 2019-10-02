@@ -29,6 +29,7 @@ import json
 import platform
 import shutil
 import stat
+import time
 
 try:
     from docopt import docopt
