@@ -46,7 +46,7 @@ class DecimalEncoder(json.JSONEncoder): #FROM http://stackoverflow.com/a/3885198
 
 def load(filename):
     try:
-        requests.request('GET', filename)
+        requests.get(filename)
     except requests.exceptions.MissingSchema:
         path = os.path.abspath(os.path.expanduser(filename))
         with open(path, 'a'):

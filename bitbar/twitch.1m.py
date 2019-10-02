@@ -45,7 +45,7 @@ def read_access_token():
 ACCESS_TOKEN = read_access_token()
 
 def get_data(access_token=ACCESS_TOKEN):
-    response = requests.get('https://api.twitch.tv/kraken/streams/followed?stream_type=live', headers={'Authorization': f'OAuth {access_token}'})
+    response = requests.get('https://api.twitch.tv/kraken/streams/followed?stream_type=live', headers={'Authorization': f'OAuth {access_token}'}, timeout=30.05)
     response.raise_for_status()
     return response.json()
 

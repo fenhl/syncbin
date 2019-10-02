@@ -24,7 +24,7 @@ for guild in guilds:
     else:
         auth = None
     try:
-        response = requests.get(guild['apiUrl'], auth=auth)
+        response = requests.get(guild['apiUrl'], auth=auth, timeout=30.05)
         response.raise_for_status()
     except requests.RequestException as e:
         responses.append(e)
