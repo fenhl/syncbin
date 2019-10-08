@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Terminal
+
 read -d '' terminal_test << EOF
 if application "Terminal" is running then
     do shell script "echo running"
@@ -16,6 +18,14 @@ tell application "Terminal"
 end tell
 EOF
 
+if [ x"$(osascript -e "${terminal_test}" 2> /dev/null)" = x'running' ]; then
+    terminal_tabs=$(osascript -e "${terminal_script}" 2> /dev/null)
+else
+    terminal_tabs=0
+fi
+
+# Atom
+
 read -d '' atom_test << EOF
 if application "Atom" is running then
     do shell script "echo running"
@@ -26,8 +36,13 @@ read -d '' atom_script << EOF
 tell application "Atom" to count windows
 EOF
 
-# see https://support.mozilla.org/gl/questions/1264072
-export firefox_file=$(find ~/Library/Application\ Support/Firefox/Profiles/*.default-release/sessionstore-backups/recovery.jsonlz4)
+if [ x"$(osascript -e "${atom_test}" 2> /dev/null)" = x'running' ]; then
+    atom_tabs=$(($(osascript -e "${atom_script}" 2> /dev/null) / 2))
+else
+    atom_tabs=0
+fi
+
+# Firefox
 
 read -d '' firefox_script << EOF
 import sys
@@ -43,17 +58,17 @@ with open(os.environ['firefox_file'], 'rb') as f:
 print(sum(len(win.get('tabs', [])) for win in jdata.get('windows', [])))
 EOF
 
-if [ x"$(osascript -e "${terminal_test}" 2> /dev/null)" = x'running' ]; then
-    terminal_tabs=$(osascript -e "${terminal_script}" 2> /dev/null)
+# see https://support.mozilla.org/gl/questions/1264072
+if find ~/Library/Application\ Support/Firefox/Profiles/*.default-release/sessionstore-backups/recovery.jsonlz4 > /dev/null 2> /dev/null; then
+    export firefox_file=$(find ~/Library/Application\ Support/Firefox/Profiles/*.default-release/sessionstore-backups/recovery.jsonlz4)
+
+    firefox_tabs=$(/usr/local/bin/python3 -c "${firefox_script}")
 else
-    terminal_tabs=0
+    firefox_tabs=0
 fi
-if [ x"$(osascript -e "${atom_test}" 2> /dev/null)" = x'running' ]; then
-    atom_tabs=$(($(osascript -e "${atom_script}" 2> /dev/null) / 2))
-else
-    atom_tabs=0
-fi
-firefox_tabs=$(/usr/local/bin/python3 -c "${firefox_script}")
+
+# total
+
 total=$(($terminal_tabs + $atom_tabs + $firefox_tabs))
 
 if [ x$1 = x-v ] || [ x$1 = x--verbose ]; then
