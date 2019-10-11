@@ -57,10 +57,10 @@ def git_dir(existing_only=True):
         return pathlib.Path(os.environ.get('GITDIR', '/opt/git' if root() else '{}/git'.format(os.environ['HOME'])))
 
 def get_os():
-    result = subprocess.run(['uname', '-s'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
+    result = subprocess.run(['uname', '-s'], stdout=subprocess.PIPE, encoding='utf-8', check=True).stdout[:-1]
     if result == 'Linux':
         if shutil.which('lsb_release') is not None:
-            result = subprocess.run(['lsb_release', '-si'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')[:-1] #TODO (Python 3.6) replace decode call with encoding arg
+            result = subprocess.run(['lsb_release', '-si'], stdout=subprocess.PIPE, encoding='utf-8', check=True).stdout[:-1]
         elif pathlib.Path('/etc/redhat-release').exists():
             with open('/etc/redhat-release') as redhat_release_f:
                 result = redhat_release_f.read().split(' ')[0]
@@ -149,7 +149,7 @@ def bootstrap_brew():
 def bootstrap_brew():
     if shutil.which('brew') is None:
         return False
-    return len(json.loads(subprocess.run(['brew', 'info', '--json=v1', 'terminal-notifier'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8'))[0]['installed']) > 0 #TODO (Python 3.6) replace decode call with encoding arg
+    return len(json.loads(subprocess.run(['brew', 'info', '--json=v1', 'terminal-notifier'], stdout=subprocess.PIPE, encoding='utf-8', check=True).stdout)[0]['installed']) > 0
 
 @bootstrap_setup('debian-root')
 def bootstrap_debian_root():
@@ -305,12 +305,10 @@ bootstrap_macbook.requires('syncbin-private')
 
 @bootstrap_macbook.test_installed
 def bootstrap_macbook():
-    if not hasattr(pathlib.Path, 'home'): # Python 3.4 and below
-        return None
     config_path = (pathlib.Path.home() / 'bin' / 'batcharge')
     if not config_path.is_symlink():
         return False
-    return config_path.resolve() == git_dir() / 'fenhl.net' / 'syncbin-private' / 'master' / 'python' / 'batcharge_macbook.py'
+    return config_path.resolve() == (git_dir() / 'fenhl.net' / 'syncbin-private' / 'master' / 'python' / 'batcharge_macbook.py').resolve()
 
 @bootstrap_setup('macos')
 def bootstrap_macos():
@@ -323,7 +321,7 @@ def bootstrap_macos():
 @bootstrap_macos.test_installed
 def bootstrap_macos():
     with contextlib.suppress(subprocess.CalledProcessError):
-        return 'net.inet6.ip6.use_tempaddr=0' in subprocess.run(['sudo', '-n', 'cat', '/etc/sysctl.conf'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8') #TODO (Python 3.6) replace decode call with encoding arg
+        return 'net.inet6.ip6.use_tempaddr=0' in subprocess.run(['sudo', '-n', 'cat', '/etc/sysctl.conf'], stdout=subprocess.PIPE, encoding='utf-8', check=True).stdout
 
 @bootstrap_setup('nginx')
 def bootstrap_nginx():
@@ -356,8 +354,6 @@ def bootstrap_no_battery():
 
 @bootstrap_no_battery.test_installed
 def bootstrap_no_battery():
-    if not hasattr(pathlib.Path, 'home'): # Python 3.4 and below
-        return None
     if not (pathlib.Path.home() / 'bin' / 'batcharge').exists():
         return False
     with (pathlib.Path.home() / 'bin' / 'batcharge').open() as batcharge_f:
@@ -446,8 +442,6 @@ def bootstrap_ssh():
 
 @bootstrap_ssh.test_installed
 def bootstrap_ssh():
-    if not hasattr(pathlib.Path, 'home'): # Python 3.4 and below
-        return None
     config_path = (pathlib.Path.home() / '.ssh' / 'config')
     return subprocess.run(['diff', str(config_path), str(git_dir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'config' / 'ssh')], stdout=subprocess.DEVNULL).returncode == 0
 
