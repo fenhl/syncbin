@@ -306,8 +306,8 @@ else
 fi
 print-progress '====' 'running startup script: sip'
 if where csrutil &> /dev/null; then
-    if csrutil status | grep enabled > /dev/null; then
-        print-warning 'System Integrity Protection is enabled' '===.' 'running startup script: sip'
+    if csrutil status | grep disabled > /dev/null; then
+        print-warning 'System Integrity Protection is disabled' '===.' 'running startup script: sip'
     fi
 fi
 print-progress '====' 'running startup script: compinit'

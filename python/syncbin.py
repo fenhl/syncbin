@@ -97,9 +97,6 @@ def root():
         return True
     return subprocess.run(['sudo', '-n', 'true'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
 
-def sip():
-    return 'enabled' in subprocess.run(['csrutil', 'status'], encoding='utf-8', stdout=subprocess.PIPE).stdout
-
 def version():
     try:
         with (git_dir() / 'github.com' / 'fenhl' / 'syncbin' / 'master' / 'version.txt').open() as version_file:
@@ -200,11 +197,7 @@ def bootstrap_debian_root():
 def bootstrap_finder():
     """Configure useful defaults for Finder on macOS"""
     print('[....] configuring Finder', end='\r', flush=True)
-    if sip():
-        print('[ !! ] System Integrity Protection is enabled, skipping Play key fix', file=sys.stderr)
-        print('[....] configuring Finder', end='\r', flush=True)
-    else:
-        subprocess.run(['launchctl', 'unload', '-w', '/System/Library/LaunchAgents/com.apple.rcd.plist'], check=True) #FROM https://www.howtogeek.com/274345/stop-itunes-from-launching-when-you-press-play-on-your-macs-keyboard/
+    subprocess.run(['launchctl', 'unload', '-w', '/System/Library/LaunchAgents/com.apple.rcd.plist'], check=True) #FROM https://www.howtogeek.com/274345/stop-itunes-from-launching-when-you-press-play-on-your-macs-keyboard/ # seems to work with SIP enabled now
     subprocess.run(['defaults', 'write', '-g', 'NSScrollViewRubberbanding', '-int', '0'], check=True)
     subprocess.run(['defaults', 'write', 'com.apple.finder', 'AppleShowAllFiles', '-bool', 'true'], check=True)
     subprocess.run(['defaults', 'write', 'com.apple.finder', '_FXShowPosixPathInTitle', '-bool', 'true'], check=True)
