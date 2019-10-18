@@ -38,8 +38,8 @@ if [[ "$packages_to_update" == '' ]]; then
     : # already up to date
 else
     if [[ x"${PIP}" == x'-m' ]]; then
-        echo "$packages_to_update" | xargs python3 -m pip --quiet install $user_flag --upgrade
+        echo "$packages_to_update" | xargs python3 -m pip --quiet install $user_flag --upgrade --no-warn-script-location
     else
-        echo "$packages_to_update" | xargs $PIP --quiet install $user_flag --upgrade
+        echo "$packages_to_update" | xargs $PIP --quiet install $user_flag --upgrade --no-warn-script-location
     fi
 fi
