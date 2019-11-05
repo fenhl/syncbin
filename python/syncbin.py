@@ -81,12 +81,26 @@ def lock(lock_name):
         try:
             path.mkdir()
         except FileExistsError:
+            try:
+                import psutil
+            except ImportError:
+                pass # don't check pid file if psutil is missing
+            else:
+                if (path / 'pid').exists():
+                    with (path / 'pid').open() as pid_f:
+                        pid = int(pid_f.read().strip())
+                    if not psutil.pid_exists(pid):
+                        (path / 'pid').unlink(missing_ok=True)
+                        path.rmdir()
             time.sleep(1)
             continue
         break
     try:
+        with (path / 'pid').open('w') as pid_f:
+            print(os.getpid(), file=pid_f)
         yield path
     finally:
+        (path / 'pid').unlink(missing_ok=True)
         path.rmdir()
 
 def py_dir():
