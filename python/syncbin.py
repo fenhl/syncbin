@@ -90,7 +90,8 @@ def lock(lock_name):
                     with (path / 'pid').open() as pid_f:
                         pid = int(pid_f.read().strip())
                     if not psutil.pid_exists(pid):
-                        (path / 'pid').unlink(missing_ok=True)
+                        with contextlib.suppress(FileNotFoundError): #TODO (Python 3.8) remove suppress context and use unlink(missing_ok=True) instead
+                            (path / 'pid').unlink()
                         path.rmdir()
             time.sleep(1)
             continue
@@ -100,7 +101,8 @@ def lock(lock_name):
             print(os.getpid(), file=pid_f)
         yield path
     finally:
-        (path / 'pid').unlink(missing_ok=True)
+        with contextlib.suppress(FileNotFoundError): #TODO (Python 3.8) remove suppress context and use unlink(missing_ok=True) instead
+            (path / 'pid').unlink()
         path.rmdir()
 
 def py_dir():
