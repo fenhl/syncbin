@@ -70,6 +70,8 @@ def get_os():
             raise RuntimeError('Could not get Linux distro')
     elif result == 'Darwin':
         result = 'macOS'
+    elif result == 'MSYS_NT-10.0':
+        result = 'Windows'
     else:
         raise RuntimeError('Unknown OS: {}'.format(result))
     return result
