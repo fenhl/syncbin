@@ -38,6 +38,8 @@ def calculate_alpha(pixel, mode, light):
         return 255 - pixel_brightness
 
 def convert(input_image, light=False, *, color=None, verbose=False):
+    if input_image.mode == 'P':
+        input_image = input_image.convert('RGBA')
     if color is None:
         color = (255, 255, 255) if light else (0, 0, 0)
     output_image = PIL.Image.new('RGBA', input_image.size)

@@ -32,6 +32,8 @@ def get_alpha(pixel, mode):
         raise NotImplementedError('Image mode {} not currently supported'.format(input_image.mode)) #TODO add support for other modes
 
 def convert(input_image, color, *, verbose=False):
+    if input_image.mode == 'P':
+        input_image = input_image.convert('RGBA')
     output_image = PIL.Image.new('RGBA', input_image.size)
     for y in range(input_image.size[1]):
         if verbose:
