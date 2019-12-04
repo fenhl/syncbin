@@ -18,6 +18,7 @@ path=(
     "/opt/local/bin"
     "/opt/local/sbin"
     "/opt/night/bin"
+    "/usr/local/share/fidera/bin"
     "/opt/wurstmineberg/bin"
     "${HOME}/.cargo/bin"
     "${HOME}/.multirust/toolchains/stable/cargo/bin"
