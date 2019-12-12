@@ -20,8 +20,8 @@ if not syncbin.root():
     sys.exit(2)
 
 with contextlib.suppress(RuntimeError):
-    if syncbin.get_os() == 'Raspbian':
-        sys.exit(2) # broken on Raspbian, skip for now
+    if syncbin.get_os() in {'Debian', 'Raspbian'}:
+        sys.exit(2) # gems are managed by apt
 
 startup_data_path = next(iter(basedir.data_dirs('syncbin/startup.json')))
 if not startup_data_path.exists():
