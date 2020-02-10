@@ -162,7 +162,11 @@ function l {
             alias l='ls -BFGahl'
         fi
     elif [[ -f "$file" ]]; then
-        more -e "$@"
+        if [[ x"$(more --version | head -c 4)" == x'less' ]]; then
+            more -e "$@"
+        else
+            more "$@"
+        fi
     else
         stat "$@"
     fi
