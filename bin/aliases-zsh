@@ -156,10 +156,10 @@ function l {
             exa -FGabgl --sort=Name --color=always --time-style=long-iso "$@"
         elif ls --group > /dev/null 2>&1; then
             # GNU ls
-            alias l="ls --color=always --group --time-style='+%Y-%m-%d %H:%M:%S' -Fabhl"
+            ls --color=always --group --time-style='+%Y-%m-%d %H:%M:%S' -Fabhl "$@"
         else
             # BSD ls
-            alias l='ls -BFGahl'
+            ls -BFGahl "$@"
         fi
     elif [[ -f "$file" ]]; then
         if [[ x"$(more --version | head -c 4)" == x'less' ]]; then
