@@ -123,7 +123,7 @@ def set_status(progress, message, newline=False):
     else:
         print('[' + '=' * progress + '.' * (4 - progress) + ']', message, end='\n' if newline else '\r')
 
-def update_project(path, arguments):
+def update_project(path, arguments): #TODO add `cargo sweep -i` run
     if subprocess.call(['git', 'branch'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=str(path)) == 0:
         set_status(3, 'updating repo        ')
         subprocess.check_call(['git', 'fetch', *quiet()], cwd=str(path))
@@ -188,7 +188,6 @@ if __name__ == '__main__':
         timeout = None
     else:
         timeout = int(arguments['--timeout'])
-    timeout
     if arguments['--all-toolchains']:
         set_status(0, 'updating Rust nightly')
         rustup_update('nightly', timeout=timeout)

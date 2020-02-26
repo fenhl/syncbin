@@ -1,3 +1,4 @@
+alias -s jlog=ssel
 alias -s json=jpy
 alias -s log=ssel
 alias -s mp4=mediainfo
