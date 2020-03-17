@@ -242,7 +242,8 @@ def bootstrap_finder():
 
 @bootstrap_setup('gitdir')
 def bootstrap_gitdir():
-    """Installs `gitdir`. Requires the `python` setup."""
+    """Installs `gitdir` and configures `git`. Requires the `python` setup."""
+    subprocess.run(['git', 'config', '--global', 'merge.conflictstyle', 'diff3'], check=True)
     gitdir_gitdir = git_dir(existing_only=False) / 'github.com' / 'fenhl' / 'gitdir'
     if not gitdir_gitdir.exists():
         gitdir_gitdir.mkdir(parents=True)
