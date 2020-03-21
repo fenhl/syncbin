@@ -1,3 +1,7 @@
+Host bureflux
+    HostName mercredi.fenhl.net
+    Port 2216
+
 Host bus
     HostName bus.uberspace.de
     User wmb
@@ -5,23 +9,9 @@ Host bus
 Host cetus
     HostName cetus.uberspace.de
 
-Host equinox
-    HostName mercredi.fenhl.net
-    Port 2218
-
 Host ergomwai
     HostName mercredi.fenhl.net
     Port 2221
-
-Host ergomwai-ip4
-    HostName 192.168.1.34
-
-Host familiepc
-    HostName mercredi.fenhl.net
-    Port 2219
-
-Host familiepc-ip4
-    HostName 192.168.178.71
 
 Host fevereiro
     HostName 192.168.43.1
@@ -32,9 +22,6 @@ Host gharch
 Host hobbitmwai
     HostName mercredi.fenhl.net
     Port 2220
-
-Host hobbitmwai-ip4
-    HostName 192.168.178.56
 
 Host laire
     HostName 139.162.138.16
@@ -48,9 +35,6 @@ Host reiwa
 
 Host weberserver
     HostName weberserver.fenhl.net
-
-Host wurstm-hetzner
-    HostName hetzner.wurstmineberg.de
 
 Host *
     User fenhl
