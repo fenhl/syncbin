@@ -36,6 +36,9 @@ Host reiwa
 Host weberserver
     HostName weberserver.fenhl.net
 
+Host winter
+    HostName 139.162.167.34
+
 Host *
     User fenhl
     Port 22
