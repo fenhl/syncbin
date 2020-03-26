@@ -38,6 +38,7 @@ Host weberserver
 
 Host winter
     HostName 139.162.167.34
+    User root
 
 Host *
     User fenhl
