@@ -31,6 +31,7 @@ path=(
     "/usr/texbin"
     "/usr/local/opt/llvm/bin"
     "/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home/bin" #TODO does this ever need to be updated?
+    "./node_modules/.bin"
     $path
 )
 # appending to $PATH
