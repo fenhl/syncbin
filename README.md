@@ -19,13 +19,13 @@ Installation
 The following *should* install `syncbin` and a couple of other things like [homebrew][], [lns][], [oh-my-zsh][], [zsh-completions][]:
 
 ```sh
-wget -O syncbin-install.sh https://raw.github.com/fenhl/syncbin/master/config/install.sh && sh syncbin-install.sh && rm syncbin-install.sh
+wget -O syncbin-install.sh https://raw.githubusercontent.com/fenhl/syncbin/master/config/install.sh && sh syncbin-install.sh && rm syncbin-install.sh
 ```
 
 Or on macOS, which doesn't have `wget`:
 
 ```sh
-curl -Lo syncbin-install.sh https://raw.github.com/fenhl/syncbin/master/config/install.sh && sh syncbin-install.sh && rm syncbin-install.sh
+curl -Lo syncbin-install.sh https://raw.githubusercontent.com/fenhl/syncbin/master/config/install.sh && sh syncbin-install.sh && rm syncbin-install.sh
 ```
 
 It is tested on Debian jessie, Raspbian stretch, Ubuntu Artful Aardvark, OS X El Capitan, and CentOS 6.5. If it doesn't work for you, feel free to open an issue.
