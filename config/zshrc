@@ -87,24 +87,6 @@ insert_sudo () {
 zle -N insert_sudo
 bindkey "^S" insert_sudo
 
-# "cd.." to "cd .." and "..." to "../.."
-# taken and expanded from bl1nk's zshrc http://git.kuchen.io/markus/dotfiles.git/tree/zsh/.zshrc
-rationalise_dot () {
-    if [[ $LBUFFER == "cd "* ]] || [[ $LBUFFER =~ "[^ ]*" ]]; then
-        if [[ $LBUFFER = *.. ]]; then
-            LBUFFER+=/..
-        elif [[ $LBUFFER == "cd." ]]; then
-            LBUFFER="cd .."
-        else
-            LBUFFER+=.
-        fi
-    else
-        LBUFFER+=.
-    fi
-}
-zle -N rationalise_dot
-bindkey . rationalise_dot
-
 # completion style
 #zstyle ":completion:*:descriptions" format "%B%d%b" # always show completion type in menu completion
 
