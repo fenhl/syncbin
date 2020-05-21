@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Open a gitdir's stage in Atom."""
+"""Open a gitdir's stage in Visual Studio Code."""
 
 import sys
 
@@ -35,4 +35,4 @@ if __name__ == '__main__':
     path = make_path(sys.argv[1:])
     if not path.exists():
         sys.exit('[!!!!] no such repo')
-    sys.exit(subprocess.call(['atom', str(path)]))
+    sys.exit(subprocess.call(['code', '-n', str(path.resolve())]))
