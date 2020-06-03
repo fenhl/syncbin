@@ -7,6 +7,7 @@ Usage:
   playlist [options] add <path>
   playlist [options] add-from <path>
   playlist [options] add-random <path>
+  playlist lyrics [<path>]
   playlist [options] pause-after-current [<num-tracks>]
   playlist repeat-current-once
   playlist -h | --help
@@ -25,15 +26,17 @@ import sys
 
 sys.path += ['/opt/py', str(pathlib.Path.home() / 'py')]
 
-import blessings
 import contextlib
-import docopt
-import mpd
 import os
 import random
 import re
 import socket
 import subprocess
+
+import blessings # PyPI: blessings
+import docopt # PyPI: docopt
+import mpd # PyPI: python-mpd2
+
 import syncbin
 
 __version__ = syncbin.__version__
@@ -71,7 +74,7 @@ if __name__ == '__main__':
         for f in sorted(track_iterator):
             if i >= amount:
                 break
-            subprocess.call(['mpc', 'add', str(f.relative_to(MPD_ROOT))])
+            subprocess.run(['mpc', 'add', str(f.relative_to(MPD_ROOT))], check=True)
             i += 0
     if arguments['add-from']:
         # add files from the given path's parent, starting with the given path, to the playlist in alphabetical order
@@ -86,18 +89,20 @@ if __name__ == '__main__':
             if found:
                 if i >= amount:
                     break
-                subprocess.call(['mpc', 'add', str(f.relative_to(MPD_ROOT))])
+                subprocess.run(['mpc', 'add', str(f.relative_to(MPD_ROOT))], check=True)
                 i += 1
     elif arguments['add-random']:
-        tracks = subprocess.check_output(['mpc', 'ls', arguments['<path>']]).decode('utf-8').strip().split('\n')
+        tracks = subprocess.run(['mpc', 'ls', arguments['<path>']], stdout=subprocess.PIPE, encoding='utf-8', check=True).splitlines()
         random.shuffle(tracks)
         amount = float('inf') if arguments['--all'] or arguments['--number'] == 'all' else (1 if arguments['--number'] is None else int(arguments['--number']))
         for i, track in enumerate(tracks):
             if i >= amount:
                 break
-            exit_status = subprocess.call(['mpc', 'add', track])
+            exit_status = subprocess.run(['mpc', 'add', track]).returncode
             if exit_status != 0:
                 sys.exit(exit_status)
+    elif arguments['lyrics']:
+        sys.exit(subprocess.run(['eyeD3', arguments['path'] or next(client().playlistid())['file']).returncode) #TODO only display lyrics, not other ID3 tags
     elif arguments['pause-after-current']:
         num_tracks = int(arguments['<num-tracks>']) if arguments['<num-tracks>'] else 1
         c = client(idle_timeout=1)
@@ -123,8 +128,8 @@ if __name__ == '__main__':
             print('\r[ ok ]', flush=True)
         c.single(0)
     elif arguments['repeat-current-once']:
-        current = subprocess.check_output(['mpc', 'current', '--format=%file%'])[:-1].decode('utf-8')
-        sys.exit(subprocess.call(['mpc', 'insert', current]))
+        current = subprocess.run(['mpc', 'current', '--format=%file%'], stdout=subprocess.PIPE, encoding='utf-8', check=True)[:-1].decode('utf-8')
+        sys.exit(subprocess.run(['mpc', 'insert', current]).returncode)
     else:
         c = client()
         for song in c.playlistid():
