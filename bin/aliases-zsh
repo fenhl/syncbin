@@ -292,6 +292,10 @@ function retry {
         done
     fi
 }
+function rj { # restart the given systemd unit, then follow its journal
+    : from syncbin
+    sudo systemctl restart "$1" && sudo journalctl --unit="$1" --follow
+}
 function rm { # remove current directory when called without arguments
     : from syncbin
     if [ "$#" -gt 0 ]; then
