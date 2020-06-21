@@ -102,7 +102,7 @@ if __name__ == '__main__':
             if exit_status != 0:
                 sys.exit(exit_status)
     elif arguments['lyrics']:
-        sys.exit(subprocess.run(['eyeD3', arguments['path'] or next(client().playlistid())['file']]).returncode) #TODO only display lyrics, not other ID3 tags
+        sys.exit(subprocess.run(['eyeD3', arguments['<path>'] or next(client().playlistid())['file']]).returncode) #TODO only display lyrics, not other ID3 tags
     elif arguments['pause-after-current']:
         num_tracks = int(arguments['<num-tracks>']) if arguments['<num-tracks>'] else 1
         c = client(idle_timeout=1)
