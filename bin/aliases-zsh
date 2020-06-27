@@ -339,7 +339,7 @@ fi
 if ! (where svg2ps &> /dev/null); then
     alias svg2ps='cairosvg -f ps'
 fi
-alias syncbin-version='cat ${HUB:-/opt/hub}/fenhl/syncbin/version.txt'
+alias syncbin-version='cat ${GITDIR:-/opt/git}/github.com/fenhl/syncbin/master/version.txt'
 if ! (where tac &> /dev/null); then
     alias tac='tail -r'
 fi
