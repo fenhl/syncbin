@@ -204,13 +204,7 @@ function ll {
 compdef ll=ls
 alias mkcd='take'
 if ! (where pip3 &> /dev/null); then
-    if where pip-3.6 &> /dev/null; then
-        alias pip3='pip-3.6'
-    elif where pip-3.5 &> /dev/null; then
-        alias pip3='pip-3.5'
-    elif where pip-3.4 &> /dev/null; then
-        alias pip3='pip-3.4'
-    fi
+    alias pip3='python3 -m pip'
 fi
 function mnt {
     : from syncbin
@@ -232,7 +226,7 @@ if ! (where pcregrep &> /dev/null); then
     alias pcregrep='grep -P'
 fi
 if ! (where pip3i &> /dev/null); then
-    alias pip3i='pip3 install'
+    alias pip3i='python3 -m pip install --user'
 fi
 function pw {
     : from syncbin
