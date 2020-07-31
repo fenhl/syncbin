@@ -3,12 +3,30 @@
 # If any arguments are given, opens the first one in a new Firefox tab.
 # Otherwise, reads HTML from standard input and sends it to Firefox.
 
-if [ $# -eq 0 ]; then
-    tmpfile=$(mktemp /tmp/syncbin-firefox.XXXXXX)
-    cat > "$tmpfile"
-    firefox-tab "$tmpfile"
-    sleep 3
-    rm "$tmpfile"
+OSName=$(uname -s)
+if [ x"${OSName}" = x"Linux" ]; then
+    # Linux
+    if [ $# -eq 0 ]; then
+        tmpfile=$(mktemp /tmp/syncbin-firefox.XXXXXX)
+        cat > "$tmpfile"
+        firefox "$tmpfile" &
+        sleep 3
+        rm "$tmpfile"
+    else
+        firefox "$1" &
+    fi
+elif [ x"${OSName}" = x"Darwin" ]; then
+    # macOS
+    if [ $# -eq 0 ]; then
+        tmpfile=$(mktemp /tmp/syncbin-firefox.XXXXXX)
+        cat > "$tmpfile"
+        firefox-tab "$tmpfile"
+        sleep 3
+        rm "$tmpfile"
+    else
+        firefox-tab "$1"
+    fi
 else
-    firefox-tab "$1"
+    echo "unknown OS: ${OSName}"
+    exit 1
 fi
