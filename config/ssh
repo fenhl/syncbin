@@ -33,6 +33,10 @@ Host reiwa
     HostName mercredi.fenhl.net
     Port 2217
 
+Host september
+    HostName 192.168.178.59
+    User Fenhl
+
 Host weberserver
     HostName weberserver.fenhl.net
 
