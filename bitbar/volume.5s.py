@@ -17,6 +17,7 @@ if volume_str == 'missing value\n':
 else:
     volume = int(volume_str)
 
+#TODO check whether headphones are being used, expect 6 if yes, 25 if no
 if muted:
     print(f'|templateImage={MUTED}')
 elif volume < 6:
