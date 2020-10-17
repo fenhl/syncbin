@@ -2,6 +2,8 @@
 
 # A thin wrapper around `cmark` to generate a full HTML page.
 
+set -e
+
 echo '<!DOCTYPE html>'
 echo '<html>'
 echo '<head>'

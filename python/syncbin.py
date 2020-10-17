@@ -175,6 +175,7 @@ def bootstrap_debian_root():
         subprocess.run(['sudo', 'chmod', 'u+s', shutil.which('ping')], check=True)
 
 bootstrap_debian_root.apt_packages = {
+    'cmark', # for md
     'exa',
     'exiftool',
     'htop',
