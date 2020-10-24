@@ -28,6 +28,8 @@ def calculate_alpha(pixel, mode, light):
         pixel_brightness = sum(pixel) // 3
     elif mode == 'RGBA':
         pixel_brightness = sum(pixel[:3]) // 3
+    elif mode == 'L'
+        pixel_brightness = pixel
     elif mode == 'LA':
         pixel_brightness = pixel[0]
     else:
