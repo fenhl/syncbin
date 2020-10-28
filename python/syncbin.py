@@ -21,7 +21,9 @@ Options:
 import sys
 
 import contextlib
+import ensurepip
 import getpass
+import importlib
 import pathlib
 import os
 import subprocess
@@ -109,6 +111,17 @@ def lock(lock_name):
 
 def py_dir():
     return pathlib.Path('/opt/py' if root() else '{}/py'.format(os.environ['HOME']))
+
+def pypi_import(name, package=None):
+    # just try importing the module first, in case it's already installed
+    with contextlib.suppress(ImportError):
+        return importlib.import_module(name)
+    # import failed, try installing the package
+    if package is None:
+        package = name
+    ensurepip.bootstrap(upgrade=True, user=True)
+    subprocess.run(['python3', '-m', 'pip', 'install', '--user', package], check=True)
+    return importlib.import_module(name)
 
 def root():
     if getpass.getuser() == 'root':
