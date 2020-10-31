@@ -21,7 +21,6 @@ Options:
 import sys
 
 import contextlib
-import ensurepip
 import getpass
 import importlib
 import pathlib
@@ -119,6 +118,8 @@ def pypi_import(name, package=None):
     # import failed, try installing the package
     if package is None:
         package = name
+    with contextlib.suppress(ImportError): # Debian doesn't have ensurepip but does have pip
+        import ensurepip
     ensurepip.bootstrap(upgrade=True, user=True)
     subprocess.run([sys.executable or 'python3', '-m', 'pip', 'install' , '--quiet', '--user', package], check=True)
     return importlib.import_module(name)
