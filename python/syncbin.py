@@ -120,7 +120,7 @@ def pypi_import(name, package=None):
     if package is None:
         package = name
     ensurepip.bootstrap(upgrade=True, user=True)
-    subprocess.run([sys.executable or 'python3', '-m', 'pip', 'install', '--user', package], check=True)
+    subprocess.run([sys.executable or 'python3', '-m', 'pip', 'install' , '--quiet', '--user', package], check=True)
     return importlib.import_module(name)
 
 def root():
