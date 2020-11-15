@@ -102,6 +102,3 @@ $VIRTUAL_ENV_DISABLE_PROMPT = 1
 
 # Ruby config
 $GEM_HOME = p'~/.local/share/gem'
-
-# Rust config
-RUST_SRC_PATH = ['/opt/git/github.com/rust-lang/rust/master/src'] # required by racer

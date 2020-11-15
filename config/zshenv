@@ -110,8 +110,5 @@ export ZSH="${GITDIR}/github.com/robbyrussell/oh-my-zsh/master"
 # Ruby config
 export GEM_HOME="${HOME}/.local/share/gem"
 
-# Rust config
-export RUST_SRC_PATH="/opt/git/github.com/rust-lang/rust/master/src" # required by racer
-
 # TeX and LaTeX config
 export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"
