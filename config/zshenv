@@ -110,5 +110,8 @@ export ZSH="${GITDIR}/github.com/robbyrussell/oh-my-zsh/master"
 # Ruby config
 export GEM_HOME="${HOME}/.local/share/gem"
 
+# Rust config
+export CARGO_MSG_LIMIT=1 # commands from the cargo-limit crate should only show the first error message
+
 # TeX and LaTeX config
 export TEXINPUTS=".:~/Library/Application\ Support/Fenhl/tex:"
