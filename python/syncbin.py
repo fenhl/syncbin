@@ -162,6 +162,7 @@ def bootstrap_setup(setup_name):
         f.requirements = []
         f.requires = requires
         f.apt_packages = set()
+        f.dist_apt_packages = {}
         return f
     return inner_wrapper
 
@@ -190,7 +191,6 @@ def bootstrap_debian_root():
 
 bootstrap_debian_root.apt_packages = {
     'cmark', # for md
-    'exa',
     'exiftool',
     'htop',
     'jq',
@@ -202,6 +202,10 @@ bootstrap_debian_root.apt_packages = {
     'ssmtp', #TODO configure
     'unattended-upgrades' #TODO configure (unattended-upgrades config, call night-device-report)
 }
+
+# exa not available on Ubuntu for some reason
+bootstrap_debian_root.dist_apt_packages['Debian'] = {'exa'}
+bootstrap_debian_root.dist_apt_packages['Raspbian'] = {'exa'}
 
 @bootstrap_debian_root.test_installed
 def bootstrap_debian_root():
@@ -564,8 +568,13 @@ if bootstrap_syncbin_private.is_installed():
         syncbin_private.update_bootstrap_setups(BOOTSTRAP_SETUPS)
 
 def bootstrap(*setups):
-    if get_os() in ('Debian', 'Raspbian', 'Ubuntu'):
-        subprocess.run(([] if getpass.getuser() == 'root' else ['sudo']) + ['apt-get', 'install', '-y'] + list(set.union(*(BOOTSTRAP_SETUPS[setup_name].apt_packages for setup_name in setups))), check=True)
+    apt_packages = set()
+    for setup_name in setups:
+        apt_packages |= BOOTSTRAP_SETUPS[setup_name].dist_apt_packages.get(get_os(), set())
+        if get_os() in ('Debian', 'Raspbian', 'Ubuntu'):
+            apt_packages |= BOOTSTRAP_SETUPS[setup_name].apt_packages
+    if apt_packages:
+        subprocess.run(([] if getpass.getuser() == 'root' else ['sudo']) + ['apt-get', 'install', '-y'] + sorted(apt_packages), check=True)
     for setup_name in setups:
         if setup_name not in BOOTSTRAP_SETUPS:
             print('[!!!!] Unknown setup for `syncbin bootstrap`: {!r}'.format(setup_name), file=sys.stderr)
