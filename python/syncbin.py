@@ -120,7 +120,7 @@ def pypi_import(name, package=None):
         package = name
     with contextlib.suppress(ImportError): # Debian doesn't have ensurepip but does have pip
         import ensurepip
-    ensurepip.bootstrap(upgrade=True, user=True)
+        ensurepip.bootstrap(upgrade=True, user=True)
     subprocess.run([sys.executable or 'python3', '-m', 'pip', 'install' , '--quiet', '--user', package], check=True)
     return importlib.import_module(name)
 
@@ -303,26 +303,6 @@ def bootstrap_keylayout():
 
 bootstrap_keylayout.requires('gitdir')
 
-@bootstrap_setup('lns')
-def bootstrap_lns():
-    try:
-        import requests
-    except ImportError:
-        sys.exit('[!!!!] missing requests, run `syncbin bootstrap python` first')
-
-    bin_path = (pathlib.Path.home() / 'bin')
-    if not bin_path.exists():
-        bin_path.mkdir()
-    subprocess.run(['tar', '-xzf', '-'], input=requests.get('http://www.chiark.greenend.org.uk/~sgtatham/utils/lns.tar.gz', timeout=30.05).content, cwd=str(bin_path), check=True)
-    (bin_path / 'lns').rename(bin_path / '.lnsdir')
-    (bin_path / '.lnsdir' / 'lns').rename(bin_path / 'lns')
-    shutil.rmtree(str(bin_path / '.lnsdir'))
-    (bin_path / 'lns').chmod(0o755)
-
-@bootstrap_lns.test_installed
-def bootstrap_lns():
-    return shutil.which('lns') is not None
-
 @bootstrap_setup('macbook')
 def bootstrap_macbook():
     """Installs `batcharge` for MacBooks."""
@@ -340,19 +320,6 @@ def bootstrap_macbook():
     if not config_path.is_symlink():
         return False
     return config_path.resolve() == (git_dir() / 'fenhl.net' / 'syncbin-private' / 'master' / 'python' / 'batcharge_macbook.py').resolve()
-
-@bootstrap_setup('macos')
-def bootstrap_macos():
-    """Disables IPv6 privacy extensions on macOS."""
-    subprocess.run(['sudo', 'sysctl', '-w', 'net.inet6.ip6.use_tempaddr=0'], check=True)
-    subprocess.run(['sudo', 'tee', '-a', '/etc/sysctl.conf'], input='net.inet6.ip6.use_tempaddr=0\n', encoding='utf-8', stdout=subprocess.DEVNULL, check=True)
-    if yesno('Open System Preferences to disable and reenable network interfaces now?'):
-        subprocess.run(['open', '-Wa', 'System Preferences'], check=True)
-
-@bootstrap_macos.test_installed
-def bootstrap_macos():
-    with contextlib.suppress(subprocess.CalledProcessError):
-        return 'net.inet6.ip6.use_tempaddr=0' in subprocess.run(['sudo', '-n', 'cat', '/etc/sysctl.conf'], stdout=subprocess.PIPE, encoding='utf-8', check=True).stdout
 
 @bootstrap_setup('nginx')
 def bootstrap_nginx():
@@ -443,7 +410,7 @@ def bootstrap_python():
 def bootstrap_rust():
     """Installs Rust via `rustup`."""
     #TODO install Rust via apt-get if on Debian ≥10
-    subprocess.run('curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y', shell=True, check=True)
+    subprocess.run('curl --proto \'=https\' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path -y', shell=True, check=True)
     if shutil.which('exa') is None:
         subprocess.run(['cargo', 'install', 'cargo-update', 'exa'], check=True)
     subprocess.run(['cargo', 'install', '--git=https://github.com/fenhl/diskspace'], check=True)
