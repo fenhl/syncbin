@@ -14,7 +14,7 @@ The current version can be found in [`version.txt`](version.txt).
 
 # Installation
 
-The following *should* install `syncbin` and a couple of other things like [homebrew](https://brew.sh/), [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh), [zsh-completions](https://github.com/zsh-users/zsh-completions):
+The following command downloads and runs [`install.sh`](config/install.sh), thereby installing `syncbin` and a couple of other things like [homebrew](https://brew.sh/), [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh), and [zsh-completions](https://github.com/zsh-users/zsh-completions):
 
 ```sh
 curl --proto '=https' --tlsv1.2 -sSf https://start.fenhl.net | sh
