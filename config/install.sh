@@ -393,8 +393,6 @@ githubinstall fenhl syncbin || exit 1
 
 ln -fs ${HUB}/fenhl/syncbin/master/config/zshenv ~/.zshenv
 ln -fs ${HUB}/fenhl/syncbin/master/config/zshrc ~/.zshrc
-ln -fs ${HUB}/fenhl/syncbin/master/config/bash_profile ~/.bash_profile
-ln -fs ${HUB}/fenhl/syncbin/master/config/profile ~/.profile
 
 if [ $pi_reinstall = yes ]; then
     : # Zsh is already installed and enabled
