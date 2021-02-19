@@ -14,11 +14,12 @@ Options:
   --version        Print version info and exit.
 """
 
-import PIL.Image
-import PIL.ImageColor
-import docopt
 import pathlib
-import re
+
+import PIL.Image # PyPI: Pillow
+import PIL.ImageColor # PyPI: Pillow
+import docopt # PyPI: docopt
+
 import syncbin
 
 __version__ = syncbin.__version__
@@ -63,6 +64,15 @@ if __name__ == '__main__':
     else:
         color = PIL.ImageColor.getrgb(arguments['--color'])
         assert len(color) == 3
-    with PIL.Image.open(arguments['<input>']) as input_image:
-        output_image = convert(input_image, light=arguments['--light'], color=color, verbose=arguments['--verbose'])
-    output_image.save(arguments['<output>'])
+    input_path = pathlib.Path(arguments['<input>'])
+    output_path = pathlib.Path(arguments['<output>'])
+    if input_path.is_dir():
+        assert output_path.is_dir()
+        for image_path in input_path.iterdir():
+            with PIL.Image.open(image_path) as input_image:
+                output_image = convert(input_image, light=arguments['--light'], color=color, verbose=arguments['--verbose'])
+            output_image.save(output_path / image_path.name)
+    else:
+        with PIL.Image.open(input_path) as input_image:
+            output_image = convert(input_image, light=arguments['--light'], color=color, verbose=arguments['--verbose'])
+        output_image.save(output_path)
