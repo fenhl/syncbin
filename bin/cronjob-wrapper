@@ -1,13 +1,29 @@
 #!/usr/local/bin/zsh
 
-# for macOS
-
-if zsh -c "${2:-$1}" &> /tmp/cronjob-"$1".log; then
-    rm /tmp/cronjob-"$1".log
-    rm -f /Users/fenhl/Desktop/cronjob-"$1".log
-else
-    #terminal-notifier -sound default -message 'cronjob '"$1"' failed'
-    if [[ -s /tmp/cronjob-"$1".log ]]; then
-        mv /tmp/cronjob-"$1".log /Users/fenhl/Desktop
+OSName=$(uname -s)
+if [ x"${OSName}" = x"Linux" ]; then
+    # Linux
+    if zsh -c "${2:-$1}" &> /tmp/cronjob-"$1".log; then
+        rm /tmp/cronjob-"$1".log
+        rm -f /home/fenhl/.local/share/syncbin/cronjob-"$1".log
+    else
+        #terminal-notifier -sound default -message 'cronjob '"$1"' failed'
+        if [[ -s /tmp/cronjob-"$1".log ]]; then
+            mv /tmp/cronjob-"$1".log /home/fenhl/.local/share/syncbin
+        fi
     fi
+elif [ x"${OSName}" = x"Darwin" ]; then
+    # macOS
+    if zsh -c "${2:-$1}" &> /tmp/cronjob-"$1".log; then
+        rm /tmp/cronjob-"$1".log
+        rm -f /Users/fenhl/Desktop/cronjob-"$1".log
+    else
+        #terminal-notifier -sound default -message 'cronjob '"$1"' failed'
+        if [[ -s /tmp/cronjob-"$1".log ]]; then
+            mv /tmp/cronjob-"$1".log /Users/fenhl/Desktop
+        fi
+    fi
+else
+    echo "unknown OS: ${OSName}"
+    exit 1
 fi
