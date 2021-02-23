@@ -4,35 +4,45 @@
 
 import sys
 
-import gitdir.host
-import gitdir.host.fenhl
-import gitdir.host.github
 import pathlib
 import subprocess
+
+import gitdir.host # https://github.com/fenhl/gitdir
+import gitdir.host.fenhl # https://github.com/fenhl/gitdir
+import gitdir.host.github # https://github.com/fenhl/gitdir
+
+import syncbin
 
 def make_path(args):
     if len(args) == 0:
         return pathlib.Path()
     elif len(args) == 1:
         if '/' in args[0]:
-            return gitdir.host.github.GitHub().repo(args[0]).stage_path
-        github = gitdir.host.github.GitHub().repo(f'fenhl/{args[0]}').stage_path
-        mercredi = gitdir.host.fenhl.Fenhl().repo(args[0]).stage_path
-        if github.exists() and mercredi.exists():
+            return gitdir.host.github.GitHub().repo(args[0])
+        github = gitdir.host.github.GitHub().repo(f'fenhl/{args[0]}')
+        mercredi = gitdir.host.fenhl.Fenhl().repo(args[0])
+        if github.stage_path.exists() and mercredi.stage_path.exists():
             raise ValueError('Repo exists on fenhl.net and github.com, specify host')
-        elif github.exists():
+        elif github.stage_path.exists():
             return github
-        elif mercredi.exists():
+        elif mercredi.stage_path.exists():
             return mercredi
         else:
             raise ValueError('No such repo')
     elif len(args) == 2:
-        return gitdir.host.by_name(args[0]).repo(args[1]).stage_path
+        return gitdir.host.by_name(args[0]).repo(args[1])
     else:
         raise ValueError('Too many arguments')
 
 if __name__ == '__main__':
-    path = make_path(sys.argv[1:])
-    if not path.exists():
-        sys.exit('[!!!!] no such repo')
+    repo_or_path = make_path(sys.argv[1:])
+    if isinstance(repo_or_path, gitdir.host.Repo):
+        if not repo_or_path.stage_path.exists():
+            if syncbin.yesno('stage path does not exist, clone from remote?'):
+                repo_or_path.clone_stage()
+            else:
+                sys.exit(1)
+        path = repo_or_path.stage_path
+    else:
+        path = repo_or_path
     sys.exit(subprocess.call(['code', '-n', str(path.resolve())]))
