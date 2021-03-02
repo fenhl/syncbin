@@ -5,8 +5,9 @@ import sys
 
 sys.path += ['/opt/py', str(pathlib.Path.home() / 'py')]
 
-import gitdir.host
 import subprocess
+
+import gitdir.host # https://github.com/fenhl/gitdir
 
 if __name__ == '__main__':
     subprocess.run(['git', 'push'], check=True)

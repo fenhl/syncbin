@@ -219,28 +219,30 @@ else
     exit 1
 fi
 
-# install RubyGems
+# install RubyGems (for `webloc`)
 
-if which gem > /dev/null 2>&1; then
-    : # found RubyGems
-elif isdeb; then
-    if [ $pi_reinstall = yes ] || yesno 'RubyGems not found, install using apt-get?'; then
-        if [ $pi_reinstall = yes ]; then
-            sudo apt-get -y install ruby
-        elif which sudo > /dev/null 2>&1; then
-            sudo apt-get install ruby
-        else
-            apt-get install ruby
+if [ "${OSName}" = "OS X" ]; then
+    if which gem > /dev/null 2>&1; then
+        : # found RubyGems
+    elif isdeb; then
+        if [ $pi_reinstall = yes ] || yesno 'RubyGems not found, install using apt-get?'; then
+            if [ $pi_reinstall = yes ]; then
+                sudo apt-get -y install ruby
+            elif which sudo > /dev/null 2>&1; then
+                sudo apt-get install ruby
+            else
+                apt-get install ruby
+            fi
         fi
     fi
-fi
 
-if which gem > /dev/null 2>&1; then
-    : # found RubyGems
-elif yesno 'RubyGems not found, continue anyway?'; then
-    : # continue anyway
-else
-    exit 1
+    if which gem > /dev/null 2>&1; then
+        : # found RubyGems
+    elif yesno 'RubyGems not found, continue anyway?'; then
+        : # continue anyway
+    else
+        exit 1
+    fi
 fi
 
 # get hub directory
