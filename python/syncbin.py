@@ -40,6 +40,14 @@ except ImportError:
 
 BOOTSTRAP_SETUPS = {}
 
+def choose(question, answers):
+    answer = input('[ ?? ] {} [{}] '.format(question, '/'.join(short for short, long in answers)))
+    while True:
+        for short, long in answers:
+            if answer.lower() in (short.lower(), long.lower()):
+                return long
+        answer = input('[ ?? ] unrecognized answer, type {}: '.format(' or '.join(f'“{long}”' for short, long in answers)))
+
 def git_dir(existing_only=True):
     with contextlib.suppress(ImportError):
         import gitdir
@@ -137,13 +145,10 @@ def version():
         return '0.0'
 
 def yesno(question):
-    answer = input('[ ?? ] {} [y/n] '.format(question))
-    while True:
-        if answer.lower() in ('y', 'yes'):
-            return True
-        elif answer.lower() in ('n', 'no'):
-            return False
-        answer = input('[ ?? ] unrecognized answer, type “yes” or “no”: ')
+    return {
+        'yes': True,
+        'no': False
+    }[choose(question, [('y', 'yes'), ('n', 'no')])]
 
 __version__ = version()
 
