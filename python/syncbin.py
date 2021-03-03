@@ -422,8 +422,10 @@ def bootstrap_rust():
 
 bootstrap_rust.apt_packages = {
     'curl',
+    'libdbus-1-3', # for diskspace
+    'libdbus-1-dev', # for diskspace
     'libssl-dev',
-    'pkg-config'
+    'pkg-config'  # for diskspace
 }
 
 @bootstrap_rust.test_installed
