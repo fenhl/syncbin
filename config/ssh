@@ -35,7 +35,6 @@ Host reiwa
 
 Host september
     HostName 192.168.178.59
-    User Fenhl
 
 Host weberserver
     HostName weberserver.fenhl.net
