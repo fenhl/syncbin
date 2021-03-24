@@ -417,7 +417,7 @@ def bootstrap_rust():
     #TODO install Rust via apt-get if on Debian ≥10
     subprocess.run('curl --proto \'=https\' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path -y', shell=True, check=True)
     if shutil.which('exa') is None:
-        subprocess.run(['cargo', 'install', 'cargo-update', 'exa'], check=True)
+        subprocess.run(['cargo', 'install', 'cargo-limit', 'cargo-update', 'exa'], check=True)
     subprocess.run(['cargo', 'install', '--git=https://github.com/fenhl/diskspace', '--branch=main'], check=True)
 
 bootstrap_rust.apt_packages = {
