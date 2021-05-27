@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+
+"""Turn an image black-and-white with a given brightness threshold.
+
+Usage:
+  threshold [options] <input> <output>
+  threshold -h | --help
+  threshold --version
+
+Options:
+  -h, --help                   Print this message and exit.
+  -t --threshold=<brightness>  Use the given brightness cutoff point on a scale from 0 to 255. [Default: 128]
+  --version                    Print version info and exit.
+"""
+
+import pathlib
+
+import PIL.Image # PyPI: Pillow
+import docopt # PyPI: docopt
+
+import syncbin
+
+__version__ = syncbin.__version__
+
+def convert(img, threshold):
+    i = img.copy().convert('LA')
+    for y in range(i.size[1]):
+        for x in range(i.size[0]):
+            if i.getpixel((x, y))[0] > threshold:
+                i.putpixel((x, y), (255, i.getpixel((x, y))[1]))
+            else:
+                i.putpixel((x, y), (0, i.getpixel((x, y))[1]))
+    return i
+
+if __name__ == '__main__':
+    arguments = docopt.docopt(__doc__, version='threshold from fenhl/syncbin ' + __version__)
+    threshold = int(arguments['--threshold'])
+    input_path = pathlib.Path(arguments['<input>'])
+    output_path = pathlib.Path(arguments['<output>'])
+    if input_path.is_dir():
+        assert output_path.is_dir()
+        for image_path in input_path.iterdir():
+            with PIL.Image.open(image_path) as input_image:
+                output_image = convert(input_image, threshold)
+            output_image.save(output_path / image_path.name)
+    else:
+        with PIL.Image.open(input_path) as input_image:
+            output_image = convert(input_image, threshold)
+        output_image.save(output_path)
