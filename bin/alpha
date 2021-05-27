@@ -5,6 +5,7 @@
 Usage:
   alpha [options] <input> <output>
   alpha -h | --help
+  alpha --version
 
 Options:
   -h, --help       Print this message and exit.
