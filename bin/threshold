@@ -8,6 +8,7 @@ Usage:
   threshold --version
 
 Options:
+  -d, --dark                   Use the pixels below the brightness cutoff point instead of those above it.
   -h, --help                   Print this message and exit.
   -t --threshold=<brightness>  Use the given brightness cutoff point on a scale from 0 to 255. [Default: 128]
   --version                    Print version info and exit.
@@ -22,11 +23,11 @@ import syncbin
 
 __version__ = syncbin.__version__
 
-def convert(img, threshold):
+def convert(img, threshold, dark=False):
     i = img.copy().convert('LA')
     for y in range(i.size[1]):
         for x in range(i.size[0]):
-            if i.getpixel((x, y))[0] > threshold:
+            if (i.getpixel((x, y))[0] > threshold) != dark:
                 i.putpixel((x, y), (255, i.getpixel((x, y))[1]))
             else:
                 i.putpixel((x, y), (0, i.getpixel((x, y))[1]))
@@ -41,9 +42,9 @@ if __name__ == '__main__':
         assert output_path.is_dir()
         for image_path in input_path.iterdir():
             with PIL.Image.open(image_path) as input_image:
-                output_image = convert(input_image, threshold)
+                output_image = convert(input_image, threshold, arguments['--dark'])
             output_image.save(output_path / image_path.name)
     else:
         with PIL.Image.open(input_path) as input_image:
-            output_image = convert(input_image, threshold)
+            output_image = convert(input_image, threshold, arguments['--dark'])
         output_image.save(output_path)
