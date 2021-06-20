@@ -475,6 +475,7 @@ def bootstrap_syncbin_private():
     import gitdir.host
 
     try:
+        gitdir.host.by_name('fenhl.net').clone('dev') #TODO build, include in rust all-projects
         gitdir.host.by_name('fenhl.net').clone('syncbin-private')
     except PermissionError:
         sys.exit('[!!!!] Permission denied. Fix /opt/git permissions, then try again.')
