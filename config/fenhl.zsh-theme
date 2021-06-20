@@ -4,64 +4,61 @@
 function syncbin-prompt-user {
     if [[ $(whoami) == $DEFAULT_USER ]]; then
         if [[ $(whoami) == root ]]; then
-            echo '#'
-        else
-            echo ' '
+            echo 'root' # always show root user even if it's default for some reason
         fi
-    elif [[ $(whoami) == root ]]; then
-        echo '%B%F{white}#%b%f'
     else
-        echo '%B%F{white}'$(whoami | cut -c 1)'%b%f'
+        echo '%B%n%b'
     fi
 }
 
 function syncbin-prompt-host {
-    if hostname -f &> /dev/null; then
-        if [[ -n "$STY" ]] || [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
-            echo '%B%F{white}'$(hostname -f | cut -c 1)'%b%f'
-        else
-            echo ' '
-        fi
-    else
-        echo '%B%F{white}?%b%f'
+    if [[ -n "$STY" ]] || [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
+        echo '%B%m%b' #TODO use night hostname?
     fi
 }
 
 function syncbin-prompt-path {
     if ! [[ -d "$(pwd -P)" ]]; then
-        echo '%B%F{red}!%b%f'
+        echo '%B%F{red}%~%b%f'
     elif [[ $PWD == $HOME ]]; then
-        echo ' '
-    elif [[ $PWD == '/' ]]; then
-        echo '%B%F{white}/%b%f'
-    elif (( $+path[(r)$PWD] )); then
-        echo '%B%F{white}b%b%f'
-    elif git branch &> /dev/null; then
-        echo '%B%F{white}g%b%f'
-    elif hg root &> /dev/null; then
-        echo '%B%F{white}m%b%f'
-    elif ishome &> /dev/null; then
-        echo '%B%F{white}~%b%f'
+        : # omit path
     else
-        echo '%B%F{white}.%b%f'
+        echo '%B%~%b'
     fi
 }
 
 function syncbin-prompt-shell {
     if [[ -n "$VIRTUAL_ENV" ]]; then
-        echo '%B%F{white}P%b%f'
+        echo '%BP%b' # Python venv
     elif [[ -n "$STY" ]]; then
-        echo '%B%F{white}S%b%f'
+        echo '%BS%b' # screen
     elif [[ $(type accio) == "accio is an alias for . accio" ]]; then
-        echo '%%'
+        echo '%%' # syncbin seems to be fully initialized
     else
-        echo '%B%F{white}%%%b%f'
+        echo '%B?%b' # syncbin not fully initialized
     fi
+}
+
+function syncbin-prompt {
+    syncbin_prompt_user="$(syncbin-prompt-user)"
+    syncbin_prompt_host="$(syncbin-prompt-host)"
+    syncbin_prompt_path="$(syncbin-prompt-path)"
+    if [[ x"${syncbin_prompt_user}" != x'' ]] && ([[ x"${syncbin_prompt_host}" != x'' ]] || [[ x"${syncbin_prompt_path}" != x'' ]]); then
+        syncbin_prompt_sep_user_host='@'
+    else
+        syncbin_prompt_sep_user_host=''
+    fi
+    if [[ x"${syncbin_prompt_host}" != x'' ]] && [[ x"${syncbin_prompt_path}" != x'' ]]; then
+        syncbin_prompt_sep_host_path=':'
+    else
+        syncbin_prompt_sep_host_path=''
+    fi
+    echo "${syncbin_prompt_user}${syncbin_prompt_sep_user_host}${syncbin_prompt_host}${syncbin_prompt_sep_host_path}${syncbin_prompt_path}$(syncbin-prompt-shell) "
 }
 
 setopt prompt_subst # make sure the functions in the prompts are actually called
 
-PROMPT='[$(syncbin-prompt-user)$(syncbin-prompt-host)$(syncbin-prompt-path)$(syncbin-prompt-shell)] '
+PROMPT='$(syncbin-prompt)'
 RPROMPT='%F{red}'
 for file in ${GITDIR}/github.com/fenhl/syncbin/master/rprompt/*; do
     RPROMPT+='$('
@@ -69,4 +66,4 @@ for file in ${GITDIR}/github.com/fenhl/syncbin/master/rprompt/*; do
     RPROMPT+=')'
 done
 RPROMPT+='%(?..[exit: %?])%f'
-PROMPT2='       zsh %_> '
+PROMPT2='    zsh %_> '
