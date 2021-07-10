@@ -112,6 +112,7 @@ def rustup_update(toolchain=None, timeout=300):
         update_popen.terminate()
         print('[!!!!]', 'updating Rust {}: timed out'.format(toolchain), file=sys.stderr)
         sys.exit(update_popen.returncode)
+    #TODO cargo sweep --installed -r /opt/git
     with syncbin.lock('rust'): # see https://github.com/rust-lang/rustup.rs/issues/988
         subprocess.check_call(env('rustup', 'self', 'update'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 

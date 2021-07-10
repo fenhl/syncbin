@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""A Python wrapper around youtube-dl for downloading and watching YouTube videos.
+"""A convenience wrapper around youtube-dl for downloading and watching YouTube videos.
 
 Usage:
   tube [options]
@@ -20,43 +20,46 @@ Options:
   -W, --watch-in-background  Open the video. This action does not block and does not open a new instance of the video player app.
 """
 
-__version__ = '2.2.0'
+__version__ = '2.2.1'
 
 import sys
 
-from datetime import datetime
-import os.path
+import datetime
+import pathlib
 import subprocess
+
+PATH = pathlib.Path.home() / 'Movies' / 'tube'
 
 def delete(video_id):
     if video_id is None:
-        sys.exit('[!!!!] No video specified')
+        sys.exit('tube: no video specified')
     else:
-        os.remove(os.path.expanduser('~/Movies/tube/' + video_id + '.mp4'))
+        (PATH / f'{video_id}.mp4').unlink()
 
 def download(video_id):
     if video_id is None:
-        sys.exit('[!!!!] No video specified')
+        sys.exit('tube: no video specified')
     else:
-        subprocess.check_call(['youtube-dl', '--id', 'https://youtube.com/watch?v=' + video_id], stdout=subprocess.DEVNULL, cwd=os.path.expanduser('~/Movies/tube'))
+        PATH.mkdir(parents=True, exist_ok=True)
+        subprocess.run(['youtube-dl', '--id', f'https://youtube.com/watch?v={video_id}'], stdout=subprocess.DEVNULL, cwd=PATH, check=True)
 
 def list_videos():
-    subprocess.call(['ls', '-hlF', os.path.expanduser('~/Movies/tube')])
+    subprocess.run(['ls', '-hlF', str(PATH)], check=True)
 
 def open_videos_dir():
-    subprocess.call(['open', os.path.expanduser('~/Movies/tube')])
+    subprocess.run(['open', str(PATH)], check=True)
 
 def print_timestamp():
-    print('[ ** ] ' + datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'))
+    print(f'{datetime.datetime.utcnow():%Y-%m-%d %H:%M:%S}')
 
 def print_version():
-    print('[ ** ] tube ' + __version__ + ' by Fenhl')
+    print(f'tube {__version__} by Fenhl')
 
 def watch(video_id, block=True):
     if video_id is None:
-        print('[!!!!] No video specified', file=sys.stderr)
+        print('tube: no video specified', file=sys.stderr)
     else:
-        subprocess.check_call(['open'] + (['-nW'] if block else []) + ['--', video_id + '.mp4'], cwd=os.path.expanduser('~/Movies/tube'))
+        subprocess.run(['open'] + (['-nW'] if block else []) + ['--', video_id + '.mp4'], cwd=PATH, check=True)
 
 if __name__ == '__main__':
     arguments = sys.argv[1:]
@@ -80,8 +83,7 @@ if __name__ == '__main__':
                 print_version()
             elif argument == '--video':
                 if len(arguments) == 0:
-                    print('[!!!!] Syntax error: missing video ID', file=sys.stderr)
-                    sys.exit(1)
+                    sys.exit('tube: missing video ID')
                 else:
                     video_id = arguments.pop(0)
             elif argument.startswith('--video='):
@@ -91,7 +93,7 @@ if __name__ == '__main__':
             elif argument == '--watch-in-background':
                 watch(video_id, block=False)
             else:
-                sys.exit('[!!!!] No such action: ' + argument)
+                sys.exit(f'tube: no such action: {argument}')
         elif argument.startswith('-'):
             letters = argument[1:]
             while len(letters) > 0:
@@ -118,12 +120,12 @@ if __name__ == '__main__':
                     elif len(arguments):
                         video_id = arguments.pop(0)
                     else:
-                        sys.exit('[!!!!] Syntax error: missing video ID')
+                        sys.exit('tube: missing video ID')
                 elif letter == 'w':
                     watch(video_id)
                 elif letter == 'W':
                     watch(video_id, block=False)
                 else:
-                    sys.exit('[!!!!] No such action: ' + letter)
+                    sys.exit(f'tube: no such action: {letter}')
         else:
             video_id = argument
