@@ -113,7 +113,16 @@ function gco {
 }
 function gd {
     : from syncbin
+    if [[ x"$TERM_PROGRAM" == x'vscode' ]] && git config diff.tool > /dev/null; then
+        if [[ -n "$STY" ]] || [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
+            : # inside VS Code but also inside an SSH session or screen, use the regular `git diff`
+        else
+            git difftool -y "$@"
+            return $?
+        fi
+    fi
     git diff --color "$@" | less -R
+    return $?
 }
 alias gds='gd --staged'
 function gpu {
