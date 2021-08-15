@@ -157,7 +157,7 @@ function test-missing-python-package {
 if ! where py-where &> /dev/null; then
     echo '[ !! ] failed to check for required Python packages: py-where not found'
 elif ! py-where blessings &> /dev/null; then
-    echo '[ !! ] missing Python package “blessings”, install with `[sudo ]pip3 install blessings`'
+    echo '[ !! ] missing Python package “blessings”, install with `py -m pip install blessings`'
 else
     test-missing-python-package basedir 'fenhl/python-xdg-basedir'
     test-missing-python-package click
