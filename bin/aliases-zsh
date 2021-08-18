@@ -377,6 +377,8 @@ compdef umnt=umount
 alias undawg='udawg'
 alias view='less' # view is less for now, working on a script that uses cat if the file is shorter than the terminal height
 # define aliases from loaded oh-my-zsh plugins
+which tab > /dev/null
+tab_exists=$?
 for plugin in $OMZ_PLUGINS; do
     if [ -f ${HOME}/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin/$plugin.plugin.zsh ]; then
         . ${HOME}/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin/$plugin.plugin.zsh
@@ -384,5 +386,8 @@ for plugin in $OMZ_PLUGINS; do
         . /opt/git/github.com/robbyrussell/oh-my-zsh/master/plugins/$plugin/$plugin.plugin.zsh
     fi
 done
+if [ $tab_exists -eq 0 ]; then
+    unfunction tab # `tab` defined in syncbin-private, don't shadow with the omz-osx command
+fi
 # define Bourne shell aliases
 . aliases
