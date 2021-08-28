@@ -68,7 +68,7 @@ function date {
         command date "$@"
         return $?
     else
-        command date -u '+[date] w%V.%u: %Y-%m-%d %H:%M:%S'
+        command date -u '+w%V.%u: %Y-%m-%d %H:%M:%S'
         return $?
     fi
 }
