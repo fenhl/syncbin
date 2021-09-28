@@ -260,6 +260,9 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
         else
             rust --quiet --no-project
         fi
+        mkdir -p ~/.config/syncbin/zsh-completions
+        rustup completions zsh > ~/.config/syncbin/zsh-completions/_rustup
+        rustup completions zsh cargo > ~/.config/syncbin/zsh-completions/_cargo
     elif where rustc &> /dev/null; then
         print-warning 'rustup not installed' '===.' 'running startup script: rustup'
     fi
