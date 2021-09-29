@@ -58,4 +58,4 @@ if total > 0:
                     print('---')
                     print(f'{guild["name"]}#{channel["name"]}')
                     for member in channel['members']:
-                        print(f'{member["username"]}#{member["discriminator"]}')
+                        print(f'{member["username"].replace("|", "¦")}#{member["discriminator"]}')
