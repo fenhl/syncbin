@@ -387,7 +387,7 @@ for plugin in $OMZ_PLUGINS; do
     fi
 done
 if [ $tab_exists -eq 0 ]; then
-    unfunction tab # `tab` defined in syncbin-private, don't shadow with the omz-osx command
+    unfunction tab # `tab` defined in syncbin-private, don't shadow with the omz-macos command
 fi
 # define Bourne shell aliases
 . aliases

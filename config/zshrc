@@ -3,7 +3,7 @@ stty -ixon # disable flow control
 
 printf '[....] defining environment variables and behavior\r'
 
-OMZ_PLUGINS=(command-not-found encode64 osx ruby)
+OMZ_PLUGINS=(command-not-found encode64 macos ruby)
 . "${GITDIR}/github.com/fenhl/syncbin/master/config/fenhl.zsh-theme"
 
 if [ -r "${GITDIR}/github.com/fenhl/syncbin/master/config/zshrc_$TERM_PROGRAM" ]; then
