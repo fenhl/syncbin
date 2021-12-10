@@ -268,7 +268,7 @@ def bootstrap_finder():
 def bootstrap_gitdir():
     """Installs `gitdir` and configures `git`. Requires the `python` setup."""
     subprocess.run(['git', 'config', '--global', 'merge.conflictstyle', 'diff3'], check=True)
-    subprocess.run([sys.executable or 'python3', '-m', 'pip', 'install' , '--quiet', '--user', 'PyGithub'], check=True)
+    subprocess.run([sys.executable or 'python3', '-m', 'pip', 'install' , '--quiet', '--user', 'PyGithub'], check=True) # dependency of gitdir.host.github
     gitdir_gitdir = git_dir(existing_only=False) / 'github.com' / 'fenhl' / 'gitdir'
     if not gitdir_gitdir.exists():
         gitdir_gitdir.mkdir(parents=True)
@@ -422,6 +422,8 @@ def bootstrap_rust():
         crates.append('exa')
     subprocess.run(['cargo', 'install'] + crates, check=True)
     subprocess.run(['cargo', 'install', '--git=https://github.com/fenhl/diskspace', '--branch=main'], check=True)
+    if (git_dir() / 'fenhl.net' / 'dev' / 'master').exists():
+        subprocess.run(['cargo', 'build', '--release'], cwd=git_dir() / 'fenhl.net' / 'dev' / 'master', check=True) #TODO include in rust all-projects
 
 bootstrap_rust.apt_packages = {
     'curl',
@@ -476,7 +478,9 @@ def bootstrap_syncbin_private():
     import gitdir.host
 
     try:
-        gitdir.host.by_name('fenhl.net').clone('dev') #TODO build, include in rust all-projects
+        gitdir.host.by_name('fenhl.net').clone('dev')
+        if shutil.which('cargo') is not None:
+            subprocess.run(['cargo', 'build', '--release'], cwd=git_dir() / 'fenhl.net' / 'dev' / 'master', check=True)
         gitdir.host.by_name('fenhl.net').clone('syncbin-private')
     except PermissionError:
         sys.exit('[!!!!] Permission denied. Fix /opt/git permissions, then try again.')
