@@ -124,7 +124,7 @@ def set_status(progress, message, newline=False):
     else:
         print('[' + '=' * progress + '.' * (4 - progress) + ']', message, end='\n' if newline else '\r')
 
-def update_project(path, arguments):
+def update_project(path, arguments, packages=()):
     if subprocess.call(['git', 'branch'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=str(path)) == 0:
         set_status(3, 'updating repo        ')
         subprocess.check_call(['git', 'fetch', *quiet()], cwd=str(path))
@@ -145,16 +145,16 @@ def update_project(path, arguments):
         elif not QUIET:
             print('[ ** ]', 'Cargo.lock tracked by git, skipping crates update step, `--crates` to override')
     set_status(5, 'update complete')
-    cargo_build = subprocess.Popen(env('cargo', 'build', *(['--release'] if arguments['--release'] else []), *quiet()), cwd=str(path))
+    cargo_build = subprocess.Popen(env('cargo', 'build', *(['--release'] if arguments['--release'] else []), *quiet(), *(f'--package={package}' for package in packages)), cwd=str(path))
     if cargo_build.wait() != 0:
         return cargo_build.returncode
     if arguments['--release'] or arguments['--no-test']:
         exit_status = 0
     else:
-        exit_status = subprocess.call(env('cargo', 'test', *quiet()), cwd=str(path))
+        exit_status = subprocess.call(env('cargo', 'test', *quiet(), *(f'--package={package}' for package in packages)), cwd=str(path))
     if exit_status == 0 and arguments['--run']:
         try:
-            return subprocess.call(env('cargo', 'run', *(['--release'] if arguments['--release'] else []), *quiet()), cwd=str(path))
+            return subprocess.call(env('cargo', 'run', *(['--release'] if arguments['--release'] else []), *quiet(), *(f'--package={package}' for package in packages)), cwd=str(path))
         except KeyboardInterrupt:
             print()
             return 130
@@ -206,7 +206,10 @@ if __name__ == '__main__':
         set_status(3, 'updating installed crates')
         subprocess.check_call(env('cargo', 'install-update', *quiet(), '--all', '--git'), stdout=subprocess.DEVNULL)
         subprocess.run(['rm', '-rf', '/tmp/cargo-update'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) # for some reason, cargo-update sometimes doesn't clean up its tempfiles?
-        for path in map(pathlib.Path, basedir.config_dirs('fenhl/syncbin.json').json(base={}).get('rust', {}).get('projects', [])):
+        config = basedir.config_dirs('fenhl/syncbin.json').json(base={})
+        for project, packages in config.get('rust', {}).get('packages', {}).items():
+            exit_status = update_project(pathlib.Path(project), arguments, packages=packages)
+        for path in map(pathlib.Path, config.get('rust', {}).get('projects', [])):
             exit_status = update_project(path, arguments)
             if exit_status != 0:
                 sys.exit(exit_status)
