@@ -416,7 +416,9 @@ def bootstrap_python():
 @bootstrap_setup('rust')
 def bootstrap_rust():
     """Installs Rust via `rustup`."""
-    #TODO install Rust via apt-get if on Debian ≥10
+    import basedir
+
+    #TODO install Rust via apt-get if on Debian ≥12 (bookworm), which has a version of Cargo supporting the rust-version package field
     subprocess.run('curl --proto \'=https\' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path -y', shell=True, check=True)
     crates = {'cargo-limit', 'cargo-sweep', 'cargo-update'}
     if shutil.which('exa') is None:
@@ -425,6 +427,7 @@ def bootstrap_rust():
     subprocess.run(['cargo', 'install', '--git=https://github.com/fenhl/diskspace', '--branch=main'], check=True)
     if (git_dir() / 'fenhl.net' / 'dev' / 'master').exists():
         subprocess.run(['cargo', 'build', '--release'], cwd=git_dir() / 'fenhl.net' / 'dev' / 'master', check=True) #TODO include in rust all-projects
+        basedir.config_dirs('fenhl/syncbin.json').lazy_json(writeable_only=True, default={'rust': {'projects': []}}, init=True)['rust']['projects'].append('/opt/git/fenhl.net/dev/master')
 
 bootstrap_rust.apt_packages = {
     'curl',
