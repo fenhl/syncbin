@@ -10,19 +10,8 @@ fi
 if [[ -z ${PIP} ]]; then
     if [[ -f /home/fenhl/berryconda3/bin/pip ]]; then
         PIP=/home/fenhl/berryconda3/bin/pip
-    elif where pip3 &> /dev/null; then
-        PIP=pip3
-    elif where pip-3.7 &> /dev/null; then
-        PIP=pip-3.7
-    elif where pip-3.6 &> /dev/null; then
-        PIP=pip-3.6
-    elif where pip-3.5 &> /dev/null; then
-        PIP=pip-3.5
-    elif where pip-3.4 &> /dev/null; then
-        PIP=pip-3.4
     else
-        echo '[!!!!] no pip3 found' >&2
-        exit 1
+        PIP=-m
     fi
 fi
 
