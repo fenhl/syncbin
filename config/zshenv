@@ -82,11 +82,17 @@ export ATOM_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}/atom"
 # Go config
 export GOPATH="${HOME}/.local/share/go"
 
+# gpg config
+export GPG_TTY="$(tty)"
+
 # Java config
 export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk/Contents/Home"
 if [[ -d /usr/local/opt/android-sdk ]]; then
     export ANDROID_HOME=/usr/local/opt/android-sdk
 fi
+
+# oh-my-zsh config
+export ZSH="${GITDIR}/github.com/robbyrussell/oh-my-zsh/master"
 
 # Python config
 typeset -T PYTHONPATH pythonpath
@@ -103,9 +109,6 @@ typeset -U pythonpath
 export PYTHONPATH
 export PYTHONSTARTUP="${GITDIR}/github.com/fenhl/syncbin/master/config/pythonstartup.py"
 export VIRTUAL_ENV_DISABLE_PROMPT=1
-
-# oh-my-zsh config
-export ZSH="${GITDIR}/github.com/robbyrussell/oh-my-zsh/master"
 
 # Ruby config
 export GEM_HOME="${HOME}/.local/share/gem"
