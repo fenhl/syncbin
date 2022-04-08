@@ -234,6 +234,7 @@ if [[ $SYNCBINHASINET -eq 0 ]]; then
     elif [[ "$(uname -s)" == "Darwin" ]]; then
         print-warning 'brew not installed, see http://brew.sh/ for instructions'
     fi
+    unlock ruby
     print-progress '===.' 'running startup script: rust'
     # rust has its own lock
     if where rustup &> /dev/null; then
