@@ -112,7 +112,7 @@ def rustup_update(toolchain=None, timeout=300):
         update_popen.terminate()
         print('[!!!!]', 'updating Rust {}: timed out'.format(toolchain), file=sys.stderr)
         sys.exit(update_popen.returncode)
-    subprocess.run(env('cargo', 'sweep', '--installed', '-r'), cwd=os.environ.get('GITDIR', '/opt/git'), stdout=subprocess.DEVNULL) # no check due to https://github.com/holmgr/cargo-sweep/issues/24
+    subprocess.run(env('cargo', 'sweep', '--installed', '-r'), cwd=os.environ.get('GITDIR', '/opt/git'), stdout=subprocess.DEVNULL, check=True)
     with syncbin.lock('rust'): # see https://github.com/rust-lang/rustup.rs/issues/988
         subprocess.check_call(env('rustup', 'self', 'update'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
