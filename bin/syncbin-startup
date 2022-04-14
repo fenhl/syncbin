@@ -141,9 +141,7 @@ function test-missing-python-package {
     fi
     if ! py-where "$module_name" &> /dev/null; then
         if [[ "$SYNCBIN_MISSING_PYTHON_PACKAGE" == "1" ]]; then
-            if where clear-eol &> /dev/null; then
-                clear-eol
-            fi
+            clear-eol # assume clear-eol is installed at this point since it's part of syncbin itself
             printf '[ !! ] missing Python packages: '
             SYNCBIN_MISSING_PYTHON_PACKAGE=0
         else
