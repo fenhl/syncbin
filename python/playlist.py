@@ -33,7 +33,6 @@ import re
 import socket
 import subprocess
 
-import blessings # PyPI: blessings
 import docopt # PyPI: docopt
 import mpd # PyPI: python-mpd2
 

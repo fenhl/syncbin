@@ -581,10 +581,10 @@ def bootstrap_help(file=sys.stdout):
     max_len = max(len(name) for name, setup in setups)
     for name, setup in setups:
         try:
-            import blessings
+            blessings = pypi_import('blessings')
 
             term = blessings.Terminal()
-        except:
+        except Exception:
             status_sigil = {
                 True: '✓',
                 False: '✗',

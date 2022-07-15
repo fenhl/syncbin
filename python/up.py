@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
-import pathlib
 import sys
 
-sys.path += ['/opt/py', str(pathlib.Path.home() / 'py')]
+import syncbin
 
-import blessings
+blessings = syncbin.pypi_import('blessings')
 
 if __name__ == '__main__':
     terminal = blessings.Terminal()

@@ -116,12 +116,11 @@ fi
 test -r ~/.opam/opam-init/init.zsh && . ~/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 
 # startup scripts
+alias clear-eol="echo -ne '\x1b[K'"
 . syncbin-startup
 
 printf '[====] '
-if where clear-eol &> /dev/null && where py-where &> /dev/null && py-where blessings &> /dev/null; then
-    clear-eol
-fi
+clear-eol
 printf 'starting zsh session\r'
 
 # load syntax highlighting

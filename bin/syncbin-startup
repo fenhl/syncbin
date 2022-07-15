@@ -26,27 +26,19 @@ function is-omz-plugin {
 }
 
 function print-progress {
-    if where clear-eol &> /dev/null && where py-where &> /dev/null && py-where blessings &> /dev/null; then
-        printf '['"$1"'] '
-        clear-eol
-        if [[ "$SYNCBIN_VERBOSE" == "0" ]]; then
-            echo "$2"
-        else
-            printf "$2"'\r'
-        fi
+    printf '['"$1"'] '
+    clear-eol
+    if [[ "$SYNCBIN_VERBOSE" == "0" ]]; then
+        echo "$2"
     else
-        printf '['"$1"'] '"$2"'\r'
+        printf "$2"'\r'
     fi
 }
 
 function print-warning {
-    if where clear-eol &> /dev/null && where py-where &> /dev/null && py-where blessings &> /dev/null; then
-        printf '[ !! ] '
-        clear-eol
-        printf 'warning: '"$1"'\n'
-    else
-        printf '[ !! ] warning: '"$1"'\n'
-    fi
+    printf '[ !! ] '
+    clear-eol
+    printf 'warning: '"$1"'\n'
     print-progress "$2" "$3"
 }
 
@@ -154,8 +146,6 @@ function test-missing-python-package {
 #TODO document why these are required
 if ! where py-where &> /dev/null; then
     echo '[ !! ] failed to check for required Python packages: py-where not found'
-elif ! py-where blessings &> /dev/null; then
-    echo '[ !! ] missing Python package “blessings”, install with `py -m pip install blessings`'
 else
     test-missing-python-package basedir 'fenhl/python-xdg-basedir'
     test-missing-python-package click
