@@ -1,9 +1,0 @@
-#!/bin/zsh
-
-if where mpd &> /dev/null; then
-    mpd ~/.config/mpd/mpd.conf &&
-    open -a Theremin
-else
-    echo '[ !! ] mpd not installed' >&2
-    exit 1
-fi

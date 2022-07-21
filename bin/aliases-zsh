@@ -1,10 +1,4 @@
 alias -- -='cd -'
-function a2edit {
-    : from syncbin
-    sudo nano /etc/apache2/sites-available/"$1"
-    sudo a2ensite "$1" > /dev/null
-    sudo service apache2 reload
-}
 function activate {
     : from syncbin
     . "$1"/bin/activate
@@ -104,9 +98,6 @@ function g { # from https://github.com/pengwynn/dotfiles/blob/master/git/git.zsh
     fi
 }
 compdef g=git
-if alias ga > /dev/null; then
-    unalias ga
-fi
 function gco {
     : from syncbin
     git checkout "$@" 2>/dev/null || g checkout -b "$@"
@@ -211,7 +202,12 @@ function ll {
     fi
 }
 compdef ll=ls
-alias mkcd='take'
+function mkcd {
+    : from syncbin
+    mkdir -p "$1" &&
+    cd "$1"
+}
+compdef mkcd=mkdir
 if ! (where pip3 &> /dev/null); then
     alias pip3='python3 -m pip'
 fi
@@ -262,7 +258,6 @@ function reconnect {
     notify "connection to $1 restored" &&
     ssh "$@"
 }
-alias relog=': $@; zsh && logout'
 function reset {
     : from syncbin
     if [ "$#" -gt 0 ]; then
@@ -271,16 +266,6 @@ function reset {
     else
         command reset
         stty -ixon # disable flow control
-    fi
-}
-function retab {
-    : from syncbin
-    if where tab &> /dev/null; then
-        tab "$@"
-        logout
-    else
-        where tab
-        return $?
     fi
 }
 function retry {
@@ -299,27 +284,6 @@ function rj { # restart the given systemd unit, then follow its journal
     : from syncbin
     sudo systemctl restart "$1" && sudo journalctl --unit="$1" --follow
 }
-function rm { # remove current directory when called without arguments
-    : from syncbin
-    if [ "$#" -gt 0 ]; then
-        command rm "$@"
-        return $?
-    else
-        command rm -r .
-        return $?
-    fi
-}
-function rr {
-    : from syncbin
-    if [ "$#" -gt 0 ]; then
-        command rm -rf "$@"
-        return $?
-    else
-        command rm -rf .
-        return $?
-    fi
-}
-compdef rr=rm
 if ! (where shuf &> /dev/null) && where gshuf &> /dev/null; then
     alias shuf='gshuf'
 fi
@@ -346,12 +310,6 @@ alias syncbin-version='cat ${GITDIR:-/opt/git}/github.com/fenhl/syncbin/master/v
 if ! (where tac &> /dev/null); then
     alias tac='tail -r'
 fi
-function take {
-    : from syncbin
-    mkdir -p "$1" &&
-    cd "$1"
-}
-compdef take=mkdir
 if ! (where tweet &> /dev/null); then
     alias tweet='t update'
 fi
