@@ -32,7 +32,7 @@ function syncbin-prompt-shell {
         echo '%BP%b' # Python venv
     elif [[ -n "$STY" ]]; then
         echo '%BS%b' # screen
-    elif [[ $(type accio) == "accio is an alias for . accio" ]]; then
+    elif [[ $(type -- -) == "- is an alias for cd -" ]]; then
         echo '%%' # syncbin seems to be fully initialized
     else
         echo '%B?%b' # syncbin not fully initialized
