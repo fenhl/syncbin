@@ -205,7 +205,7 @@ bootstrap_debian_root.apt_packages = {
     'ruby-dev',
     'screen',
     'ssmtp', #TODO configure
-    'unattended-upgrades' #TODO configure (unattended-upgrades config, call night-device-report)
+    'unattended-upgrades', #TODO configure (unattended-upgrades config, call night-device-report)
 }
 
 # exa not available on Ubuntu for some reason
@@ -424,7 +424,7 @@ def bootstrap_rust():
     if shutil.which('exa') is None:
         crates.add('exa')
     git_crates = {
-        'https://github.com/adumbidiot/cargo-sweep': 'issue-24', # installing from this branch instead of crates.io to fix https://github.com/holmgr/cargo-sweep/issues/24
+        'https://github.com/holmgr/cargo-sweep': 'master', # waiting for a release with f24188b
         'https://github.com/fenhl/diskspace': 'main',
     }
     subprocess.run(['cargo', 'install'] + sorted(crates), check=True)
@@ -439,7 +439,7 @@ bootstrap_rust.apt_packages = {
     'libdbus-1-3', # for diskspace
     'libdbus-1-dev', # for diskspace
     'libssl-dev',
-    'pkg-config'  # for diskspace
+    'pkg-config',  # for diskspace
 }
 
 @bootstrap_rust.test_installed
@@ -588,13 +588,13 @@ def bootstrap_help(file=sys.stdout):
             status_sigil = {
                 True: '✓',
                 False: '✗',
-                None: '?'
+                None: '?',
             }[setup.is_installed()]
         else:
             status_sigil = {
                 True: term.bright_green('✓'),
                 False: term.bright_red('✗'),
-                None: term.bright_yellow('?')
+                None: term.bright_yellow('?'),
             }[setup.is_installed()]
         print('{} {}{}  {}'.format(status_sigil, name, ' ' * (max_len - len(name)), '(undocumented)' if setup.__doc__ is None else setup.__doc__), file=file)
         #TODO more details
@@ -605,7 +605,7 @@ if __name__ == '__main__':
     except NameError:
         arguments = {
             'bootstrap': True,
-            '<setup>': ['python']
+            '<setup>': ['python'],
         }
     if arguments['bootstrap']:
         if len(arguments['<setup>']) == 0:
