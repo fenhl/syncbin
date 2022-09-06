@@ -18,6 +18,7 @@ path=(
     "/sbin"
     "/opt/local/bin"
     "/opt/local/sbin"
+    "/snap/bin"
     "/opt/night/bin"
     "/usr/local/share/fidera/bin"
     "/opt/wurstmineberg/bin"
