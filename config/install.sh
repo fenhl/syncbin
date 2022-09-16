@@ -397,7 +397,7 @@ ln -fs ${HUB}/fenhl/syncbin/master/config/zshenv ~/.zshenv
 ln -fs ${HUB}/fenhl/syncbin/master/config/zshrc ~/.zshrc
 
 if [ $pi_reinstall = yes ]; then
-    : # Zsh is already installed and enabled
+    sudo chsh -s /usr/bin/zsh fenhl
 elif which zsh > /dev/null 2>&1; then
     echo '[ ** ] Looks like syncbin was successfully installed. You can now `chsh -s /bin/zsh` and relog.'
 else
