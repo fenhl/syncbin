@@ -130,8 +130,8 @@ if __name__ == '__main__':
         sys.stdout.write("\n")
         builtins._ = value
 
-    sys.ps1 = '[jpy>] '
-    sys.ps2 = '[jpy…] '
+    sys.ps1 = 'jpy> '
+    sys.ps2 = 'jpy… '
     sys.displayhook = displayhook
     arguments = docopt.docopt(__doc__)
     for filename in arguments['FILE']:

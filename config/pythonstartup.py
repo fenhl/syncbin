@@ -8,8 +8,8 @@ import collections.abc
 
 _syncbin_python_version_string = str(sys.version_info.major) + '.' + str(sys.version_info.minor)
 
-sys.ps1 = '[' + _syncbin_python_version_string + '>] '
-sys.ps2 = '[' + _syncbin_python_version_string + '…] '
+sys.ps1 = _syncbin_python_version_string + '> '
+sys.ps2 = _syncbin_python_version_string + '… '
 
 def namespace(initial=None):
     if initial is None:
