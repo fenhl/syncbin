@@ -1,7 +1,9 @@
 stty -echo # don't show input while loading
 stty -ixon # disable flow control
 
-printf '[....] defining environment variables and behavior\r'
+if [[ x"$VSCODE_RESOLVING_ENVIRONMENT" != x"1" ]]; then
+    printf '[....] defining environment variables and behavior\r'
+fi
 
 OMZ_PLUGINS=(command-not-found encode64 macos ruby)
 . "${GITDIR}/github.com/fenhl/syncbin/master/config/fenhl.zsh-theme"
@@ -115,23 +117,25 @@ fi
 # opam configuration
 test -r ~/.opam/opam-init/init.zsh && . ~/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 
-# startup scripts
-alias clear-eol="echo -ne '\x1b[K'"
-. syncbin-startup
+if [[ x"$VSCODE_RESOLVING_ENVIRONMENT" != x"1" ]]; then
+    # startup scripts
+    alias clear-eol="echo -ne '\x1b[K'"
+    . syncbin-startup
 
-printf '[====] '
-clear-eol
-printf 'starting zsh session\r'
+    printf '[====] '
+    clear-eol
+    printf 'starting zsh session\r'
 
-# load syntax highlighting
-if [[ -d /usr/local/share/zsh-syntax-highlighting ]]; then # Homebrew
-    . /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-elif [[ -d /opt/git/github.com/zsh-users/zsh-syntax-highlighting/master ]]; then # global gitdir
-    #TODO update in syncbin-startup
-    . /opt/git/github.com/zsh-users/zsh-syntax-highlighting/master/zsh-syntax-highlighting.zsh
-elif [[ -d ~/git/github.com/zsh-users/zsh-syntax-highlighting/master ]]; then # local gitdir
-    #TODO update in syncbin-startup
-    . ~/git/github.com/zsh-users/zsh-syntax-highlighting/master/zsh-syntax-highlighting.zsh
+    # load syntax highlighting
+    if [[ -d /usr/local/share/zsh-syntax-highlighting ]]; then # Homebrew
+        . /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    elif [[ -d /opt/git/github.com/zsh-users/zsh-syntax-highlighting/master ]]; then # global gitdir
+        #TODO update in syncbin-startup
+        . /opt/git/github.com/zsh-users/zsh-syntax-highlighting/master/zsh-syntax-highlighting.zsh
+    elif [[ -d ~/git/github.com/zsh-users/zsh-syntax-highlighting/master ]]; then # local gitdir
+        #TODO update in syncbin-startup
+        . ~/git/github.com/zsh-users/zsh-syntax-highlighting/master/zsh-syntax-highlighting.zsh
+    fi
 fi
 
 # reënable input
