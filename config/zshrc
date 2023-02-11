@@ -114,6 +114,11 @@ if where brew &> /dev/null; then
     HELPDIR=/usr/local/share/zsh/helpfiles
 fi
 
+# Elixir configuration
+if [[ -f "$HOME/.asdf/asdf.sh" ]]; then
+    . "$HOME/.asdf/asdf.sh"
+fi
+
 # opam configuration
 test -r ~/.opam/opam-init/init.zsh && . ~/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 
