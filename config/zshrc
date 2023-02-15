@@ -122,9 +122,10 @@ fi
 # opam configuration
 test -r ~/.opam/opam-init/init.zsh && . ~/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 
+alias clear-eol="echo -ne '\x1b[K'"
+
 if [[ x"$VSCODE_RESOLVING_ENVIRONMENT" != x"1" ]]; then
     # startup scripts
-    alias clear-eol="echo -ne '\x1b[K'"
     . syncbin-startup
 
     printf '[====] '
