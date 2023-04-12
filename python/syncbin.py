@@ -424,12 +424,12 @@ def bootstrap_rust():
     if shutil.which('exa') is None:
         crates.add('exa')
     git_crates = {
-        'https://github.com/holmgr/cargo-sweep': 'master', # waiting for a release with f24188b
-        'https://github.com/fenhl/diskspace': 'main',
+        'https://github.com/holmgr/cargo-sweep': ('master', ['cargo-sweep']), # waiting for a release with f24188b
+        'https://github.com/fenhl/diskspace': ('main', []),
     }
     subprocess.run(['cargo', 'install'] + sorted(crates), check=True)
-    for repo_url, branch in git_crates.items():
-        subprocess.run(['cargo', 'install', f'--git={repo_url}'] + ([] if branch is None else [f'--branch={branch}']), check=True)
+    for repo_url, (branch, binaries) in git_crates.items():
+        subprocess.run(['cargo', 'install', f'--git={repo_url}'] + ([] if branch is None else [f'--branch={branch}']) + binaries, check=True)
     if (git_dir() / 'fenhl.net' / 'dev' / 'master').exists():
         subprocess.run(['cargo', 'build', '--release'], cwd=git_dir() / 'fenhl.net' / 'dev' / 'master', check=True) #TODO include in rust all-projects
         basedir.config_dirs('fenhl/syncbin.json').lazy_json(writeable_only=True, default={'rust': {'projects': []}}, init=True)['rust']['projects'].append('/opt/git/fenhl.net/dev/master')
