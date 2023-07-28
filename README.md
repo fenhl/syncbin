@@ -17,7 +17,7 @@ The current version can be found in [`version.txt`](version.txt).
 The following command downloads and runs [`install.sh`](config/install.sh), thereby installing `syncbin` and a couple of other things like [homebrew](https://brew.sh/), [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh), and [zsh-completions](https://github.com/zsh-users/zsh-completions):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://start.fenhl.net | sh
+wget -O syncbin-install.sh https://raw.githubusercontent.com/fenhl/syncbin/master/config/install.sh && sh syncbin-install.sh && rm syncbin-install.sh
 ```
 
 It was last tested on Debian jessie, Raspbian buster, Ubuntu Artful Aardvark, macOS Mojave, and CentOS 6.5. If it doesn't work for you, feel free to open an issue.

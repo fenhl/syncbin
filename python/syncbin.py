@@ -467,7 +467,6 @@ def bootstrap_ssh():
 @bootstrap_setup('sudo')
 def bootstrap_sudo():
     """Configures passwordless `sudo`."""
-    #TODO if Touch ID is supported, use instead: https://medium.com/@jalalazimi/how-to-enable-touch-id-for-sudo-on-macbook-pro-46272ac3e2df
     sudoers_d = pathlib.Path('/etc/sudoers.d')
     if not sudoers_d.exists():
         subprocess.run(['sudo', 'mkdir', '-p', str(sudoers_d)], check=True)
