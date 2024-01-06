@@ -20,13 +20,13 @@ def make_path(args):
         if '/' in args[0]:
             return gitdir.host.github.GitHub().repo(args[0])
         github = gitdir.host.github.GitHub().repo(f'fenhl/{args[0]}')
-        mercredi = gitdir.host.fenhl.Fenhl().repo(args[0])
-        if github.stage_path.exists() and mercredi.stage_path.exists():
+        vendredi = gitdir.host.fenhl.Fenhl().repo(args[0])
+        if github.stage_path.exists() and vendredi.stage_path.exists():
             raise ValueError('Repo exists on fenhl.net and github.com, specify host')
         elif github.stage_path.exists():
             return github
-        elif mercredi.stage_path.exists():
-            return mercredi
+        elif vendredi.stage_path.exists():
+            return vendredi
         else:
             raise ValueError('No such repo')
     elif len(args) == 2:

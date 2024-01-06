@@ -1,27 +1,27 @@
 Host bureflux
-    HostName mercredi.fenhl.net
+    HostName 143.42.59.66
     Port 2216
 
 Host ergomwai
-    HostName mercredi.fenhl.net
+    HostName 143.42.59.66
     Port 2221
 
 Host gharch
     HostName 172.104.145.95
 
 Host hobbitmwai
-    HostName mercredi.fenhl.net
+    HostName 143.42.59.66
     Port 2220
 
-Host mercredi
-    HostName mercredi.fenhl.net
-
 Host reiwa
-    HostName mercredi.fenhl.net
+    HostName 143.42.59.66
     Port 2217
 
 Host september
     HostName 192.168.178.59
+
+Host vendredi
+    HostName 143.42.59.66
 
 Host weberserver
     HostName weberserver.fenhl.net
