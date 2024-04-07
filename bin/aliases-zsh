@@ -143,7 +143,6 @@ if alias l > /dev/null; then
 fi
 function l {
     : from syncbin
-    # exa
     if [[ $# -lt 1 ]]; then
         file=.
     else
@@ -152,7 +151,11 @@ function l {
     if [[ -L "$file" ]]; then
         readlink "$@"
     elif [[ -d "$file" ]]; then
-        if which exa > /dev/null 2>&1; then
+        if which eza > /dev/null 2>&1; then
+            # eza
+            eza -Gabgl --sort=Name --color=always --time-style=long-iso "$@"
+        elif which exa > /dev/null 2>&1; then
+            # exa
             exa -FGabgl --sort=Name --color=always --time-style=long-iso "$@"
         elif ls --group > /dev/null 2>&1; then
             # GNU ls
@@ -176,7 +179,6 @@ if alias ll > /dev/null; then
 fi
 function ll {
     : from syncbin
-    # exa
     if [[ $# -lt 1 ]]; then
         file=.
     else
@@ -185,7 +187,10 @@ function ll {
     if [[ -L "$file" ]]; then
         readlink "$@"
     elif [[ -d "$file" ]]; then
-        if where exa &> /dev/null; then
+        if where eza &> /dev/null; then
+            # eza
+            eza --classify=always -abgl -TL1 --sort=Name --color=always --time-style=long-iso "$@" | less -R
+        elif where exa &> /dev/null; then
             # exa
             exa -Fabgl -TL1 --sort=Name --color=always --time-style=long-iso "$@" | less -R
         elif ls --group > /dev/null 2>&1; then
