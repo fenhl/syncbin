@@ -13,6 +13,10 @@ Host hobbitmwai
     HostName 143.42.59.66
     Port 2220
 
+Host intercal
+    HostName 143.42.59.66
+    Port 18828
+
 Host reiwa
     HostName 143.42.59.66
     Port 2217
