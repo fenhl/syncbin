@@ -2,7 +2,7 @@
 
 import sys
 
-sys.path.append('/opt/git/fenhl.net/syncbin-private/master/python')
+sys.path.append('/opt/git/fenhl.net/syncbin-private/main/python')
 
 import batcharge_macbook
 
